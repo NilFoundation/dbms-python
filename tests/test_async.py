@@ -2,8 +2,8 @@ import time
 
 import pytest
 
-from arango.database import AsyncDatabase
-from arango.exceptions import (
+from dbms.database import AsyncDatabase
+from dbms.exceptions import (
     AQLQueryExecuteError,
     AsyncExecuteError,
     AsyncJobCancelError,
@@ -12,7 +12,7 @@ from arango.exceptions import (
     AsyncJobResultError,
     AsyncJobStatusError,
 )
-from arango.job import AsyncJob
+from dbms.job import AsyncJob
 from tests.helpers import extract
 
 

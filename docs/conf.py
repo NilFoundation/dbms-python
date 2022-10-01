@@ -1,4 +1,4 @@
-project = "python-arango"
+project = "python-dbms"
 copyright = "2016-2022, Joohwan Oh"
 author = "Joohwan Oh"
 extensions = [
@@ -15,9 +15,9 @@ master_doc = "index"
 autodoc_member_order = "bysource"
 
 doctest_global_setup = """
-from arango import ArangoClient
-# Initialize the ArangoDB client.
-client = ArangoClient()
+from dbms import DbmsClient
+# Initialize the DbmsDB client.
+client = DbmsClient()
 # Connect to "_system" database as root user.
 sys_db = client.db('_system', username='root', password='passwd')
 # Create "test" database if it does not exist.

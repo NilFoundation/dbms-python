@@ -1,7 +1,7 @@
 Async API Execution
 -------------------
 
-In **asynchronous API executions**, python-arango sends API requests to ArangoDB in
+In **asynchronous API executions**, python-dbms sends API requests to DbmsDB in
 fire-and-forget style. The server processes the requests in the background, and
 the results can be retrieved once available via :ref:`AsyncJob` objects.
 
@@ -11,15 +11,15 @@ the results can be retrieved once available via :ref:`AsyncJob` objects.
 
     import time
 
-    from arango import (
-        ArangoClient,
+    from dbms import (
+        DbmsClient,
         AQLQueryExecuteError,
         AsyncJobCancelError,
         AsyncJobClearError
     )
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -77,7 +77,7 @@ the results can be retrieved once available via :ref:`AsyncJob` objects.
     except AsyncJobCancelError as err:
         assert err.message.endswith(f'job {job3.id} not found')
 
-    # Clear the result of a job from ArangoDB server to free up resources.
+    # Clear the result of a job from DbmsDB server to free up resources.
     # Result of job4 was removed from the server automatically upon retrieval,
     # so attempt to clear it raises an exception.
     try:

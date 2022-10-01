@@ -1,9 +1,9 @@
 Cursors
 -------
 
-Many operations provided by python-arango (e.g. executing :doc:`aql` queries)
-return result **cursors** to batch the network communication between ArangoDB
-server and python-arango client. Each HTTP request from a cursor fetches the
+Many operations provided by python-dbms (e.g. executing :doc:`aql` queries)
+return result **cursors** to batch the network communication between DbmsDB
+server and python-dbms client. Each HTTP request from a cursor fetches the
 next batch of results (usually documents). Depending on the query, the total
 number of items in the result set may or may not be known in advance.
 
@@ -11,10 +11,10 @@ number of items in the result set may or may not be known in advance.
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -80,20 +80,20 @@ number of items in the result set may or may not be known in advance.
 See :ref:`Cursor` for API specification.
 
 If the fetched result batch is depleted while you are iterating over a cursor
-(or while calling the method :func:`arango.cursor.Cursor.next`), python-arango
+(or while calling the method :func:`dbms.cursor.Cursor.next`), python-dbms
 automatically sends an HTTP request to the server to fetch the next batch
 (just-in-time style). To control exactly when the fetches occur, you can use
-methods :func:`arango.cursor.Cursor.fetch` and :func:`arango.cursor.Cursor.pop`
+methods :func:`dbms.cursor.Cursor.fetch` and :func:`dbms.cursor.Cursor.pop`
 instead.
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

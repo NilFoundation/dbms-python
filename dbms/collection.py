@@ -3,11 +3,11 @@ __all__ = ["StandardCollection", "VertexCollection", "EdgeCollection"]
 from numbers import Number
 from typing import List, Optional, Sequence, Tuple, Union
 
-from arango.api import ApiGroup
-from arango.connection import Connection
-from arango.cursor import Cursor
-from arango.exceptions import (
-    ArangoServerError,
+from dbms.api import ApiGroup
+from dbms.connection import Connection
+from dbms.cursor import Cursor
+from dbms.exceptions import (
+    DbmsServerError,
     CollectionChecksumError,
     CollectionConfigureError,
     CollectionLoadError,
@@ -36,13 +36,13 @@ from arango.exceptions import (
     IndexListError,
     IndexLoadError,
 )
-from arango.executor import ApiExecutor
-from arango.formatter import format_collection, format_edge, format_index, format_vertex
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Fields, Headers, Json, Params
-from arango.utils import get_batches, get_doc_id, is_none_or_int, is_none_or_str
+from dbms.executor import ApiExecutor
+from dbms.formatter import format_collection, format_edge, format_index, format_vertex
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Fields, Headers, Json, Params
+from dbms.utils import get_batches, get_doc_id, is_none_or_int, is_none_or_str
 
 
 class Collection(ApiGroup):
@@ -97,7 +97,7 @@ class Collection(ApiGroup):
         :type doc_id: str
         :return: Verified document ID.
         :rtype: str
-        :raise arango.exceptions.DocumentParseError: On bad collection name.
+        :raise dbms.exceptions.DocumentParseError: On bad collection name.
         """
         if not doc_id.startswith(self._id_prefix):
             raise DocumentParseError(f'bad collection name in document ID "{doc_id}"')
@@ -110,7 +110,7 @@ class Collection(ApiGroup):
         :type body: dict
         :return: Document ID.
         :rtype: str
-        :raise arango.exceptions.DocumentParseError: On missing ID and key.
+        :raise dbms.exceptions.DocumentParseError: On missing ID and key.
         """
         try:
             if "_id" in body:
@@ -176,7 +176,7 @@ class Collection(ApiGroup):
         :type body: dict
         :return: Document body with "_key" field.
         :rtype: dict
-        :raise arango.exceptions.DocumentParseError: On missing ID and key.
+        :raise dbms.exceptions.DocumentParseError: On missing ID and key.
         """
         if "_key" in body:
             return body
@@ -215,11 +215,11 @@ class Collection(ApiGroup):
 
         :return: True if recalculation was successful.
         :rtype: bool
-        :raise arango.exceptions.CollectionRecalculateCountError: If operation fails.
+        :raise dbms.exceptions.CollectionRecalculateCountError: If operation fails.
         """
         request = Request(
             method="put",
-            endpoint=f"/_api/collection/{self.name}/recalculateCount",
+            endpoint=f"/_api/relation/{self.name}/recalculateCount",
         )
 
         def response_handler(resp: Response) -> bool:
@@ -240,7 +240,7 @@ class Collection(ApiGroup):
         """
         request = Request(
             method="put",
-            endpoint=f"/_api/collection/{self.name}/responsibleShard",
+            endpoint=f"/_api/relation/{self.name}/responsibleShard",
             data=document,
             read=self.name,
         )
@@ -263,11 +263,11 @@ class Collection(ApiGroup):
         :type new_name: str
         :return: True if collection was renamed successfully.
         :rtype: bool
-        :raise arango.exceptions.CollectionRenameError: If rename fails.
+        :raise dbms.exceptions.CollectionRenameError: If rename fails.
         """
         request = Request(
             method="put",
-            endpoint=f"/_api/collection/{self.name}/rename",
+            endpoint=f"/_api/relation/{self.name}/rename",
             data={"name": new_name},
         )
 
@@ -285,11 +285,11 @@ class Collection(ApiGroup):
 
         :return: Collection properties.
         :rtype: dict
-        :raise arango.exceptions.CollectionPropertiesError: If retrieval fails.
+        :raise dbms.exceptions.CollectionPropertiesError: If retrieval fails.
         """
         request = Request(
             method="get",
-            endpoint=f"/_api/collection/{self.name}/properties",
+            endpoint=f"/_api/relation/{self.name}/properties",
             read=self.name,
         )
 
@@ -330,7 +330,7 @@ class Collection(ApiGroup):
         :type write_concern: int
         :return: New collection properties.
         :rtype: dict
-        :raise arango.exceptions.CollectionConfigureError: If operation fails.
+        :raise dbms.exceptions.CollectionConfigureError: If operation fails.
         """
         data: Json = {}
         if sync is not None:
@@ -344,7 +344,7 @@ class Collection(ApiGroup):
 
         request = Request(
             method="put",
-            endpoint=f"/_api/collection/{self.name}/properties",
+            endpoint=f"/_api/relation/{self.name}/properties",
             data=data,
         )
 
@@ -360,11 +360,11 @@ class Collection(ApiGroup):
 
         :return: Collection statistics.
         :rtype: dict
-        :raise arango.exceptions.CollectionStatisticsError: If retrieval fails.
+        :raise dbms.exceptions.CollectionStatisticsError: If retrieval fails.
         """
         request = Request(
             method="get",
-            endpoint=f"/_api/collection/{self.name}/figures",
+            endpoint=f"/_api/relation/{self.name}/figures",
             read=self.name,
         )
 
@@ -400,11 +400,11 @@ class Collection(ApiGroup):
 
         :return: Collection revision.
         :rtype: str
-        :raise arango.exceptions.CollectionRevisionError: If retrieval fails.
+        :raise dbms.exceptions.CollectionRevisionError: If retrieval fails.
         """
         request = Request(
             method="get",
-            endpoint=f"/_api/collection/{self.name}/revision",
+            endpoint=f"/_api/relation/{self.name}/revision",
             read=self.name,
         )
 
@@ -424,11 +424,11 @@ class Collection(ApiGroup):
         :type with_data: bool
         :return: Collection checksum.
         :rtype: str
-        :raise arango.exceptions.CollectionChecksumError: If retrieval fails.
+        :raise dbms.exceptions.CollectionChecksumError: If retrieval fails.
         """
         request = Request(
             method="get",
-            endpoint=f"/_api/collection/{self.name}/checksum",
+            endpoint=f"/_api/relation/{self.name}/checksum",
             params={"withRevision": with_rev, "withData": with_data},
         )
 
@@ -444,9 +444,9 @@ class Collection(ApiGroup):
 
         :return: True if collection was loaded successfully.
         :rtype: bool
-        :raise arango.exceptions.CollectionLoadError: If operation fails.
+        :raise dbms.exceptions.CollectionLoadError: If operation fails.
         """
-        request = Request(method="put", endpoint=f"/_api/collection/{self.name}/load")
+        request = Request(method="put", endpoint=f"/_api/relation/{self.name}/load")
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
@@ -460,9 +460,9 @@ class Collection(ApiGroup):
 
         :return: True if collection was unloaded successfully.
         :rtype: bool
-        :raise arango.exceptions.CollectionUnloadError: If operation fails.
+        :raise dbms.exceptions.CollectionUnloadError: If operation fails.
         """
-        request = Request(method="put", endpoint=f"/_api/collection/{self.name}/unload")
+        request = Request(method="put", endpoint=f"/_api/relation/{self.name}/unload")
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
@@ -476,10 +476,10 @@ class Collection(ApiGroup):
 
         :return: True if collection was truncated successfully.
         :rtype: bool
-        :raise arango.exceptions.CollectionTruncateError: If operation fails.
+        :raise dbms.exceptions.CollectionTruncateError: If operation fails.
         """
         request = Request(
-            method="put", endpoint=f"/_api/collection/{self.name}/truncate"
+            method="put", endpoint=f"/_api/relation/{self.name}/truncate"
         )
 
         def response_handler(resp: Response) -> bool:
@@ -494,9 +494,9 @@ class Collection(ApiGroup):
 
         :return: Total document count.
         :rtype: int
-        :raise arango.exceptions.DocumentCountError: If retrieval fails.
+        :raise dbms.exceptions.DocumentCountError: If retrieval fails.
         """
-        request = Request(method="get", endpoint=f"/_api/collection/{self.name}/count")
+        request = Request(method="get", endpoint=f"/_api/relation/{self.name}/count")
 
         def response_handler(resp: Response) -> int:
             if resp.is_success:
@@ -525,8 +525,8 @@ class Collection(ApiGroup):
         :type check_rev: bool
         :return: True if document exists, False otherwise.
         :rtype: bool
-        :raise arango.exceptions.DocumentInError: If check fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentInError: If check fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         handle, body, headers = self._prep_from_doc(document, rev, check_rev)
 
@@ -552,8 +552,8 @@ class Collection(ApiGroup):
         """Return the IDs of all documents in the collection.
 
         :return: Document ID cursor.
-        :rtype: arango.cursor.Cursor
-        :raise arango.exceptions.DocumentIDsError: If retrieval fails.
+        :rtype: dbms.cursor.Cursor
+        :raise dbms.exceptions.DocumentIDsError: If retrieval fails.
         """
         request = Request(
             method="put",
@@ -573,8 +573,8 @@ class Collection(ApiGroup):
         """Return the keys of all documents in the collection.
 
         :return: Document key cursor.
-        :rtype: arango.cursor.Cursor
-        :raise arango.exceptions.DocumentKeysError: If retrieval fails.
+        :rtype: dbms.cursor.Cursor
+        :raise dbms.exceptions.DocumentKeysError: If retrieval fails.
         """
         request = Request(
             method="put",
@@ -600,8 +600,8 @@ class Collection(ApiGroup):
         :param limit: Max number of documents returned.
         :type limit: int | None
         :return: Document cursor.
-        :rtype: arango.cursor.Cursor
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
+        :rtype: dbms.cursor.Cursor
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
         """
         assert is_none_or_int(skip), "skip must be a non-negative int"
         assert is_none_or_int(limit), "limit must be a non-negative int"
@@ -635,8 +635,8 @@ class Collection(ApiGroup):
         :param limit: Max number of documents returned.
         :type limit: int | None
         :return: Document cursor.
-        :rtype: arango.cursor.Cursor
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
+        :rtype: dbms.cursor.Cursor
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
         """
         assert isinstance(filters, dict), "filters must be a dict"
         assert is_none_or_int(skip), "skip must be a non-negative int"
@@ -678,8 +678,8 @@ class Collection(ApiGroup):
         :param limit: Max number of documents returned.
         :type limit: int | None
         :returns: Document cursor.
-        :rtype: arango.cursor.Cursor
-        :raises arango.exceptions.DocumentGetError: If retrieval fails.
+        :rtype: dbms.cursor.Cursor
+        :raises dbms.exceptions.DocumentGetError: If retrieval fails.
         """
         assert isinstance(latitude, Number), "latitude must be a number"
         assert isinstance(longitude, Number), "longitude must be a number"
@@ -737,8 +737,8 @@ class Collection(ApiGroup):
         :param limit: Max number of documents returned.
         :type limit: int | None
         :returns: Document cursor.
-        :rtype: arango.cursor.Cursor
-        :raises arango.exceptions.DocumentGetError: If retrieval fails.
+        :rtype: dbms.cursor.Cursor
+        :raises dbms.exceptions.DocumentGetError: If retrieval fails.
         """
         assert is_none_or_int(skip), "skip must be a non-negative int"
         assert is_none_or_int(limit), "limit must be a non-negative int"
@@ -794,8 +794,8 @@ class Collection(ApiGroup):
             the given coordinate. This parameter is ignored in transactions.
         :type distance_field: str
         :returns: Document cursor.
-        :rtype: arango.cursor.Cursor
-        :raises arango.exceptions.DocumentGetError: If retrieval fails.
+        :rtype: dbms.cursor.Cursor
+        :raises dbms.exceptions.DocumentGetError: If retrieval fails.
         """
         assert isinstance(latitude, Number), "latitude must be a number"
         assert isinstance(longitude, Number), "longitude must be a number"
@@ -860,8 +860,8 @@ class Collection(ApiGroup):
             prefix). This parameter is ignored in transactions.
         :type index: str | None
         :returns: Document cursor.
-        :rtype: arango.cursor.Cursor
-        :raises arango.exceptions.DocumentGetError: If retrieval fails.
+        :rtype: dbms.cursor.Cursor
+        :raises dbms.exceptions.DocumentGetError: If retrieval fails.
         """
         assert isinstance(latitude1, Number), "latitude1 must be a number"
         assert isinstance(longitude1, Number), "longitude1 must be a number"
@@ -910,8 +910,8 @@ class Collection(ApiGroup):
         :param limit: Max number of documents returned.
         :type limit: int | None
         :returns: Document cursor.
-        :rtype: arango.cursor.Cursor
-        :raises arango.exceptions.DocumentGetError: If retrieval fails.
+        :rtype: dbms.cursor.Cursor
+        :raises dbms.exceptions.DocumentGetError: If retrieval fails.
         """
         assert is_none_or_int(limit), "limit must be a non-negative int"
 
@@ -952,7 +952,7 @@ class Collection(ApiGroup):
         :type documents: [str | dict]
         :return: Documents. Missing ones are not included.
         :rtype: [dict]
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
         """
         handles = [self._extract_id(d) if isinstance(d, dict) else d for d in documents]
 
@@ -978,7 +978,7 @@ class Collection(ApiGroup):
 
         :return: A random document.
         :rtype: dict
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
         """
         request = Request(
             method="put",
@@ -1004,7 +1004,7 @@ class Collection(ApiGroup):
 
         :return: Collection indexes.
         :rtype: [dict]
-        :raise arango.exceptions.IndexListError: If retrieval fails.
+        :raise dbms.exceptions.IndexListError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -1027,7 +1027,7 @@ class Collection(ApiGroup):
         :type data: dict
         :return: New index details.
         :rtype: dict
-        :raise arango.exceptions.IndexCreateError: If create fails.
+        :raise dbms.exceptions.IndexCreateError: If create fails.
         """
         request = Request(
             method="post",
@@ -1070,7 +1070,7 @@ class Collection(ApiGroup):
         :type in_background: bool | None
         :return: New index details.
         :rtype: dict
-        :raise arango.exceptions.IndexCreateError: If create fails.
+        :raise dbms.exceptions.IndexCreateError: If create fails.
         """
         data: Json = {"type": "hash", "fields": fields}
 
@@ -1114,7 +1114,7 @@ class Collection(ApiGroup):
         :type in_background: bool | None
         :return: New index details.
         :rtype: dict
-        :raise arango.exceptions.IndexCreateError: If create fails.
+        :raise dbms.exceptions.IndexCreateError: If create fails.
         """
         data: Json = {"type": "skiplist", "fields": fields}
 
@@ -1157,7 +1157,7 @@ class Collection(ApiGroup):
         :type legacyPolygons: bool | None
         :return: New index details.
         :rtype: dict
-        :raise arango.exceptions.IndexCreateError: If create fails.
+        :raise dbms.exceptions.IndexCreateError: If create fails.
         """
         data: Json = {"type": "geo", "fields": fields}
 
@@ -1180,7 +1180,7 @@ class Collection(ApiGroup):
         in_background: Optional[bool] = None,
     ) -> Result[Json]:
         """Create a new fulltext index. This method is deprecated
-            in ArangoDB 3.10 and will be removed in a future version
+            in DbmsDB 3.10 and will be removed in a future version
             of the driver.
 
         :param fields: Document fields to index.
@@ -1193,7 +1193,7 @@ class Collection(ApiGroup):
         :type in_background: bool | None
         :return: New index details.
         :rtype: dict
-        :raise arango.exceptions.IndexCreateError: If create fails.
+        :raise dbms.exceptions.IndexCreateError: If create fails.
         """
         data: Json = {"type": "fulltext", "fields": fields}
 
@@ -1245,7 +1245,7 @@ class Collection(ApiGroup):
         :type cacheEnabled: bool | None
         :return: New index details.
         :rtype: dict
-        :raise arango.exceptions.IndexCreateError: If create fails.
+        :raise dbms.exceptions.IndexCreateError: If create fails.
         """
         data: Json = {"type": "persistent", "fields": fields}
 
@@ -1283,7 +1283,7 @@ class Collection(ApiGroup):
         :type in_background: bool | None
         :return: New index details.
         :rtype: dict
-        :raise arango.exceptions.IndexCreateError: If create fails.
+        :raise dbms.exceptions.IndexCreateError: If create fails.
         """
         data: Json = {"type": "ttl", "fields": fields, "expireAfter": expiry_time}
 
@@ -1304,7 +1304,7 @@ class Collection(ApiGroup):
         :return: True if index was deleted successfully, False if index was
             not found and **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.IndexDeleteError: If delete fails.
+        :raise dbms.exceptions.IndexDeleteError: If delete fails.
         """
         request = Request(
             method="delete", endpoint=f"/_api/index/{self.name}/{index_id}"
@@ -1324,11 +1324,11 @@ class Collection(ApiGroup):
 
         :return: True if index was loaded successfully.
         :rtype: bool
-        :raise arango.exceptions.IndexLoadError: If operation fails.
+        :raise dbms.exceptions.IndexLoadError: If operation fails.
         """
         request = Request(
             method="put",
-            endpoint=f"/_api/collection/{self.name}/loadIndexesIntoMemory",
+            endpoint=f"/_api/relation/{self.name}/loadIndexesIntoMemory",
         )
 
         def response_handler(resp: Response) -> bool:
@@ -1349,7 +1349,7 @@ class Collection(ApiGroup):
         overwrite_mode: Optional[str] = None,
         keep_none: Optional[bool] = None,
         merge: Optional[bool] = None,
-    ) -> Result[Union[bool, List[Union[Json, ArangoServerError]]]]:
+    ) -> Result[Union[bool, List[Union[Json, DbmsServerError]]]]:
         """Insert multiple documents.
 
         .. note::
@@ -1365,7 +1365,7 @@ class Collection(ApiGroup):
             In edge/vertex collections, this method does NOT provide the
             transactional guarantees and validations that single insert
             operation does for graphs. If these properties are required, see
-            :func:`arango.database.StandardDatabase.begin_batch_execution`
+            :func:`dbms.database.StandardDatabase.begin_batch_execution`
             for an alternative approach.
 
         :param documents: List of new documents to insert. If they contain the
@@ -1403,8 +1403,8 @@ class Collection(ApiGroup):
             parameter **silent** was set to True.
         :return: List of document metadata (e.g. document keys, revisions) and
             any exception, or True if parameter **silent** was set to True.
-        :rtype: [dict | ArangoServerError] | bool
-        :raise arango.exceptions.DocumentInsertError: If insert fails.
+        :rtype: [dict | DbmsServerError] | bool
+        :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
         documents = [self._ensure_key_from_id(doc) for doc in documents]
 
@@ -1433,13 +1433,13 @@ class Collection(ApiGroup):
 
         def response_handler(
             resp: Response,
-        ) -> Union[bool, List[Union[Json, ArangoServerError]]]:
+        ) -> Union[bool, List[Union[Json, DbmsServerError]]]:
             if not resp.is_success:
                 raise DocumentInsertError(resp, request)
             if silent is True:
                 return True
 
-            results: List[Union[Json, ArangoServerError]] = []
+            results: List[Union[Json, DbmsServerError]] = []
             for body in resp.body:
                 if "_id" in body:
                     if "_oldRev" in body:
@@ -1463,7 +1463,7 @@ class Collection(ApiGroup):
         return_old: bool = False,
         sync: Optional[bool] = None,
         silent: bool = False,
-    ) -> Result[Union[bool, List[Union[Json, ArangoServerError]]]]:
+    ) -> Result[Union[bool, List[Union[Json, DbmsServerError]]]]:
         """Update multiple documents.
 
         .. note::
@@ -1479,7 +1479,7 @@ class Collection(ApiGroup):
             In edge/vertex collections, this method does NOT provide the
             transactional guarantees and validations that single update
             operation does for graphs. If these properties are required, see
-            :func:`arango.database.StandardDatabase.begin_batch_execution`
+            :func:`dbms.database.StandardDatabase.begin_batch_execution`
             for an alternative approach.
 
         :param documents: Partial or full documents with the updated values.
@@ -1507,8 +1507,8 @@ class Collection(ApiGroup):
         :type silent: bool
         :return: List of document metadata (e.g. document keys, revisions) and
             any exceptions, or True if parameter **silent** was set to True.
-        :rtype: [dict | ArangoError] | bool
-        :raise arango.exceptions.DocumentUpdateError: If update fails.
+        :rtype: [dict | DbmsError] | bool
+        :raise dbms.exceptions.DocumentUpdateError: If update fails.
         """
         params: Params = {
             "keepNull": keep_none,
@@ -1534,7 +1534,7 @@ class Collection(ApiGroup):
 
         def response_handler(
             resp: Response,
-        ) -> Union[bool, List[Union[Json, ArangoServerError]]]:
+        ) -> Union[bool, List[Union[Json, DbmsServerError]]]:
             if not resp.is_success:
                 raise DocumentUpdateError(resp, request)
             if silent is True:
@@ -1548,7 +1548,7 @@ class Collection(ApiGroup):
                 else:
                     sub_resp = self._conn.prep_bulk_err_response(resp, body)
 
-                    error: ArangoServerError
+                    error: DbmsServerError
                     if sub_resp.error_code == 1200:
                         error = DocumentRevisionError(sub_resp, request)
                     else:  # pragma: no cover
@@ -1576,7 +1576,7 @@ class Collection(ApiGroup):
             In edge/vertex collections, this method does NOT provide the
             transactional guarantees and validations that single update
             operation does for graphs. If these properties are required, see
-            :func:`arango.database.StandardDatabase.begin_batch_execution`
+            :func:`dbms.database.StandardDatabase.begin_batch_execution`
             for an alternative approach.
 
         :param filters: Document filters.
@@ -1597,7 +1597,7 @@ class Collection(ApiGroup):
         :type merge: bool | None
         :return: Number of documents updated.
         :rtype: int
-        :raise arango.exceptions.DocumentUpdateError: If update fails.
+        :raise dbms.exceptions.DocumentUpdateError: If update fails.
         """
         data: Json = {
             "collection": self.name,
@@ -1634,7 +1634,7 @@ class Collection(ApiGroup):
         return_old: bool = False,
         sync: Optional[bool] = None,
         silent: bool = False,
-    ) -> Result[Union[bool, List[Union[Json, ArangoServerError]]]]:
+    ) -> Result[Union[bool, List[Union[Json, DbmsServerError]]]]:
         """Replace multiple documents.
 
         .. note::
@@ -1650,7 +1650,7 @@ class Collection(ApiGroup):
             In edge/vertex collections, this method does NOT provide the
             transactional guarantees and validations that single replace
             operation does for graphs. If these properties are required, see
-            :func:`arango.database.StandardDatabase.begin_batch_execution`
+            :func:`dbms.database.StandardDatabase.begin_batch_execution`
             for an alternative approach.
 
         :param documents: New documents to replace the old ones with. They must
@@ -1673,8 +1673,8 @@ class Collection(ApiGroup):
         :type silent: bool
         :return: List of document metadata (e.g. document keys, revisions) and
             any exceptions, or True if parameter **silent** was set to True.
-        :rtype: [dict | ArangoServerError] | bool
-        :raise arango.exceptions.DocumentReplaceError: If replace fails.
+        :rtype: [dict | DbmsServerError] | bool
+        :raise dbms.exceptions.DocumentReplaceError: If replace fails.
         """
         params: Params = {
             "returnNew": return_new,
@@ -1698,13 +1698,13 @@ class Collection(ApiGroup):
 
         def response_handler(
             resp: Response,
-        ) -> Union[bool, List[Union[Json, ArangoServerError]]]:
+        ) -> Union[bool, List[Union[Json, DbmsServerError]]]:
             if not resp.is_success:
                 raise DocumentReplaceError(resp, request)
             if silent is True:
                 return True
 
-            results: List[Union[Json, ArangoServerError]] = []
+            results: List[Union[Json, DbmsServerError]] = []
             for body in resp.body:
                 if "_id" in body:
                     body["_old_rev"] = body.pop("_oldRev")
@@ -1712,7 +1712,7 @@ class Collection(ApiGroup):
                 else:
                     sub_resp = self._conn.prep_bulk_err_response(resp, body)
 
-                    error: ArangoServerError
+                    error: DbmsServerError
                     if sub_resp.error_code == 1200:
                         error = DocumentRevisionError(sub_resp, request)
                     else:  # pragma: no cover
@@ -1738,7 +1738,7 @@ class Collection(ApiGroup):
             In edge/vertex collections, this method does NOT provide the
             transactional guarantees and validations that single replace
             operation does for graphs. If these properties are required, see
-            :func:`arango.database.StandardDatabase.begin_batch_execution`
+            :func:`dbms.database.StandardDatabase.begin_batch_execution`
             for an alternative approach.
 
         :param filters: Document filters.
@@ -1752,7 +1752,7 @@ class Collection(ApiGroup):
         :type sync: bool | None
         :return: Number of documents replaced.
         :rtype: int
-        :raise arango.exceptions.DocumentReplaceError: If replace fails.
+        :raise dbms.exceptions.DocumentReplaceError: If replace fails.
         """
         data: Json = {"collection": self.name, "example": filters, "newValue": body}
         if limit is not None:
@@ -1782,7 +1782,7 @@ class Collection(ApiGroup):
         check_rev: bool = True,
         sync: Optional[bool] = None,
         silent: bool = False,
-    ) -> Result[Union[bool, List[Union[Json, ArangoServerError]]]]:
+    ) -> Result[Union[bool, List[Union[Json, DbmsServerError]]]]:
         """Delete multiple documents.
 
         .. note::
@@ -1798,7 +1798,7 @@ class Collection(ApiGroup):
             In edge/vertex collections, this method does NOT provide the
             transactional guarantees and validations that single delete
             operation does for graphs. If these properties are required, see
-            :func:`arango.database.StandardDatabase.begin_batch_execution`
+            :func:`dbms.database.StandardDatabase.begin_batch_execution`
             for an alternative approach.
 
         :param documents: Document IDs, keys or bodies. Document bodies must
@@ -1816,8 +1816,8 @@ class Collection(ApiGroup):
         :type silent: bool
         :return: List of document metadata (e.g. document keys, revisions) and
             any exceptions, or True if parameter **silent** was set to True.
-        :rtype: [dict | ArangoServerError] | bool
-        :raise arango.exceptions.DocumentDeleteError: If delete fails.
+        :rtype: [dict | DbmsServerError] | bool
+        :raise dbms.exceptions.DocumentDeleteError: If delete fails.
         """
         params: Params = {
             "returnOld": return_old,
@@ -1843,20 +1843,20 @@ class Collection(ApiGroup):
 
         def response_handler(
             resp: Response,
-        ) -> Union[bool, List[Union[Json, ArangoServerError]]]:
+        ) -> Union[bool, List[Union[Json, DbmsServerError]]]:
             if not resp.is_success:
                 raise DocumentDeleteError(resp, request)
             if silent is True:
                 return True
 
-            results: List[Union[Json, ArangoServerError]] = []
+            results: List[Union[Json, DbmsServerError]] = []
             for body in resp.body:
                 if "_id" in body:
                     results.append(body)
                 else:
                     sub_resp = self._conn.prep_bulk_err_response(resp, body)
 
-                    error: ArangoServerError
+                    error: DbmsServerError
                     if sub_resp.error_code == 1200:
                         error = DocumentRevisionError(sub_resp, request)
                     else:
@@ -1877,7 +1877,7 @@ class Collection(ApiGroup):
             In edge/vertex collections, this method does NOT provide the
             transactional guarantees and validations that single delete
             operation does for graphs. If these properties are required, see
-            :func:`arango.database.StandardDatabase.begin_batch_execution`
+            :func:`dbms.database.StandardDatabase.begin_batch_execution`
             for an alternative approach.
 
         :param filters: Document filters.
@@ -1889,7 +1889,7 @@ class Collection(ApiGroup):
         :type sync: bool | None
         :return: Number of documents deleted.
         :rtype: int
-        :raise arango.exceptions.DocumentDeleteError: If delete fails.
+        :raise dbms.exceptions.DocumentDeleteError: If delete fails.
         """
         data: Json = {"collection": self.name, "example": filters}
         if sync is not None:
@@ -1928,7 +1928,7 @@ class Collection(ApiGroup):
 
         .. note::
 
-            This method is faster than :func:`arango.collection.Collection.insert_many`
+            This method is faster than :func:`dbms.collection.Collection.insert_many`
             but does not return as many details.
 
         .. note::
@@ -1936,7 +1936,7 @@ class Collection(ApiGroup):
             In edge/vertex collections, this method does NOT provide the
             transactional guarantees and validations that single insert
             operation does for graphs. If these properties are required, see
-            :func:`arango.database.StandardDatabase.begin_batch_execution`
+            :func:`dbms.database.StandardDatabase.begin_batch_execution`
             for an alternative approach.
 
         :param documents: List of new documents to insert. If they contain the
@@ -1985,7 +1985,7 @@ class Collection(ApiGroup):
         :type batch_size: int
         :return: Result of the bulk import.
         :rtype: dict | list[dict]
-        :raise arango.exceptions.DocumentInsertError: If import fails.
+        :raise dbms.exceptions.DocumentInsertError: If import fails.
         """
         if overwrite and batch_size is not None:
             msg = "Cannot use parameter 'batch_size' if 'overwrite' is set to True"
@@ -2041,7 +2041,7 @@ class Collection(ApiGroup):
 
 
 class StandardCollection(Collection):
-    """Standard ArangoDB collection API wrapper."""
+    """Standard DbmsDB collection API wrapper."""
 
     def __repr__(self) -> str:
         return f"<StandardCollection {self.name}>"
@@ -2068,8 +2068,8 @@ class StandardCollection(Collection):
         :type check_rev: bool
         :return: Document, or None if not found.
         :rtype: dict | None
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         handle, body, headers = self._prep_from_doc(document, rev, check_rev)
 
@@ -2141,7 +2141,7 @@ class StandardCollection(Collection):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentInsertError: If insert fails.
+        :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
         document = self._ensure_key_from_id(document)
 
@@ -2221,8 +2221,8 @@ class StandardCollection(Collection):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentUpdateError: If update fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentUpdateError: If update fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         params: Params = {
             "keepNull": keep_none,
@@ -2290,8 +2290,8 @@ class StandardCollection(Collection):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentReplaceError: If replace fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentReplaceError: If replace fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         params: Params = {
             "returnNew": return_new,
@@ -2365,8 +2365,8 @@ class StandardCollection(Collection):
             found and **ignore_missing** was set to True (does not apply in
             transactions).
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentDeleteError: If delete fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentDeleteError: If delete fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         handle, body, headers = self._prep_from_doc(document, rev, check_rev)
 
@@ -2448,8 +2448,8 @@ class VertexCollection(Collection):
         :type check_rev: bool
         :return: Vertex document or None if not found.
         :rtype: dict | None
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         handle, body, headers = self._prep_from_doc(vertex, rev, check_rev)
 
@@ -2496,7 +2496,7 @@ class VertexCollection(Collection):
         :return: Document metadata (e.g. document key, revision), or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentInsertError: If insert fails.
+        :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
         vertex = self._ensure_key_from_id(vertex)
 
@@ -2556,8 +2556,8 @@ class VertexCollection(Collection):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentUpdateError: If update fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentUpdateError: If update fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         vertex_id, headers = self._prep_from_body(vertex, check_rev)
 
@@ -2622,8 +2622,8 @@ class VertexCollection(Collection):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentReplaceError: If replace fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentReplaceError: If replace fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         vertex_id, headers = self._prep_from_body(vertex, check_rev)
 
@@ -2688,8 +2688,8 @@ class VertexCollection(Collection):
             transactions). Old document is returned if **return_old** is set to
             True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentDeleteError: If delete fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentDeleteError: If delete fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         handle, _, headers = self._prep_from_doc(vertex, rev, check_rev)
 
@@ -2720,7 +2720,7 @@ class VertexCollection(Collection):
 
 
 class EdgeCollection(Collection):
-    """ArangoDB edge collection API wrapper.
+    """DbmsDB edge collection API wrapper.
 
     :param connection: HTTP connection.
     :param executor: API executor.
@@ -2765,8 +2765,8 @@ class EdgeCollection(Collection):
         :type check_rev: bool
         :return: Edge document or None if not found.
         :rtype: dict | None
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         handle, body, headers = self._prep_from_doc(edge, rev, check_rev)
 
@@ -2815,7 +2815,7 @@ class EdgeCollection(Collection):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentInsertError: If insert fails.
+        :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
         edge = self._ensure_key_from_id(edge)
 
@@ -2875,8 +2875,8 @@ class EdgeCollection(Collection):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentUpdateError: If update fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentUpdateError: If update fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         edge_id, headers = self._prep_from_body(edge, check_rev)
 
@@ -2942,8 +2942,8 @@ class EdgeCollection(Collection):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentReplaceError: If replace fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentReplaceError: If replace fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         edge_id, headers = self._prep_from_body(edge, check_rev)
 
@@ -3007,8 +3007,8 @@ class EdgeCollection(Collection):
             found and **ignore_missing** was set to True (does not  apply in
             transactions).
         :rtype: bool
-        :raise arango.exceptions.DocumentDeleteError: If delete fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentDeleteError: If delete fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         handle, _, headers = self._prep_from_doc(edge, rev, check_rev)
 
@@ -3067,7 +3067,7 @@ class EdgeCollection(Collection):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentInsertError: If insert fails.
+        :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
         edge = {"_from": get_doc_id(from_vertex), "_to": get_doc_id(to_vertex)}
         if data is not None:
@@ -3086,7 +3086,7 @@ class EdgeCollection(Collection):
         :type direction: str
         :return: List of edges and statistics.
         :rtype: dict
-        :raise arango.exceptions.EdgeListError: If retrieval fails.
+        :raise dbms.exceptions.EdgeListError: If retrieval fails.
         """
         params: Params = {"vertex": get_doc_id(vertex)}
         if direction is not None:

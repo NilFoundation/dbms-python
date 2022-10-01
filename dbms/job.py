@@ -3,16 +3,16 @@ __all__ = ["AsyncJob", "BatchJob"]
 from typing import Callable, Generic, Optional, TypeVar
 from uuid import uuid4
 
-from arango.connection import Connection
-from arango.exceptions import (
+from dbms.connection import Connection
+from dbms.exceptions import (
     AsyncJobCancelError,
     AsyncJobClearError,
     AsyncJobResultError,
     AsyncJobStatusError,
     BatchJobResultError,
 )
-from arango.request import Request
-from arango.response import Response
+from dbms.request import Request
+from dbms.response import Response
 
 T = TypeVar("T")
 
@@ -54,7 +54,7 @@ class AsyncJob(Generic[T]):
     def status(self) -> str:
         """Return the async job status from server.
 
-        Once a job result is retrieved via func:`arango.job.AsyncJob.result`
+        Once a job result is retrieved via func:`dbms.job.AsyncJob.result`
         method, it is deleted from server and subsequent status queries will
         fail.
 
@@ -62,7 +62,7 @@ class AsyncJob(Generic[T]):
             in queue), "done" (job finished or raised an error), or "cancelled"
             (job was cancelled before completion).
         :rtype: str
-        :raise arango.exceptions.AsyncJobStatusError: If retrieval fails.
+        :raise dbms.exceptions.AsyncJobStatusError: If retrieval fails.
         """
         request = Request(method="get", endpoint=f"/_api/job/{self._id}")
         resp = self._conn.send_request(request)
@@ -86,13 +86,13 @@ class AsyncJob(Generic[T]):
         queries for result will fail.
 
         :return: Async job result.
-        :raise arango.exceptions.ArangoError: If the job raised an exception.
-        :raise arango.exceptions.AsyncJobResultError: If retrieval fails.
+        :raise dbms.exceptions.DbmsError: If the job raised an exception.
+        :raise dbms.exceptions.AsyncJobResultError: If retrieval fails.
         """
         request = Request(method="put", endpoint=f"/_api/job/{self._id}")
         resp = self._conn.send_request(request)
 
-        if "X-Arango-Async-Id" in resp.headers or "x-arango-async-id" in resp.headers:
+        if "X-Dbms-Async-Id" in resp.headers or "x-dbms-async-id" in resp.headers:
             return self._response_handler(resp)
 
         if resp.status_code == 204:
@@ -114,7 +114,7 @@ class AsyncJob(Generic[T]):
         :return: True if job was cancelled successfully, False if the job
             was not found but **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.AsyncJobCancelError: If cancel fails.
+        :raise dbms.exceptions.AsyncJobCancelError: If cancel fails.
         """
         request = Request(method="put", endpoint=f"/_api/job/{self._id}/cancel")
         resp = self._conn.send_request(request)
@@ -137,7 +137,7 @@ class AsyncJob(Generic[T]):
         :return: True if result was deleted successfully, False if the job
             was not found but **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.AsyncJobClearError: If delete fails.
+        :raise dbms.exceptions.AsyncJobClearError: If delete fails.
         """
         request = Request(method="delete", endpoint=f"/_api/job/{self._id}")
         resp = self._conn.send_request(request)
@@ -196,8 +196,8 @@ class BatchJob(Generic[T]):
         If the job raised an exception, it is propagated up at this point.
 
         :return: Batch job result.
-        :raise arango.exceptions.ArangoError: If the job raised an exception.
-        :raise arango.exceptions.BatchJobResultError: If job result is not
+        :raise dbms.exceptions.DbmsError: If the job raised an exception.
+        :raise dbms.exceptions.BatchJobResultError: If job result is not
             available (i.e. batch is not committed yet).
         """
         if self._status == "pending" or self._response is None:

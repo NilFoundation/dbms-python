@@ -2,15 +2,15 @@
 
 |
 
-Python-Arango
+Python-Dbms
 -------------
 
-Welcome to the documentation for **python-arango**, a Python driver for ArangoDB_.
+Welcome to the documentation for **python-dbms**, a Python driver for DbmsDB_.
 
 Requirements
 =============
 
-- ArangoDB version 3.7+
+- DbmsDB version 3.7+
 - Python version 3.7+
 
 Installation
@@ -18,7 +18,7 @@ Installation
 
 .. code-block:: bash
 
-    ~$ pip install python-arango --upgrade
+    ~$ pip install python-dbms --upgrade
 
 Contents
 ========
@@ -60,4 +60,4 @@ Contents
     contributing
     specs
 
-.. _ArangoDB: https://www.arangodb.com
+.. _DbmsDB: https://www.dbmsdb.com

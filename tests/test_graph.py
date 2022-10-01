@@ -1,5 +1,5 @@
-from arango.collection import EdgeCollection
-from arango.exceptions import (
+from dbms.collection import EdgeCollection
+from dbms.exceptions import (
     DocumentDeleteError,
     DocumentGetError,
     DocumentInsertError,

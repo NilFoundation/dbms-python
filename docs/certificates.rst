@@ -7,7 +7,7 @@ By default, self-signed certificates will cause trouble when connecting.
 
 .. code-block:: python
 
-    client = ArangoClient(hosts="https://localhost:8529")
+    client = DbmsClient(hosts="https://localhost:8529")
 
 To make connections work even when using self-signed certificates, you can
 provide the certificate CA bundle or turn the verification off.
@@ -15,14 +15,14 @@ provide the certificate CA bundle or turn the verification off.
 If you want to have fine-grained control over the HTTP connection, you should define
 your HTTP client as described in the :ref:`HTTPClients` section.
 
-The ``ArangoClient`` class provides an option to override the verification behavior,
+The ``DbmsClient`` class provides an option to override the verification behavior,
 no matter what has been defined in the underlying HTTP session.
 You can use this option to disable verification or provide a custom CA bundle without
 defining a custom HTTP Client.
 
 .. code-block:: python
 
-    client = ArangoClient(hosts="https://localhost:8529", verify_override=False)
+    client = DbmsClient(hosts="https://localhost:8529", verify_override=False)
 
 This will allow connecting, but the underlying `urllib3` library may still issue
 warnings due to the insecurity of using self-signed certificates.

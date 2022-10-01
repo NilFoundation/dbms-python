@@ -1,7 +1,7 @@
 Multithreading
 --------------
 
-There are a few things you should consider before using python-arango in a
+There are a few things you should consider before using python-dbms in a
 multithreaded (or multiprocess) architecture.
 
 Stateful Objects
@@ -18,8 +18,8 @@ accessed across multiple threads without locks in place:
 HTTP Sessions
 =============
 
-When :ref:`ArangoClient` is initialized, a `requests.Session`_ instance is
-created per ArangoDB host connected. HTTP requests to a host are sent using
+When :ref:`DbmsClient` is initialized, a `requests.Session`_ instance is
+created per DbmsDB host connected. HTTP requests to a host are sent using
 only its corresponding session. For more information on how to override this
 behaviour, see :doc:`http`.
 

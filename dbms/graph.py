@@ -2,10 +2,10 @@ __all__ = ["Graph"]
 
 from typing import List, Optional, Sequence, Union
 
-from arango.api import ApiGroup
-from arango.collection import EdgeCollection, VertexCollection
-from arango.connection import Connection
-from arango.exceptions import (
+from dbms.api import ApiGroup
+from dbms.collection import EdgeCollection, VertexCollection
+from dbms.connection import Connection
+from dbms.exceptions import (
     EdgeDefinitionCreateError,
     EdgeDefinitionDeleteError,
     EdgeDefinitionListError,
@@ -16,13 +16,13 @@ from arango.exceptions import (
     VertexCollectionDeleteError,
     VertexCollectionListError,
 )
-from arango.executor import ApiExecutor
-from arango.formatter import format_graph_properties
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Json, Jsons
-from arango.utils import get_col_name, get_doc_id
+from dbms.executor import ApiExecutor
+from dbms.formatter import format_graph_properties
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Json, Jsons
+from dbms.utils import get_col_name, get_doc_id
 
 
 class Graph(ApiGroup):
@@ -43,7 +43,7 @@ class Graph(ApiGroup):
         :param vertex: Vertex document ID or body with "_id" field.
         :type vertex: str | dict
         :return: Vertex collection API wrapper.
-        :rtype: arango.collection.VertexCollection
+        :rtype: dbms.collection.VertexCollection
         """
         return self.vertex_collection(get_col_name(vertex))
 
@@ -53,7 +53,7 @@ class Graph(ApiGroup):
         :param edge: Edge document ID or body with "_id" field.
         :type edge: str | dict
         :return: Edge collection API wrapper.
-        :rtype: arango.collection.EdgeCollection
+        :rtype: dbms.collection.EdgeCollection
         """
         return self.edge_collection(get_col_name(edge))
 
@@ -71,7 +71,7 @@ class Graph(ApiGroup):
 
         :return: Graph properties.
         :rtype: dict
-        :raise arango.exceptions.GraphPropertiesError: If retrieval fails.
+        :raise dbms.exceptions.GraphPropertiesError: If retrieval fails.
         """
         request = Request(method="get", endpoint=f"/_api/gharial/{self._name}")
 
@@ -111,7 +111,7 @@ class Graph(ApiGroup):
 
         :return: Names of vertex collections that are not orphaned.
         :rtype: [str]
-        :raise arango.exceptions.VertexCollectionListError: If retrieval fails.
+        :raise dbms.exceptions.VertexCollectionListError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -131,7 +131,7 @@ class Graph(ApiGroup):
         :param name: Vertex collection name.
         :type name: str
         :return: Vertex collection API wrapper.
-        :rtype: arango.collection.VertexCollection
+        :rtype: dbms.collection.VertexCollection
         """
         return VertexCollection(self._conn, self._executor, self._name, name)
 
@@ -141,8 +141,8 @@ class Graph(ApiGroup):
         :param name: Vertex collection name.
         :type name: str
         :return: Vertex collection API wrapper.
-        :rtype: arango.collection.VertexCollection
-        :raise arango.exceptions.VertexCollectionCreateError: If create fails.
+        :rtype: dbms.collection.VertexCollection
+        :raise dbms.exceptions.VertexCollectionCreateError: If create fails.
         """
         request = Request(
             method="post",
@@ -167,7 +167,7 @@ class Graph(ApiGroup):
         :type purge: bool
         :return: True if vertex collection was deleted successfully.
         :rtype: bool
-        :raise arango.exceptions.VertexCollectionDeleteError: If delete fails.
+        :raise dbms.exceptions.VertexCollectionDeleteError: If delete fails.
         """
         request = Request(
             method="delete",
@@ -224,7 +224,7 @@ class Graph(ApiGroup):
         :param name: Edge collection name.
         :type name: str
         :return: Edge collection API wrapper.
-        :rtype: arango.collection.EdgeCollection
+        :rtype: dbms.collection.EdgeCollection
         """
         return EdgeCollection(self._conn, self._executor, self._name, name)
 
@@ -233,7 +233,7 @@ class Graph(ApiGroup):
 
         :return: Edge definitions of the graph.
         :rtype: [dict]
-        :raise arango.exceptions.EdgeDefinitionListError: If retrieval fails.
+        :raise dbms.exceptions.EdgeDefinitionListError: If retrieval fails.
         """
         request = Request(method="get", endpoint=f"/_api/gharial/{self._name}")
 
@@ -279,8 +279,8 @@ class Graph(ApiGroup):
         :param to_vertex_collections: Names of "to" vertex collections.
         :type to_vertex_collections: [str]
         :return: Edge collection API wrapper.
-        :rtype: arango.collection.EdgeCollection
-        :raise arango.exceptions.EdgeDefinitionCreateError: If create fails.
+        :rtype: dbms.collection.EdgeCollection
+        :raise dbms.exceptions.EdgeDefinitionCreateError: If create fails.
         """
         request = Request(
             method="post",
@@ -314,8 +314,8 @@ class Graph(ApiGroup):
         :param to_vertex_collections: Names of "to" vertex collections.
         :type to_vertex_collections: [str]
         :return: Edge collection API wrapper.
-        :rtype: arango.collection.EdgeCollection
-        :raise arango.exceptions.EdgeDefinitionReplaceError: If replace fails.
+        :rtype: dbms.collection.EdgeCollection
+        :raise dbms.exceptions.EdgeDefinitionReplaceError: If replace fails.
         """
         request = Request(
             method="put",
@@ -345,7 +345,7 @@ class Graph(ApiGroup):
         :type purge: bool
         :return: True if edge definition was deleted successfully.
         :rtype: bool
-        :raise arango.exceptions.EdgeDefinitionDeleteError: If delete fails.
+        :raise dbms.exceptions.EdgeDefinitionDeleteError: If delete fails.
         """
         request = Request(
             method="delete",
@@ -439,7 +439,7 @@ class Graph(ApiGroup):
         :type expander_func: str | None
         :return: Visited edges and vertices.
         :rtype: dict
-        :raise arango.exceptions.GraphTraverseError: If traversal fails.
+        :raise dbms.exceptions.GraphTraverseError: If traversal fails.
         """
         if strategy is not None:
             if strategy.lower() == "dfs":
@@ -507,8 +507,8 @@ class Graph(ApiGroup):
         :type check_rev: bool
         :return: True if vertex document exists, False otherwise.
         :rtype: bool
-        :raise arango.exceptions.DocumentGetError: If check fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentGetError: If check fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_vertex(vertex).has(vertex, rev, check_rev)
 
@@ -530,8 +530,8 @@ class Graph(ApiGroup):
         :type check_rev: bool
         :return: Vertex document or None if not found.
         :rtype: dict | None
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_vertex(vertex).get(vertex, rev, check_rev)
 
@@ -558,7 +558,7 @@ class Graph(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentInsertError: If insert fails.
+        :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
         return self.vertex_collection(collection).insert(vertex, sync, silent)
 
@@ -589,8 +589,8 @@ class Graph(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentUpdateError: If update fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentUpdateError: If update fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_vertex(vertex).update(
             vertex=vertex,
@@ -623,8 +623,8 @@ class Graph(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentReplaceError: If replace fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentReplaceError: If replace fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_vertex(vertex).replace(
             vertex=vertex, check_rev=check_rev, sync=sync, silent=silent
@@ -658,8 +658,8 @@ class Graph(ApiGroup):
             not found and **ignore_missing** was set to True (does not apply in
             transactions).
         :rtype: bool
-        :raise arango.exceptions.DocumentDeleteError: If delete fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentDeleteError: If delete fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_vertex(vertex).delete(
             vertex=vertex,
@@ -688,8 +688,8 @@ class Graph(ApiGroup):
         :type check_rev: bool
         :return: True if edge document exists, False otherwise.
         :rtype: bool
-        :raise arango.exceptions.DocumentInError: If check fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentInError: If check fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_edge(edge).has(edge, rev, check_rev)
 
@@ -708,8 +708,8 @@ class Graph(ApiGroup):
         :type check_rev: bool
         :return: Edge document or None if not found.
         :rtype: dict | None
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_edge(edge).get(edge, rev, check_rev)
 
@@ -737,7 +737,7 @@ class Graph(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentInsertError: If insert fails.
+        :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
         return self.edge_collection(collection).insert(edge, sync, silent)
 
@@ -768,8 +768,8 @@ class Graph(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentUpdateError: If update fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentUpdateError: If update fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_edge(edge).update(
             edge=edge,
@@ -803,8 +803,8 @@ class Graph(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentReplaceError: If replace fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentReplaceError: If replace fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_edge(edge).replace(
             edge=edge, check_rev=check_rev, sync=sync, silent=silent
@@ -838,8 +838,8 @@ class Graph(ApiGroup):
             found and **ignore_missing** was set to True (does not  apply in
             transactions).
         :rtype: bool
-        :raise arango.exceptions.DocumentDeleteError: If delete fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentDeleteError: If delete fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_edge(edge).delete(
             edge=edge,
@@ -878,7 +878,7 @@ class Graph(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentInsertError: If insert fails.
+        :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
         return self.edge_collection(collection).link(
             from_vertex=from_vertex,
@@ -902,6 +902,6 @@ class Graph(ApiGroup):
         :type direction: str
         :return: List of edges and statistics.
         :rtype: dict
-        :raise arango.exceptions.EdgeListError: If retrieval fails.
+        :raise dbms.exceptions.EdgeListError: If retrieval fails.
         """
         return self.edge_collection(collection).edges(vertex, direction)

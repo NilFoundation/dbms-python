@@ -1,6 +1,6 @@
 from typing import Any, Sequence
 
-from arango.typings import Headers, Json
+from dbms.typings import Headers, Json
 
 
 def verify_format(_: Any, res: Json) -> Json:
@@ -754,23 +754,23 @@ def format_replication_header(headers: Headers) -> Json:
     headers = {k.lower(): v for k, v in headers.items()}
     result: Json = {}
 
-    if "x-arango-replication-frompresent" in headers:
-        result["from_present"] = headers["x-arango-replication-frompresent"] == "true"
+    if "x-dbms-replication-frompresent" in headers:
+        result["from_present"] = headers["x-dbms-replication-frompresent"] == "true"
 
-    if "x-arango-replication-lastincluded" in headers:
-        result["last_included"] = headers["x-arango-replication-lastincluded"]
+    if "x-dbms-replication-lastincluded" in headers:
+        result["last_included"] = headers["x-dbms-replication-lastincluded"]
 
-    if "x-arango-replication-lastscanned" in headers:
-        result["last_scanned"] = headers["x-arango-replication-lastscanned"]
+    if "x-dbms-replication-lastscanned" in headers:
+        result["last_scanned"] = headers["x-dbms-replication-lastscanned"]
 
-    if "x-arango-replication-lasttick" in headers:
-        result["last_tick"] = headers["x-arango-replication-lasttick"]
+    if "x-dbms-replication-lasttick" in headers:
+        result["last_tick"] = headers["x-dbms-replication-lasttick"]
 
-    if "x-arango-replication-active" in headers:
-        result["active"] = headers["x-arango-replication-active"] == "true"
+    if "x-dbms-replication-active" in headers:
+        result["active"] = headers["x-dbms-replication-active"] == "true"
 
-    if "x-arango-replication-checkmore" in headers:
-        result["check_more"] = headers["x-arango-replication-checkmore"] == "true"
+    if "x-dbms-replication-checkmore" in headers:
+        result["check_more"] = headers["x-dbms-replication-checkmore"] == "true"
 
     return result
 

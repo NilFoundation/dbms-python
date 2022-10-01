@@ -2,8 +2,8 @@ __all__ = ["Replication"]
 
 from typing import Optional, Sequence
 
-from arango.api import ApiGroup
-from arango.exceptions import (
+from dbms.api import ApiGroup
+from dbms.exceptions import (
     ReplicationApplierConfigError,
     ReplicationApplierConfigSetError,
     ReplicationApplierStartError,
@@ -21,7 +21,7 @@ from arango.exceptions import (
     ReplicationServerIDError,
     ReplicationSyncError,
 )
-from arango.formatter import (
+from dbms.formatter import (
     format_replication_applier_config,
     format_replication_applier_state,
     format_replication_header,
@@ -29,10 +29,10 @@ from arango.formatter import (
     format_replication_logger_state,
     format_replication_sync,
 )
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Json, Params
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Json, Params
 
 
 class Replication(ApiGroup):
@@ -54,7 +54,7 @@ class Replication(ApiGroup):
         :type all_databases: bool | None
         :return: Overview of collections and indexes.
         :rtype: dict
-        :raise arango.exceptions.ReplicationInventoryError: If retrieval fails.
+        :raise dbms.exceptions.ReplicationInventoryError: If retrieval fails.
         """
         params: Params = {"batchId": batch_id}
         if include_system is not None:
@@ -80,7 +80,7 @@ class Replication(ApiGroup):
         :type ttl: int | None
         :return: ID of the batch.
         :rtype: dict
-        :raise arango.exceptions.ReplicationDumpBatchCreateError: If create fails.
+        :raise dbms.exceptions.ReplicationDumpBatchCreateError: If create fails.
         """
         request = Request(
             method="post", endpoint="/_api/replication/batch", data={"ttl": ttl}
@@ -100,7 +100,7 @@ class Replication(ApiGroup):
         :type batch_id: str
         :return: True if deletion was successful.
         :rtype: bool
-        :raise arango.exceptions.ReplicationDumpBatchDeleteError: If delete fails.
+        :raise dbms.exceptions.ReplicationDumpBatchDeleteError: If delete fails.
         """
         request = Request(
             method="delete",
@@ -124,7 +124,7 @@ class Replication(ApiGroup):
         :type ttl: int
         :return: True if operation was successful.
         :rtype: bool
-        :raise arango.exceptions.ReplicationDumpBatchExtendError: If dump fails.
+        :raise dbms.exceptions.ReplicationDumpBatchExtendError: If dump fails.
         """
         request = Request(
             method="put",
@@ -160,7 +160,7 @@ class Replication(ApiGroup):
         :type deserialize: bool
         :return: Collection events data.
         :rtype: str | [dict]
-        :raise arango.exceptions.ReplicationDumpError: If retrieval fails.
+        :raise dbms.exceptions.ReplicationDumpError: If retrieval fails.
         """
         params: Params = {"collection": collection}
 
@@ -242,7 +242,7 @@ class Replication(ApiGroup):
         :type initial_sync_wait_time: int | None
         :return: Collections transferred and last log tick.
         :rtype: dict
-        :raise arango.exceptions.ReplicationSyncError: If sync fails.
+        :raise dbms.exceptions.ReplicationSyncError: If sync fails.
         """
         data: Json = {"endpoint": endpoint}
 
@@ -280,7 +280,7 @@ class Replication(ApiGroup):
         :type include_system: bool
         :return: Overview of collections and indexes on the cluster.
         :rtype: dict
-        :raise arango.exceptions.ReplicationClusterInventoryError: If retrieval fails.
+        :raise dbms.exceptions.ReplicationClusterInventoryError: If retrieval fails.
         """
         params: Params = {}
         if include_system is not None:
@@ -302,7 +302,7 @@ class Replication(ApiGroup):
 
         :return: Logger state.
         :rtype: dict
-        :raise arango.exceptions.ReplicationLoggerStateError: If retrieval fails.
+        :raise dbms.exceptions.ReplicationLoggerStateError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -321,7 +321,7 @@ class Replication(ApiGroup):
 
         :return: First tick value.
         :rtype: str
-        :raise arango.exceptions.ReplicationLoggerFirstTickError: If retrieval fails.
+        :raise dbms.exceptions.ReplicationLoggerFirstTickError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -340,7 +340,7 @@ class Replication(ApiGroup):
 
         :return: Configuration of the replication applier.
         :rtype: dict
-        :raise arango.exceptions.ReplicationApplierConfigError: If retrieval fails.
+        :raise dbms.exceptions.ReplicationApplierConfigError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -469,7 +469,7 @@ class Replication(ApiGroup):
         :type restrict_collections: [str] | None
         :return: Updated configuration.
         :rtype: dict
-        :raise arango.exceptions.ReplicationApplierConfigSetError: If update fails.
+        :raise dbms.exceptions.ReplicationApplierConfigSetError: If update fails.
         """
         data: Json = {"endpoint": endpoint}
 
@@ -530,7 +530,7 @@ class Replication(ApiGroup):
 
         :return: Applier state and details.
         :rtype: dict
-        :raise arango.exceptions.ReplicationApplierStateError: If retrieval fails.
+        :raise dbms.exceptions.ReplicationApplierStateError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -555,7 +555,7 @@ class Replication(ApiGroup):
         :type last_tick: str
         :return: Applier state and details.
         :rtype: dict
-        :raise arango.exceptions.ReplicationApplierStartError: If operation fails.
+        :raise dbms.exceptions.ReplicationApplierStartError: If operation fails.
         """
         request = Request(
             method="put",
@@ -575,7 +575,7 @@ class Replication(ApiGroup):
 
         :return: Applier state and details.
         :rtype: dict
-        :raise arango.exceptions.ReplicationApplierStopError: If operation fails.
+        :raise dbms.exceptions.ReplicationApplierStopError: If operation fails.
         """
         request = Request(
             method="put",
@@ -700,7 +700,7 @@ class Replication(ApiGroup):
         :type verbose: bool | None
         :return: Replication details.
         :rtype: dict
-        :raise arango.exceptions.ReplicationApplierStopError: If operation fails.
+        :raise dbms.exceptions.ReplicationApplierStopError: If operation fails.
         """
         data: Json = {"endpoint": endpoint}
 
@@ -759,7 +759,7 @@ class Replication(ApiGroup):
 
         :return: Server ID.
         :rtype: str
-        :raise arango.exceptions.ReplicationServerIDError: If retrieval fails.
+        :raise dbms.exceptions.ReplicationServerIDError: If retrieval fails.
         """
         request = Request(
             method="get",

@@ -1,16 +1,16 @@
 Simple Queries
 --------------
 
-.. caution:: There is no option to add a TTL (Time to live) or batch size optimizations to the Simple Queries due to how Arango is handling simple collection HTTP requests. Your request may time out and you'll see a CursorNextError exception. The AQL queries provide full functionality.
+.. caution:: There is no option to add a TTL (Time to live) or batch size optimizations to the Simple Queries due to how Dbms is handling simple collection HTTP requests. Your request may time out and you'll see a CursorNextError exception. The AQL queries provide full functionality.
 
-Here is an example of using ArangoDB's **simply queries**:
+Here is an example of using DbmsDB's **simply queries**:
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -47,18 +47,18 @@ Here is an example of using ArangoDB's **simply queries**:
 
 Here are all simple query (and other utility) methods available:
 
-* :func:`arango.collection.Collection.all`
-* :func:`arango.collection.Collection.find`
-* :func:`arango.collection.Collection.find_near`
-* :func:`arango.collection.Collection.find_in_range`
-* :func:`arango.collection.Collection.find_in_radius`
-* :func:`arango.collection.Collection.find_in_box`
-* :func:`arango.collection.Collection.find_by_text`
-* :func:`arango.collection.Collection.get_many`
-* :func:`arango.collection.Collection.ids`
-* :func:`arango.collection.Collection.keys`
-* :func:`arango.collection.Collection.random`
-* :func:`arango.collection.StandardCollection.update_match`
-* :func:`arango.collection.StandardCollection.replace_match`
-* :func:`arango.collection.StandardCollection.delete_match`
-* :func:`arango.collection.StandardCollection.import_bulk`
+* :func:`dbms.collection.Collection.all`
+* :func:`dbms.collection.Collection.find`
+* :func:`dbms.collection.Collection.find_near`
+* :func:`dbms.collection.Collection.find_in_range`
+* :func:`dbms.collection.Collection.find_in_radius`
+* :func:`dbms.collection.Collection.find_in_box`
+* :func:`dbms.collection.Collection.find_by_text`
+* :func:`dbms.collection.Collection.get_many`
+* :func:`dbms.collection.Collection.ids`
+* :func:`dbms.collection.Collection.keys`
+* :func:`dbms.collection.Collection.random`
+* :func:`dbms.collection.StandardCollection.update_match`
+* :func:`dbms.collection.StandardCollection.replace_match`
+* :func:`dbms.collection.StandardCollection.delete_match`
+* :func:`dbms.collection.StandardCollection.import_bulk`

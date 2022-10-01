@@ -1,7 +1,7 @@
 import pytest
 
-from arango.database import TransactionDatabase
-from arango.exceptions import (
+from dbms.database import TransactionDatabase
+from dbms.exceptions import (
     TransactionAbortError,
     TransactionCommitError,
     TransactionExecuteError,

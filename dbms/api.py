@@ -2,11 +2,11 @@ __all__ = ["ApiGroup"]
 
 from typing import Callable, Optional, TypeVar
 
-from arango.connection import Connection
-from arango.executor import ApiExecutor
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
+from dbms.connection import Connection
+from dbms.executor import ApiExecutor
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
 
 T = TypeVar("T")
 
@@ -27,8 +27,8 @@ class ApiGroup:
         """Return the HTTP connection.
 
         :return: HTTP connection.
-        :rtype: arango.connection.BasicConnection | arango.connection.JwtConnection |
-            arango.connection.JwtSuperuserConnection
+        :rtype: dbms.connection.BasicConnection | dbms.connection.JwtConnection |
+            dbms.connection.JwtSuperuserConnection
         """
         return self._conn
 
@@ -66,7 +66,7 @@ class ApiGroup:
         """Execute an API.
 
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :param response_handler: HTTP response handler.
         :type response_handler: callable
         :return: API execution result.

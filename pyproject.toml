@@ -8,8 +8,8 @@ build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]
 omit = [
-    "arango/version.py",
-    "arango/formatter.py",
+    "dbms/version.py",
+    "dbms/formatter.py",
     "setup.py",
 ]
 
@@ -28,4 +28,4 @@ ignore_missing_imports = true
 strict = true
 
 [tool.setuptools_scm]
-write_to = "arango/version.py"
+write_to = "dbms/version.py"

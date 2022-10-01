@@ -1,6 +1,6 @@
-from arango.connection import BasicConnection, JwtConnection, JwtSuperuserConnection
-from arango.errno import FORBIDDEN, HTTP_UNAUTHORIZED
-from arango.exceptions import (
+from dbms.connection import BasicConnection, JwtConnection, JwtSuperuserConnection
+from dbms.errno import FORBIDDEN, HTTP_UNAUTHORIZED
+from dbms.exceptions import (
     JWTAuthError,
     JWTSecretListError,
     JWTSecretReloadError,

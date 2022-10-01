@@ -1,7 +1,7 @@
 import pytest
 
-from arango.errno import DATABASE_NOT_FOUND, FILE_NOT_FOUND, FORBIDDEN
-from arango.exceptions import (
+from dbms.errno import DATABASE_NOT_FOUND, FILE_NOT_FOUND, FORBIDDEN
+from dbms.exceptions import (
     BackupCreateError,
     BackupDeleteError,
     BackupDownloadError,
@@ -14,7 +14,7 @@ from tests.helpers import assert_raises
 
 def test_backup_management(sys_db, bad_db, enterprise):
     if not enterprise:
-        pytest.skip("Only for ArangoDB enterprise edition")
+        pytest.skip("Only for DbmsDB enterprise edition")
 
     # Test create backup "foo".
     result = sys_db.backup.create(

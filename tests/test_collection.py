@@ -1,5 +1,5 @@
-from arango.collection import StandardCollection
-from arango.exceptions import (
+from dbms.collection import StandardCollection
+from dbms.exceptions import (
     CollectionChecksumError,
     CollectionConfigureError,
     CollectionCreateError,

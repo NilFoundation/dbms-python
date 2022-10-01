@@ -10,13 +10,13 @@ initialization. They must be callables that take a single argument.
 
     import json
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client with custom serializer and deserializer.
-    client = ArangoClient(
+    # Initialize the DbmsDB client with custom serializer and deserializer.
+    client = DbmsClient(
         hosts='http://localhost:8529',
         serializer=json.dumps,
         deserializer=json.loads
     )
 
-See :ref:`ArangoClient` for API specification.
+See :ref:`DbmsClient` for API specification.

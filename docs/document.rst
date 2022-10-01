@@ -1,7 +1,7 @@
 Documents
 ---------
 
-In python-arango, a **document** is a Python dictionary with the following
+In python-dbms, a **document** is a Python dictionary with the following
 properties:
 
 * Is JSON serializable.
@@ -13,17 +13,17 @@ properties:
   document uniquely across all collections within a database. This ID is a
   combination of the collection name and the document key using the format
   ``{collection}/{key}`` (see example below).
-* Contains the ``_rev`` field. ArangoDB supports MVCC (Multiple Version
+* Contains the ``_rev`` field. DbmsDB supports MVCC (Multiple Version
   Concurrency Control) and is capable of storing each document in multiple
   revisions. Latest revision of a document is indicated by this field. The
-  field is populated by ArangoDB and is not required as input unless you want
+  field is populated by DbmsDB and is not required as input unless you want
   to validate a document against its current revision.
 
 For more information on documents and associated terminologies, refer to
-`ArangoDB manual`_. Here is an example of a valid document in "students"
+`DbmsDB manual`_. Here is an example of a valid document in "students"
 collection:
 
-.. _ArangoDB manual: https://docs.arangodb.com
+.. _DbmsDB manual: https://docs.dbmsdb.com
 
 .. testcode::
 
@@ -66,10 +66,10 @@ Standard documents are managed via collection API wrapper:
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -157,10 +157,10 @@ must provide document IDs instead of keys:
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

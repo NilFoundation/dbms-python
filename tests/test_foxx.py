@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from arango.exceptions import (
+from dbms.exceptions import (
     FoxxCommitError,
     FoxxConfigGetError,
     FoxxConfigReplaceError,
@@ -26,7 +26,7 @@ from arango.exceptions import (
     FoxxSwaggerGetError,
     FoxxTestRunError,
 )
-from arango.foxx import Foxx
+from dbms.foxx import Foxx
 from tests.helpers import assert_raises, extract, generate_service_mount
 
 service_file = "/tmp/service.zip"

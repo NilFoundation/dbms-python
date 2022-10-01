@@ -2,14 +2,14 @@ import json
 
 import pytest
 
-from arango.exceptions import (
-    ArangoClientError,
-    ArangoServerError,
+from dbms.exceptions import (
+    DbmsClientError,
+    DbmsServerError,
     DocumentInsertError,
     DocumentParseError,
 )
-from arango.request import Request
-from arango.response import Response
+from dbms.request import Request
+from dbms.response import Response
 
 
 def test_server_error(client, col, docs):
@@ -19,7 +19,7 @@ def test_server_error(client, col, docs):
         col.insert(document, return_new=False)  # duplicate key error
     exc = err.value
 
-    assert isinstance(exc, ArangoServerError)
+    assert isinstance(exc, DbmsServerError)
     assert exc.source == "server"
     assert exc.message == str(exc)
     assert exc.message.startswith("[HTTP 409][ERR 1210] unique constraint")
@@ -61,7 +61,7 @@ def test_client_error(col):
         col.get({"_id": "invalid"})  # malformed document
     exc = err.value
 
-    assert isinstance(exc, ArangoClientError)
+    assert isinstance(exc, DbmsClientError)
     assert exc.source == "client"
     assert exc.error_code is None
     assert exc.error_message is None

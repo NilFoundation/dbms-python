@@ -1,20 +1,20 @@
 Backups
 -------
 
-Backups are near consistent snapshots of an entire ArangoDB service including
+Backups are near consistent snapshots of an entire DbmsDB service including
 databases, collections, indexes, views and users. For more information, refer
-to `ArangoDB manual`_.
+to `DbmsDB manual`_.
 
-.. _ArangoDB manual: https://docs.arangodb.com
+.. _DbmsDB manual: https://docs.dbmsdb.com
 
 **Example:**
 
 .. code-block:: python
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "_system" database as root user.
     sys_db = client.db(

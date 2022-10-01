@@ -10,8 +10,8 @@ import logging
 from contextlib import contextmanager
 from typing import Any, Iterator, Sequence, Union
 
-from arango.exceptions import DocumentParseError
-from arango.typings import Json
+from dbms.exceptions import DocumentParseError
+from dbms.typings import Json
 
 
 @contextmanager
@@ -35,7 +35,7 @@ def get_col_name(doc: Union[str, Json]) -> str:
     :type doc: str | dict
     :return: Collection name.
     :rtype: str
-    :raise arango.exceptions.DocumentParseError: If document ID is missing.
+    :raise dbms.exceptions.DocumentParseError: If document ID is missing.
     """
     try:
         doc_id: str = doc["_id"] if isinstance(doc, dict) else doc
@@ -52,7 +52,7 @@ def get_doc_id(doc: Union[str, Json]) -> str:
     :type doc: str | dict
     :return: Document ID.
     :rtype: str
-    :raise arango.exceptions.DocumentParseError: If document ID is missing.
+    :raise dbms.exceptions.DocumentParseError: If document ID is missing.
     """
     try:
         doc_id: str = doc["_id"] if isinstance(doc, dict) else doc

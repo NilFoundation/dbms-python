@@ -1,20 +1,20 @@
 Foxx
 ----
 
-Python-arango provides support for **Foxx**, a microservice framework which
-lets you define custom HTTP endpoints to extend ArangoDB's REST API. For more
-information, refer to `ArangoDB manual`_.
+Python-dbms provides support for **Foxx**, a microservice framework which
+lets you define custom HTTP endpoints to extend DbmsDB's REST API. For more
+information, refer to `DbmsDB manual`_.
 
-.. _ArangoDB manual: https://docs.arangodb.com
+.. _DbmsDB manual: https://docs.dbmsdb.com
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "_system" database as root user.
     db = client.db('_system', username='root', password='passwd')
@@ -95,10 +95,10 @@ You can also manage Foxx services by using zip or Javascript files directly:
 
 .. code-block:: python
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "_system" database as root user.
     db = client.db('_system', username='root', password='passwd')

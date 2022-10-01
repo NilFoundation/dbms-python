@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from arango.exceptions import (
+from dbms.exceptions import (
     PregelJobCreateError,
     PregelJobDeleteError,
     PregelJobGetError,

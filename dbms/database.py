@@ -4,13 +4,13 @@ from datetime import datetime
 from numbers import Number
 from typing import Any, List, Optional, Sequence, Union
 
-from arango.api import ApiGroup
-from arango.aql import AQL
-from arango.backup import Backup
-from arango.cluster import Cluster
-from arango.collection import StandardCollection
-from arango.connection import Connection
-from arango.exceptions import (
+from dbms.api import ApiGroup
+from dbms.aql import AQL
+from dbms.backup import Backup
+from dbms.cluster import Cluster
+from dbms.collection import StandardCollection
+from dbms.connection import Connection
+from dbms.exceptions import (
     AnalyzerCreateError,
     AnalyzerDeleteError,
     AnalyzerGetError,
@@ -71,30 +71,30 @@ from arango.exceptions import (
     ViewReplaceError,
     ViewUpdateError,
 )
-from arango.executor import (
+from dbms.executor import (
     AsyncApiExecutor,
     BatchApiExecutor,
     DefaultApiExecutor,
     TransactionApiExecutor,
 )
-from arango.formatter import (
+from dbms.formatter import (
     format_body,
     format_database,
     format_server_status,
     format_tls,
     format_view,
 )
-from arango.foxx import Foxx
-from arango.graph import Graph
-from arango.job import BatchJob
-from arango.pregel import Pregel
-from arango.replication import Replication
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Json, Jsons, Params
-from arango.utils import get_col_name
-from arango.wal import WAL
+from dbms.foxx import Foxx
+from dbms.graph import Graph
+from dbms.job import BatchJob
+from dbms.pregel import Pregel
+from dbms.replication import Replication
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Json, Jsons, Params
+from dbms.utils import get_col_name
+from dbms.wal import WAL
 
 
 class Database(ApiGroup):
@@ -106,7 +106,7 @@ class Database(ApiGroup):
         :param name: Collection name.
         :type name: str
         :return: Collection API wrapper.
-        :rtype: arango.collection.StandardCollection
+        :rtype: dbms.collection.StandardCollection
         """
         return self.collection(name)
 
@@ -116,8 +116,8 @@ class Database(ApiGroup):
         :param document: Document ID or body with "_id" field.
         :type document: str | dict
         :return: Collection API wrapper.
-        :rtype: arango.collection.StandardCollection
-        :raise arango.exceptions.DocumentParseError: On malformed document.
+        :rtype: dbms.collection.StandardCollection
+        :raise dbms.exceptions.DocumentParseError: On malformed document.
         """
         return self.collection(get_col_name(document))
 
@@ -132,10 +132,10 @@ class Database(ApiGroup):
 
     @property
     def aql(self) -> AQL:
-        """Return AQL (ArangoDB Query Language) API wrapper.
+        """Return AQL (DbmsDB Query Language) API wrapper.
 
         :return: AQL API wrapper.
-        :rtype: arango.aql.AQL
+        :rtype: dbms.aql.AQL
         """
         return AQL(self._conn, self._executor)
 
@@ -144,7 +144,7 @@ class Database(ApiGroup):
         """Return WAL (Write-Ahead Log) API wrapper.
 
         :return: WAL API wrapper.
-        :rtype: arango.wal.WAL
+        :rtype: dbms.wal.WAL
         """
         return WAL(self._conn, self._executor)
 
@@ -153,7 +153,7 @@ class Database(ApiGroup):
         """Return Foxx API wrapper.
 
         :return: Foxx API wrapper.
-        :rtype: arango.foxx.Foxx
+        :rtype: dbms.foxx.Foxx
         """
         return Foxx(self._conn, self._executor)
 
@@ -162,7 +162,7 @@ class Database(ApiGroup):
         """Return Pregel API wrapper.
 
         :return: Pregel API wrapper.
-        :rtype: arango.pregel.Pregel
+        :rtype: dbms.pregel.Pregel
         """
         return Pregel(self._conn, self._executor)
 
@@ -171,7 +171,7 @@ class Database(ApiGroup):
         """Return Replication API wrapper.
 
         :return: Replication API wrapper.
-        :rtype: arango.replication.Replication
+        :rtype: dbms.replication.Replication
         """
         return Replication(self._conn, self._executor)
 
@@ -180,7 +180,7 @@ class Database(ApiGroup):
         """Return Cluster API wrapper.
 
         :return: Cluster API wrapper.
-        :rtype: arango.cluster.Cluster
+        :rtype: dbms.cluster.Cluster
         """
         return Cluster(self._conn, self._executor)
 
@@ -189,7 +189,7 @@ class Database(ApiGroup):
         """Return Backup API wrapper.
 
         :return: Backup API wrapper.
-        :rtype: arango.backup.Backup
+        :rtype: dbms.backup.Backup
         """
         return Backup(self._conn, self._executor)
 
@@ -198,7 +198,7 @@ class Database(ApiGroup):
 
         :return: Database properties.
         :rtype: dict
-        :raise arango.exceptions.DatabasePropertiesError: If retrieval fails.
+        :raise dbms.exceptions.DatabasePropertiesError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -241,7 +241,7 @@ class Database(ApiGroup):
         :param sync: Block until operation is synchronized to disk.
         :type sync: bool | None
         :param timeout: Timeout for waiting on collection locks. If set to 0,
-            ArangoDB server waits indefinitely. If not set, system default
+            DbmsDB server waits indefinitely. If not set, system default
             value is used.
         :type timeout: int | None
         :param max_size: Max transaction size limit in bytes.
@@ -258,7 +258,7 @@ class Database(ApiGroup):
         :type intermediate_commit_size: int | None
         :return: Return value of **command**.
         :rtype: Any
-        :raise arango.exceptions.TransactionExecuteError: If execution fails.
+        :raise dbms.exceptions.TransactionExecuteError: If execution fails.
         """
         collections: Json = {"allowImplicit": allow_implicit}
         if read is not None:
@@ -293,11 +293,11 @@ class Database(ApiGroup):
         return self._execute(request, response_handler)
 
     def version(self) -> Result[str]:
-        """Return ArangoDB server version.
+        """Return DbmsDB server version.
 
         :return: Server version.
         :rtype: str
-        :raise arango.exceptions.ServerVersionError: If retrieval fails.
+        :raise dbms.exceptions.ServerVersionError: If retrieval fails.
         """
         request = Request(
             method="get", endpoint="/_api/version", params={"details": False}
@@ -311,11 +311,11 @@ class Database(ApiGroup):
         return self._execute(request, response_handler)
 
     def details(self) -> Result[Json]:
-        """Return ArangoDB server details.
+        """Return DbmsDB server details.
 
         :return: Server details.
         :rtype: dict
-        :raise arango.exceptions.ServerDetailsError: If retrieval fails.
+        :raise dbms.exceptions.ServerDetailsError: If retrieval fails.
         """
         request = Request(
             method="get", endpoint="/_api/version", params={"details": True}
@@ -330,11 +330,11 @@ class Database(ApiGroup):
         return self._execute(request, response_handler)
 
     def status(self) -> Result[Json]:
-        """Return ArangoDB server status.
+        """Return DbmsDB server status.
 
         :return: Server status.
         :rtype: dict
-        :raise arango.exceptions.ServerStatusError: If retrieval fails.
+        :raise dbms.exceptions.ServerStatusError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -353,7 +353,7 @@ class Database(ApiGroup):
 
         :return: Required version of target database.
         :rtype: str
-        :raise arango.exceptions.ServerRequiredDBVersionError: If retrieval fails.
+        :raise dbms.exceptions.ServerRequiredDBVersionError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_admin/database/target-version")
 
@@ -369,7 +369,7 @@ class Database(ApiGroup):
 
         :return: Database engine details.
         :rtype: dict
-        :raise arango.exceptions.ServerEngineError: If retrieval fails.
+        :raise dbms.exceptions.ServerEngineError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/engine")
 
@@ -385,7 +385,7 @@ class Database(ApiGroup):
 
         :return: Server statistics.
         :rtype: dict
-        :raise arango.exceptions.ServerStatisticsError: If retrieval fails.
+        :raise dbms.exceptions.ServerStatisticsError: If retrieval fails.
         """
         if description:
             endpoint = "/_admin/statistics-description"
@@ -408,7 +408,7 @@ class Database(ApiGroup):
             in a cluster), "COORDINATOR" (cluster coordinator), "PRIMARY",
             "SECONDARY", "AGENT" (Agency node in a cluster) or "UNDEFINED".
         :rtype: str
-        :raise arango.exceptions.ServerRoleError: If retrieval fails.
+        :raise dbms.exceptions.ServerRoleError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_admin/server/role")
 
@@ -424,7 +424,7 @@ class Database(ApiGroup):
 
         :return: Server system time.
         :rtype: datetime.datetime
-        :raise arango.exceptions.ServerTimeError: If retrieval fails.
+        :raise dbms.exceptions.ServerTimeError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_admin/time")
 
@@ -440,7 +440,7 @@ class Database(ApiGroup):
 
         :return: Details of the last request.
         :rtype: dict
-        :raise arango.exceptions.ServerEchoError: If retrieval fails.
+        :raise dbms.exceptions.ServerEchoError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_admin/echo")
 
@@ -457,7 +457,7 @@ class Database(ApiGroup):
 
         :return: True if the server was shutdown successfully.
         :rtype: bool
-        :raise arango.exceptions.ServerShutdownError: If shutdown fails.
+        :raise dbms.exceptions.ServerShutdownError: If shutdown fails.
         """
         request = Request(method="delete", endpoint="/_admin/shutdown")
 
@@ -475,7 +475,7 @@ class Database(ApiGroup):
         :type tests: [str]
         :return: Test results.
         :rtype: dict
-        :raise arango.exceptions.ServerRunTestsError: If execution fails.
+        :raise dbms.exceptions.ServerRunTestsError: If execution fails.
         """
         request = Request(method="post", endpoint="/_admin/test", data={"tests": tests})
 
@@ -522,7 +522,7 @@ class Database(ApiGroup):
         :type sort: str
         :return: Server log entries.
         :rtype: dict
-        :raise arango.exceptions.ServerReadLogError: If read fails.
+        :raise dbms.exceptions.ServerReadLogError: If read fails.
         """
         params = dict()
         if upto is not None:
@@ -577,7 +577,7 @@ class Database(ApiGroup):
 
         .. code-block:: python
 
-            arango.set_log_levels(
+            dbms.set_log_levels(
                 agency='DEBUG',
                 collector='INFO',
                 threads='WARNING'
@@ -603,7 +603,7 @@ class Database(ApiGroup):
 
         :return: True if routing was reloaded successfully.
         :rtype: bool
-        :raise arango.exceptions.ServerReloadRoutingError: If reload fails.
+        :raise dbms.exceptions.ServerReloadRoutingError: If reload fails.
         """
         request = Request(method="post", endpoint="/_admin/routing/reload")
 
@@ -649,7 +649,7 @@ class Database(ApiGroup):
         """Hot-reload JWT secrets.
 
         Calling this without payload reloads JWT secrets from disk. Only files
-        specified via arangod startup option ``--server.jwt-secret-keyfile`` or
+        specified via dbmsd startup option ``--server.jwt-secret-keyfile`` or
         ``--server.jwt-secret-folder`` are used. It is not possible to change
         the location where files are loaded from without restarting the server.
 
@@ -699,11 +699,11 @@ class Database(ApiGroup):
     def encryption(self) -> Result[Json]:
         """Rotate the user-supplied keys for encryption.
 
-        This method is available only for enterprise edition of ArangoDB.
+        This method is available only for enterprise edition of DbmsDB.
 
         :return: New TLS data.
         :rtype: dict
-        :raise arango.exceptions.ServerEncryptionError: If retrieval fails.
+        :raise dbms.exceptions.ServerEncryptionError: If retrieval fails.
         """
         request = Request(method="post", endpoint="/_admin/server/encryption")
 
@@ -724,7 +724,7 @@ class Database(ApiGroup):
 
         :return: Database names.
         :rtype: [str]
-        :raise arango.exceptions.DatabaseListError: If retrieval fails.
+        :raise dbms.exceptions.DatabaseListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/database")
 
@@ -789,7 +789,7 @@ class Database(ApiGroup):
         :type sharding: str
         :return: True if database was created successfully.
         :rtype: bool
-        :raise arango.exceptions.DatabaseCreateError: If create fails.
+        :raise dbms.exceptions.DatabaseCreateError: If create fails.
 
         Here is an example entry for parameter **users**:
 
@@ -844,7 +844,7 @@ class Database(ApiGroup):
         :return: True if database was deleted successfully, False if database
             was not found and **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.DatabaseDeleteError: If delete fails.
+        :raise dbms.exceptions.DatabaseDeleteError: If delete fails.
         """
         request = Request(method="delete", endpoint=f"/_api/database/{name}")
 
@@ -867,7 +867,7 @@ class Database(ApiGroup):
         :param name: Collection name.
         :type name: str
         :return: Standard collection API wrapper.
-        :rtype: arango.collection.StandardCollection
+        :rtype: dbms.collection.StandardCollection
         """
         return StandardCollection(self._conn, self._executor, name)
 
@@ -879,7 +879,7 @@ class Database(ApiGroup):
         :return: True if collection exists, False otherwise.
         :rtype: bool
         """
-        request = Request(method="get", endpoint="/_api/collection")
+        request = Request(method="get", endpoint="/_api/relation")
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
@@ -893,9 +893,9 @@ class Database(ApiGroup):
 
         :return: Collections in the database and their details.
         :rtype: [dict]
-        :raise arango.exceptions.CollectionListError: If retrieval fails.
+        :raise dbms.exceptions.CollectionListError: If retrieval fails.
         """
-        request = Request(method="get", endpoint="/_api/collection")
+        request = Request(method="get", endpoint="/_api/relation")
 
         def response_handler(resp: Response) -> Jsons:
             if not resp.is_success:
@@ -974,7 +974,7 @@ class Database(ApiGroup):
         :param shard_like: Name of prototype collection whose sharding
             specifics are imitated. Prototype collections cannot be dropped
             before imitating collections. Applies to enterprise version of
-            ArangoDB only.
+            DbmsDB only.
         :type shard_like: str
         :param sync_replication: If set to True, server reports success only
             when collection is created in all replicas. You can set this to
@@ -984,10 +984,10 @@ class Database(ApiGroup):
         :param enforce_replication_factor: Check if there are enough replicas
             available at creation time, or halt the operation.
         :type enforce_replication_factor: bool
-        :param sharding_strategy: Sharding strategy. Available for ArangoDB
+        :param sharding_strategy: Sharding strategy. Available for DbmsDB
             version  and up only. Possible values are "community-compat",
             "enterprise-compat", "enterprise-smart-edge-compat", "hash" and
-            "enterprise-hash-smart-edge". Refer to ArangoDB documentation for
+            "enterprise-hash-smart-edge". Refer to DbmsDB documentation for
             more details on each value.
         :type sharding_strategy: str
         :param smart_join_attribute: Attribute of the collection which must
@@ -997,7 +997,7 @@ class Database(ApiGroup):
             Requires parameter **shard_like** to be set to the name of another
             collection, and parameter **shard_fields** to be set to a single
             shard key attribute, with another colon ":" at the end. Available
-            only for enterprise version of ArangoDB.
+            only for enterprise version of DbmsDB.
         :type smart_join_attribute: str
         :param write_concern: Write concern for the collection. Determines how
             many copies of each shard are required to be in sync on different
@@ -1008,18 +1008,18 @@ class Database(ApiGroup):
             Default value is 1. Used for clusters only.
         :type write_concern: int
         :param schema: Optional dict specifying the collection level schema
-            for documents. See ArangoDB documentation for more information on
+            for documents. See DbmsDB documentation for more information on
             document schema validation.
         :type schema: dict
         :param computedValues: Array of computed values for the new collection
             enabling default values to new documents or the maintenance of
-            auxiliary attributes for search queries. Available in ArangoDB
-            version 3.10 or greater. See ArangoDB documentation for more
+            auxiliary attributes for search queries. Available in DbmsDB
+            version 3.10 or greater. See DbmsDB documentation for more
             information on computed values.
         :type computedValues: list
         :return: Standard collection API wrapper.
-        :rtype: arango.collection.StandardCollection
-        :raise arango.exceptions.CollectionCreateError: If create fails.
+        :rtype: dbms.collection.StandardCollection
+        :raise dbms.exceptions.CollectionCreateError: If create fails.
         """
         key_options: Json = {"type": key_generator, "allowUserKeys": user_keys}
         if key_increment is not None:
@@ -1060,7 +1060,7 @@ class Database(ApiGroup):
             params["enforceReplicationFactor"] = enforce_replication_factor
 
         request = Request(
-            method="post", endpoint="/_api/collection", params=params, data=data
+            method="post", endpoint="/_api/relation", params=params, data=data
         )
 
         def response_handler(resp: Response) -> StandardCollection:
@@ -1084,14 +1084,14 @@ class Database(ApiGroup):
         :return: True if collection was deleted successfully, False if
             collection was not found and **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.CollectionDeleteError: If delete fails.
+        :raise dbms.exceptions.CollectionDeleteError: If delete fails.
         """
         params: Params = {}
         if system is not None:
             params["isSystem"] = system
 
         request = Request(
-            method="delete", endpoint=f"/_api/collection/{name}", params=params
+            method="delete", endpoint=f"/_api/relation/{name}", params=params
         )
 
         def response_handler(resp: Response) -> bool:
@@ -1113,7 +1113,7 @@ class Database(ApiGroup):
         :param name: Graph name.
         :type name: str
         :return: Graph API wrapper.
-        :rtype: arango.graph.Graph
+        :rtype: dbms.graph.Graph
         """
         return Graph(self._conn, self._executor, name)
 
@@ -1139,7 +1139,7 @@ class Database(ApiGroup):
 
         :return: Graphs in the database.
         :rtype: [dict]
-        :raise arango.exceptions.GraphListError: If retrieval fails.
+        :raise dbms.exceptions.GraphListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/gharial")
 
@@ -1194,22 +1194,22 @@ class Database(ApiGroup):
         :type orphan_collections: [str] | None
         :param smart: If set to True, sharding is enabled (see parameter
             **smart_field** below). Applies only to enterprise version of
-            ArangoDB.
+            DbmsDB.
         :type smart: bool | None
         :param disjoint: If set to True, create a disjoint SmartGraph instead
             of a regular SmartGraph. Applies only to enterprise version of
-            ArangoDB.
+            DbmsDB.
         :type disjoint: bool | None
         :param smart_field: Document field used to shard the vertices of the
             graph. To use this, parameter **smart** must be set to True and
             every vertex in the graph must have the smart field. Applies only
-            to enterprise version of ArangoDB.
+            to enterprise version of DbmsDB.
         :type smart_field: str | None
         :param shard_count: Number of shards used for every collection in the
             graph. To use this, parameter **smart** must be set to True and
             every vertex in the graph must have the smart field. This number
             cannot be modified later once set. Applies only to enterprise
-            version of ArangoDB.
+            version of DbmsDB.
         :type shard_count: int | None
         :param replication_factor: Number of copies of each shard on different
             servers in a cluster. Allowed values are 1 (only one copy is kept
@@ -1227,8 +1227,8 @@ class Database(ApiGroup):
             Default value is 1. Used for clusters only.
         :type write_concern: int
         :return: Graph API wrapper.
-        :rtype: arango.graph.Graph
-        :raise arango.exceptions.GraphCreateError: If create fails.
+        :rtype: dbms.graph.Graph
+        :raise dbms.exceptions.GraphCreateError: If create fails.
 
         Here is an example entry for parameter **edge_definitions**:
 
@@ -1294,7 +1294,7 @@ class Database(ApiGroup):
         :return: True if graph was deleted successfully, False if graph was not
             found and **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.GraphDeleteError: If delete fails.
+        :raise dbms.exceptions.GraphDeleteError: If delete fails.
         """
         params: Params = {}
         if drop_collections is not None:
@@ -1332,8 +1332,8 @@ class Database(ApiGroup):
         :type check_rev: bool
         :return: True if document exists, False otherwise.
         :rtype: bool
-        :raise arango.exceptions.DocumentInError: If check fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentInError: If check fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_doc(document).has(
             document=document, rev=rev, check_rev=check_rev
@@ -1354,8 +1354,8 @@ class Database(ApiGroup):
         :type check_rev: bool
         :return: Document, or None if not found.
         :rtype: dict | None
-        :raise arango.exceptions.DocumentGetError: If retrieval fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentGetError: If retrieval fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_doc(document).get(
             document=document, rev=rev, check_rev=check_rev
@@ -1412,7 +1412,7 @@ class Database(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentInsertError: If insert fails.
+        :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
         return self.collection(collection).insert(
             document=document,
@@ -1463,8 +1463,8 @@ class Database(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentUpdateError: If update fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentUpdateError: If update fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_doc(document).update(
             document=document,
@@ -1507,8 +1507,8 @@ class Database(ApiGroup):
         :return: Document metadata (e.g. document key, revision) or True if
             parameter **silent** was set to True.
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentReplaceError: If replace fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentReplaceError: If replace fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_doc(document).replace(
             document=document,
@@ -1556,8 +1556,8 @@ class Database(ApiGroup):
             found and **ignore_missing** was set to True (does not apply in
             transactions).
         :rtype: bool | dict
-        :raise arango.exceptions.DocumentDeleteError: If delete fails.
-        :raise arango.exceptions.DocumentRevisionError: If revisions mismatch.
+        :raise dbms.exceptions.DocumentDeleteError: If delete fails.
+        :raise dbms.exceptions.DocumentRevisionError: If revisions mismatch.
         """
         return self._get_col_by_doc(document).delete(
             document=document,
@@ -1578,7 +1578,7 @@ class Database(ApiGroup):
 
         :return: Currently active server tasks.
         :rtype: [dict]
-        :raise arango.exceptions.TaskListError: If retrieval fails.
+        :raise dbms.exceptions.TaskListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/tasks")
 
@@ -1597,7 +1597,7 @@ class Database(ApiGroup):
         :type task_id: str
         :return: Server task details.
         :rtype: dict
-        :raise arango.exceptions.TaskGetError: If retrieval fails.
+        :raise dbms.exceptions.TaskGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint=f"/_api/tasks/{task_id}")
 
@@ -1635,7 +1635,7 @@ class Database(ApiGroup):
         :type task_id: str | None
         :return: Details of the new task.
         :rtype: dict
-        :raise arango.exceptions.TaskCreateError: If create fails.
+        :raise dbms.exceptions.TaskCreateError: If create fails.
         """
         data: Json = {"name": name, "command": command}
         if params is not None:
@@ -1669,7 +1669,7 @@ class Database(ApiGroup):
         :return: True if task was successfully deleted, False if task was not
             found and **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.TaskDeleteError: If delete fails.
+        :raise dbms.exceptions.TaskDeleteError: If delete fails.
         """
         request = Request(method="delete", endpoint=f"/_api/tasks/{task_id}")
 
@@ -1708,7 +1708,7 @@ class Database(ApiGroup):
 
         :return: List of user details.
         :rtype: [dict]
-        :raise arango.exceptions.UserListError: If retrieval fails.
+        :raise dbms.exceptions.UserListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/user")
 
@@ -1733,7 +1733,7 @@ class Database(ApiGroup):
         :type username: str
         :return: User details.
         :rtype: dict
-        :raise arango.exceptions.UserGetError: If retrieval fails.
+        :raise dbms.exceptions.UserGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint=f"/_api/user/{username}")
 
@@ -1767,7 +1767,7 @@ class Database(ApiGroup):
         :type extra: dict | None
         :return: New user details.
         :rtype: dict
-        :raise arango.exceptions.UserCreateError: If create fails.
+        :raise dbms.exceptions.UserCreateError: If create fails.
         """
         data: Json = {"user": username, "passwd": password, "active": active}
         if extra is not None:
@@ -1805,7 +1805,7 @@ class Database(ApiGroup):
         :type extra: dict | None
         :return: New user details.
         :rtype: dict
-        :raise arango.exceptions.UserUpdateError: If update fails.
+        :raise dbms.exceptions.UserUpdateError: If update fails.
         """
         data: Json = {}
         if password is not None:
@@ -1851,7 +1851,7 @@ class Database(ApiGroup):
         :type extra: dict | None
         :return: New user details.
         :rtype: dict
-        :raise arango.exceptions.UserReplaceError: If replace fails.
+        :raise dbms.exceptions.UserReplaceError: If replace fails.
         """
         data: Json = {"user": username, "passwd": password}
         if active is not None:
@@ -1882,7 +1882,7 @@ class Database(ApiGroup):
         :return: True if user was deleted successfully, False if user was not
             found and **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.UserDeleteError: If delete fails.
+        :raise dbms.exceptions.UserDeleteError: If delete fails.
         """
         request = Request(method="delete", endpoint=f"/_api/user/{username}")
 
@@ -1906,7 +1906,7 @@ class Database(ApiGroup):
         :type username: str
         :return: User permissions for all databases and collections.
         :rtype: dict
-        :raise arango.exceptions.PermissionListError: If retrieval fails.
+        :raise dbms.exceptions.PermissionListError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -1935,7 +1935,7 @@ class Database(ApiGroup):
         :type collection: str | None
         :return: Permission for given database or collection.
         :rtype: str
-        :raise arango.exceptions.PermissionGetError: If retrieval fails.
+        :raise dbms.exceptions.PermissionGetError: If retrieval fails.
         """
         endpoint = f"/_api/user/{username}/database/{database}"
         if collection is not None:
@@ -1969,7 +1969,7 @@ class Database(ApiGroup):
         :type collection: str | None
         :return: True if access was granted successfully.
         :rtype: bool
-        :raise arango.exceptions.PermissionUpdateError: If update fails.
+        :raise dbms.exceptions.PermissionUpdateError: If update fails.
         """
         endpoint = f"/_api/user/{username}/database/{database}"
         if collection is not None:
@@ -1997,7 +1997,7 @@ class Database(ApiGroup):
         :type collection: str
         :return: True if permission was reset successfully.
         :rtype: bool
-        :raise arango.exceptions.PermissionRestError: If reset fails.
+        :raise dbms.exceptions.PermissionRestError: If reset fails.
         """
         endpoint = f"/_api/user/{username}/database/{database}"
         if collection is not None:
@@ -2025,7 +2025,7 @@ class Database(ApiGroup):
         :type count: int
         :return: List of job IDs.
         :rtype: [str]
-        :raise arango.exceptions.AsyncJobListError: If retrieval fails.
+        :raise dbms.exceptions.AsyncJobListError: If retrieval fails.
         """
         params: Params = {}
         if count is not None:
@@ -2052,7 +2052,7 @@ class Database(ApiGroup):
         :type threshold: int | None
         :return: True if job results were cleared successfully.
         :rtype: bool
-        :raise arango.exceptions.AsyncJobClearError: If operation fails.
+        :raise dbms.exceptions.AsyncJobClearError: If operation fails.
         """
         if threshold is None:
             request = Request(method="delete", endpoint="/_api/job/all")
@@ -2079,7 +2079,7 @@ class Database(ApiGroup):
 
         :return: List of views.
         :rtype: [dict]
-        :raise arango.exceptions.ViewListError: If retrieval fails.
+        :raise dbms.exceptions.ViewListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/view")
 
@@ -2095,7 +2095,7 @@ class Database(ApiGroup):
 
         :return: View details.
         :rtype: dict
-        :raise arango.exceptions.ViewGetError: If retrieval fails.
+        :raise dbms.exceptions.ViewGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint=f"/_api/view/{name}/properties")
 
@@ -2113,14 +2113,14 @@ class Database(ApiGroup):
 
         :param name: View name.
         :type name: str
-        :param view_type: View type (e.g. "arangosearch").
+        :param view_type: View type (e.g. "dbmssearch").
         :type view_type: str
         :param properties: View properties. For more information see
-            https://www.arangodb.com/docs/stable/http/views-arangosearch.html
+            https://www.dbmsdb.com/docs/stable/http/views-dbmssearch.html
         :type properties: dict
         :return: View details.
         :rtype: dict
-        :raise arango.exceptions.ViewCreateError: If create fails.
+        :raise dbms.exceptions.ViewCreateError: If create fails.
         """
         data: Json = {"name": name, "type": view_type}
 
@@ -2142,11 +2142,11 @@ class Database(ApiGroup):
         :param name: View name.
         :type name: str
         :param properties: View properties. For more information see
-            https://www.arangodb.com/docs/stable/http/views-arangosearch.html
+            https://www.dbmsdb.com/docs/stable/http/views-dbmssearch.html
         :type properties: dict
         :return: View details.
         :rtype: dict
-        :raise arango.exceptions.ViewUpdateError: If update fails.
+        :raise dbms.exceptions.ViewUpdateError: If update fails.
         """
         request = Request(
             method="patch",
@@ -2167,11 +2167,11 @@ class Database(ApiGroup):
         :param name: View name.
         :type name: str
         :param properties: View properties. For more information see
-            https://www.arangodb.com/docs/stable/http/views-arangosearch.html
+            https://www.dbmsdb.com/docs/stable/http/views-dbmssearch.html
         :type properties: dict
         :return: View details.
         :rtype: dict
-        :raise arango.exceptions.ViewReplaceError: If replace fails.
+        :raise dbms.exceptions.ViewReplaceError: If replace fails.
         """
         request = Request(
             method="put",
@@ -2196,7 +2196,7 @@ class Database(ApiGroup):
         :return: True if view was deleted successfully, False if view was not
             found and **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.ViewDeleteError: If delete fails.
+        :raise dbms.exceptions.ViewDeleteError: If delete fails.
         """
         request = Request(method="delete", endpoint=f"/_api/view/{name}")
 
@@ -2218,7 +2218,7 @@ class Database(ApiGroup):
         :type new_name: str
         :return: True if view was renamed successfully.
         :rtype: bool
-        :raise arango.exceptions.ViewRenameError: If delete fails.
+        :raise dbms.exceptions.ViewRenameError: If delete fails.
         """
         request = Request(
             method="put",
@@ -2234,29 +2234,29 @@ class Database(ApiGroup):
         return self._execute(request, response_handler)
 
     ################################
-    # ArangoSearch View Management #
+    # DbmsSearch View Management #
     ################################
 
-    def create_arangosearch_view(
+    def create_dbmssearch_view(
         self, name: str, properties: Optional[Json] = None
     ) -> Result[Json]:
-        """Create an ArangoSearch view.
+        """Create an DbmsSearch view.
 
         :param name: View name.
         :type name: str
         :param properties: View properties. For more information see
-            https://www.arangodb.com/docs/stable/http/views-arangosearch.html
+            https://www.dbmsdb.com/docs/stable/http/views-dbmssearch.html
         :type properties: dict | None
         :return: View details.
         :rtype: dict
-        :raise arango.exceptions.ViewCreateError: If create fails.
+        :raise dbms.exceptions.ViewCreateError: If create fails.
         """
-        data: Json = {"name": name, "type": "arangosearch"}
+        data: Json = {"name": name, "type": "dbmssearch"}
 
         if properties is not None:
             data.update(properties)
 
-        request = Request(method="post", endpoint="/_api/view#ArangoSearch", data=data)
+        request = Request(method="post", endpoint="/_api/view#DbmsSearch", data=data)
 
         def response_handler(resp: Response) -> Json:
             if resp.is_success:
@@ -2265,21 +2265,21 @@ class Database(ApiGroup):
 
         return self._execute(request, response_handler)
 
-    def update_arangosearch_view(self, name: str, properties: Json) -> Result[Json]:
-        """Update an ArangoSearch view.
+    def update_dbmssearch_view(self, name: str, properties: Json) -> Result[Json]:
+        """Update an DbmsSearch view.
 
         :param name: View name.
         :type name: str
         :param properties: View properties. For more information see
-            https://www.arangodb.com/docs/stable/http/views-arangosearch.html
+            https://www.dbmsdb.com/docs/stable/http/views-dbmssearch.html
         :type properties: dict
         :return: View details.
         :rtype: dict
-        :raise arango.exceptions.ViewUpdateError: If update fails.
+        :raise dbms.exceptions.ViewUpdateError: If update fails.
         """
         request = Request(
             method="patch",
-            endpoint=f"/_api/view/{name}/properties#ArangoSearch",
+            endpoint=f"/_api/view/{name}/properties#DbmsSearch",
             data=properties,
         )
 
@@ -2290,21 +2290,21 @@ class Database(ApiGroup):
 
         return self._execute(request, response_handler)
 
-    def replace_arangosearch_view(self, name: str, properties: Json) -> Result[Json]:
-        """Replace an ArangoSearch view.
+    def replace_dbmssearch_view(self, name: str, properties: Json) -> Result[Json]:
+        """Replace an DbmsSearch view.
 
         :param name: View name.
         :type name: str
         :param properties: View properties. For more information see
-            https://www.arangodb.com/docs/stable/http/views-arangosearch.html
+            https://www.dbmsdb.com/docs/stable/http/views-dbmssearch.html
         :type properties: dict
         :return: View details.
         :rtype: dict
-        :raise arango.exceptions.ViewReplaceError: If replace fails.
+        :raise dbms.exceptions.ViewReplaceError: If replace fails.
         """
         request = Request(
             method="put",
-            endpoint=f"/_api/view/{name}/properties#ArangoSearch",
+            endpoint=f"/_api/view/{name}/properties#DbmsSearch",
             data=properties,
         )
 
@@ -2324,7 +2324,7 @@ class Database(ApiGroup):
 
         :return: List of analyzers.
         :rtype: [dict]
-        :raise arango.exceptions.AnalyzerListError: If retrieval fails.
+        :raise dbms.exceptions.AnalyzerListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/analyzer")
 
@@ -2343,7 +2343,7 @@ class Database(ApiGroup):
         :type name: str
         :return: Analyzer details.
         :rtype: dict
-        :raise arango.exceptions.AnalyzerGetError: If retrieval fails.
+        :raise dbms.exceptions.AnalyzerGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint=f"/_api/analyzer/{name}")
 
@@ -2373,7 +2373,7 @@ class Database(ApiGroup):
         :type features: list | None
         :return: Analyzer details.
         :rtype: dict
-        :raise arango.exceptions.AnalyzerCreateError: If create fails.
+        :raise dbms.exceptions.AnalyzerCreateError: If create fails.
         """
         data: Json = {"name": name, "type": analyzer_type}
 
@@ -2407,7 +2407,7 @@ class Database(ApiGroup):
         :return: True if analyzer was deleted successfully, False if analyzer
             was not found and **ignore_missing** was set to True.
         :rtype: bool
-        :raise arango.exceptions.AnalyzerDeleteError: If delete fails.
+        :raise dbms.exceptions.AnalyzerDeleteError: If delete fails.
         """
         request = Request(
             method="delete",
@@ -2438,12 +2438,12 @@ class StandardDatabase(Database):
         """Begin async execution.
 
         :param return_result: If set to True, API executions return instances
-            of :class:`arango.job.AsyncJob`, which you can use to retrieve
+            of :class:`dbms.job.AsyncJob`, which you can use to retrieve
             results from server once available. If set to False, API executions
             return None and no results are stored on server.
         :type return_result: bool
         :return: Database API wrapper object specifically for async execution.
-        :rtype: arango.database.AsyncDatabase
+        :rtype: dbms.database.AsyncDatabase
         """
         return AsyncDatabase(self._conn, return_result)
 
@@ -2451,12 +2451,12 @@ class StandardDatabase(Database):
         """Begin batch execution.
 
         :param return_result: If set to True, API executions return instances
-            of :class:`arango.job.BatchJob` that are populated with results on
+            of :class:`dbms.job.BatchJob` that are populated with results on
             commit. If set to False, API executions return None and no results
             are tracked client-side.
         :type return_result: bool
         :return: Database API wrapper object specifically for batch execution.
-        :rtype: arango.database.BatchDatabase
+        :rtype: dbms.database.BatchDatabase
         """
         return BatchDatabase(self._conn, return_result)
 
@@ -2493,7 +2493,7 @@ class StandardDatabase(Database):
         :param max_size: Max transaction size in bytes.
         :type max_size: int | None
         :return: Database API wrapper object specifically for transactions.
-        :rtype: arango.database.TransactionDatabase
+        :rtype: dbms.database.TransactionDatabase
         """
         return TransactionDatabase(
             connection=self._conn,
@@ -2510,11 +2510,11 @@ class StandardDatabase(Database):
 class AsyncDatabase(Database):
     """Database API wrapper tailored specifically for async execution.
 
-    See :func:`arango.database.StandardDatabase.begin_async_execution`.
+    See :func:`dbms.database.StandardDatabase.begin_async_execution`.
 
     :param connection: HTTP connection.
     :param return_result: If set to True, API executions return instances of
-        :class:`arango.job.AsyncJob`, which you can use to retrieve results
+        :class:`dbms.job.AsyncJob`, which you can use to retrieve results
         from server once available. If set to False, API executions return None
         and no results are stored on server.
     :type return_result: bool
@@ -2533,11 +2533,11 @@ class AsyncDatabase(Database):
 class BatchDatabase(Database):
     """Database API wrapper tailored specifically for batch execution.
 
-    See :func:`arango.database.StandardDatabase.begin_batch_execution`.
+    See :func:`dbms.database.StandardDatabase.begin_batch_execution`.
 
     :param connection: HTTP connection.
     :param return_result: If set to True, API executions return instances of
-        :class:`arango.job.BatchJob` that are populated with results on commit.
+        :class:`dbms.job.BatchJob` that are populated with results on commit.
         If set to False, API executions return None and no results are tracked
         client-side.
     :type return_result: bool
@@ -2564,7 +2564,7 @@ class BatchDatabase(Database):
 
         :return: Queued batch jobs or None if **return_result** parameter was
             set to False during initialization.
-        :rtype: [arango.job.BatchJob] | None
+        :rtype: [dbms.job.BatchJob] | None
         """
         return self._executor.jobs
 
@@ -2572,15 +2572,15 @@ class BatchDatabase(Database):
         """Execute the queued requests in a single batch API request.
 
         If **return_result** parameter was set to True during initialization,
-        :class:`arango.job.BatchJob` instances are populated with results.
+        :class:`dbms.job.BatchJob` instances are populated with results.
 
         :return: Batch jobs, or None if **return_result** parameter was set to
             False during initialization.
-        :rtype: [arango.job.BatchJob] | None
-        :raise arango.exceptions.BatchStateError: If batch state is invalid
+        :rtype: [dbms.job.BatchJob] | None
+        :raise dbms.exceptions.BatchStateError: If batch state is invalid
             (e.g. batch was already committed or the response size did not
             match expected).
-        :raise arango.exceptions.BatchExecuteError: If commit fails.
+        :raise dbms.exceptions.BatchExecuteError: If commit fails.
         """
         return self._executor.commit()
 
@@ -2588,7 +2588,7 @@ class BatchDatabase(Database):
 class TransactionDatabase(Database):
     """Database API wrapper tailored specifically for transactions.
 
-    See :func:`arango.database.StandardDatabase.begin_transaction`.
+    See :func:`dbms.database.StandardDatabase.begin_transaction`.
 
     :param connection: HTTP connection.
     :param read: Name(s) of collections read during transaction. Read-only
@@ -2655,7 +2655,7 @@ class TransactionDatabase(Database):
 
         :return: Transaction status.
         :rtype: str
-        :raise arango.exceptions.TransactionStatusError: If retrieval fails.
+        :raise dbms.exceptions.TransactionStatusError: If retrieval fails.
         """
         return self._executor.status()
 
@@ -2664,7 +2664,7 @@ class TransactionDatabase(Database):
 
         :return: True if commit was successful.
         :rtype: bool
-        :raise arango.exceptions.TransactionCommitError: If commit fails.
+        :raise dbms.exceptions.TransactionCommitError: If commit fails.
         """
         return self._executor.commit()
 
@@ -2673,6 +2673,6 @@ class TransactionDatabase(Database):
 
         :return: True if the abort operation was successful.
         :rtype: bool
-        :raise arango.exceptions.TransactionAbortError: If abort fails.
+        :raise dbms.exceptions.TransactionAbortError: If abort fails.
         """
         return self._executor.abort()

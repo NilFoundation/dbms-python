@@ -3,14 +3,14 @@ import json
 import mock
 import pytest
 
-from arango.database import BatchDatabase
-from arango.exceptions import (
+from dbms.database import BatchDatabase
+from dbms.exceptions import (
     BatchExecuteError,
     BatchJobResultError,
     BatchStateError,
     DocumentInsertError,
 )
-from arango.job import BatchJob
+from dbms.job import BatchJob
 from tests.helpers import clean_doc, extract
 
 

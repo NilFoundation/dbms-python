@@ -1,17 +1,17 @@
 Users and Permissions
 ---------------------
 
-Python-arango provides operations for managing users and permissions. Most of
+Python-dbms provides operations for managing users and permissions. Most of
 these operations can only be performed by admin users via ``_system`` database.
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "_system" database as root user.
     sys_db = client.db('_system', username='root', password='passwd')

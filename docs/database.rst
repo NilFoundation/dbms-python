@@ -1,7 +1,7 @@
 Databases
 ---------
 
-ArangoDB server can have an arbitrary number of **databases**. Each database
+DbmsDB server can have an arbitrary number of **databases**. Each database
 has its own set of :doc:`collections <collection>` and :doc:`graphs <graph>`.
 There is a special database named ``_system``, which cannot be dropped and
 provides operations for managing users, permissions and other databases. Most
@@ -12,10 +12,10 @@ information.
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "_system" database as root user.
     # This returns an API wrapper for "_system" database.
@@ -63,4 +63,4 @@ information.
     # Delete the database. Note that the new users will remain.
     sys_db.delete_database('test')
 
-See :ref:`ArangoClient` and :ref:`StandardDatabase` for API specification.
+See :ref:`DbmsClient` and :ref:`StandardDatabase` for API specification.

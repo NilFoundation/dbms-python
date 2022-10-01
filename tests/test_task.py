@@ -1,4 +1,4 @@
-from arango.exceptions import (
+from dbms.exceptions import (
     TaskCreateError,
     TaskDeleteError,
     TaskGetError,
@@ -8,7 +8,7 @@ from tests.helpers import assert_raises, extract, generate_task_id, generate_tas
 
 
 def test_task_management(sys_db, db, bad_db):
-    test_command = 'require("@arangodb").print(params);'
+    test_command = 'require("@dbmsdb").print(params);'
 
     # Test create task with random ID
     task_name = generate_task_name()

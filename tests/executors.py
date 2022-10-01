@@ -1,7 +1,7 @@
 import time
 
-from arango.executor import AsyncApiExecutor, BatchApiExecutor, TransactionApiExecutor
-from arango.job import BatchJob
+from dbms.executor import AsyncApiExecutor, BatchApiExecutor, TransactionApiExecutor
+from dbms.job import BatchJob
 
 
 class TestAsyncApiExecutor(AsyncApiExecutor):

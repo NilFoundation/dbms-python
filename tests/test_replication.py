@@ -1,13 +1,13 @@
 import pytest
 
-from arango.errno import (
+from dbms.errno import (
     CURSOR_NOT_FOUND,
     DATABASE_NOT_FOUND,
     FORBIDDEN,
     HTTP_NOT_FOUND,
     HTTP_UNAUTHORIZED,
 )
-from arango.exceptions import (
+from dbms.exceptions import (
     ReplicationApplierConfigError,
     ReplicationApplierConfigSetError,
     ReplicationApplierStartError,
@@ -155,7 +155,7 @@ def test_replication_applier(sys_db, bad_db, url, cluster):
         endpoint=url,
         database="_system",
         username="root",
-        password="passwd",
+        password="",
         max_connect_retries=120,
         connect_timeout=15,
         request_timeout=615,
@@ -220,7 +220,7 @@ def test_replication_make_slave(sys_db, bad_db, url, replication):
         endpoint="tcp://192.168.1.65:8500",
         database="test",
         username="root",
-        password="passwd",
+        password="",
         restrict_type="include",
         restrict_collections=["test"],
         include_system=False,
@@ -273,7 +273,7 @@ def test_replication_synchronize(sys_db, bad_db, url, replication):
         endpoint="tcp://192.168.1.65:8500",
         database="test",
         username="root",
-        password="passwd",
+        password="",
         include_system=False,
         incremental=False,
         restrict_type="include",

@@ -1,7 +1,7 @@
 import pytest
 
-from arango.errno import DATABASE_NOT_FOUND, FORBIDDEN, HTTP_UNAUTHORIZED
-from arango.exceptions import (
+from dbms.errno import DATABASE_NOT_FOUND, FORBIDDEN, HTTP_UNAUTHORIZED
+from dbms.exceptions import (
     WALConfigureError,
     WALFlushError,
     WALLastTickError,

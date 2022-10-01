@@ -5,18 +5,18 @@ A **graph** consists of vertices and edges. Vertices are stored as documents in
 :ref:`vertex collections <vertex-collections>` and edges stored as documents in
 :ref:`edge collections <edge-collections>`. The collections used in a graph and
 their relations are specified with :ref:`edge definitions <edge-definitions>`.
-For more information, refer to `ArangoDB manual`_.
+For more information, refer to `DbmsDB manual`_.
 
-.. _ArangoDB manual: https://docs.arangodb.com
+.. _DbmsDB manual: https://docs.dbmsdb.com
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -67,10 +67,10 @@ Here is an example showing how edge definitions are managed:
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -122,10 +122,10 @@ additional safeguards:
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -159,8 +159,8 @@ IDs instead of keys where applicable.
 
 .. testcode::
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -202,7 +202,7 @@ wrappers provides additional safeguards:
 
 .. testsetup:: edge_collections
 
-    client = ArangoClient()
+    client = DbmsClient()
     db = client.db('test', username='root', password='passwd')
     school = db.graph('school')
 
@@ -220,10 +220,10 @@ wrappers provides additional safeguards:
 
 .. testcode:: edge_collections
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -275,10 +275,10 @@ IDs instead of keys where applicable.
 
 .. testcode:: edge_collections
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -318,7 +318,7 @@ See :ref:`Graph` and :ref:`EdgeCollection` for API specification.
 Graph Traversals
 ================
 
-**Graph traversals** are executed via the :func:`arango.graph.Graph.traverse`
+**Graph traversals** are executed via the :func:`dbms.graph.Graph.traverse`
 method. Each traversal can span across multiple vertex collections, and walk
 over edges and vertices using various algorithms.
 
@@ -326,7 +326,7 @@ over edges and vertices using various algorithms.
 
 .. testsetup:: traversals
 
-    client = ArangoClient()
+    client = DbmsClient()
     db = client.db('test', username='root', password='passwd')
     school = db.graph('school')
 
@@ -342,10 +342,10 @@ over edges and vertices using various algorithms.
 
 .. testcode:: traversals
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -380,4 +380,4 @@ over edges and vertices using various algorithms.
         vertex_uniqueness='global',
     )
 
-See :func:`arango.graph.Graph.traverse` for API specification.
+See :func:`dbms.graph.Graph.traverse` for API specification.

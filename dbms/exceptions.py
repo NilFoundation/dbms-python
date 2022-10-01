@@ -1,15 +1,15 @@
 from typing import Optional
 
-from arango.request import Request
-from arango.response import Response
+from dbms.request import Request
+from dbms.response import Response
 
 
-class ArangoError(Exception):
-    """Base class for all exceptions in python-arango."""
+class DbmsError(Exception):
+    """Base class for all exceptions in python-dbms."""
 
 
-class ArangoClientError(ArangoError):
-    """Base class for errors originating from python-arango client.
+class DbmsClientError(DbmsError):
+    """Base class for errors originating from python-dbms client.
 
     :param msg: Error message.
     :type msg: str
@@ -35,11 +35,11 @@ class ArangoClientError(ArangoError):
         self.http_headers = None
 
 
-class ArangoServerError(ArangoError):
-    """Base class for errors originating from ArangoDB server.
+class DbmsServerError(DbmsError):
+    """Base class for errors originating from DbmsDB server.
 
     :param resp: HTTP response.
-    :type resp: arango.response.Response
+    :type resp: dbms.response.Response
     :param msg: Error message override.
     :type msg: str
 
@@ -50,18 +50,18 @@ class ArangoServerError(ArangoError):
     :ivar url: API URL.
     :vartype url: str
     :ivar response: HTTP response object.
-    :vartype response: arango.response.Response
+    :vartype response: dbms.response.Response
     :ivar request: HTTP request object.
-    :vartype request: arango.request.Request
+    :vartype request: dbms.request.Request
     :ivar http_method: HTTP method in lowercase (e.g. "post").
     :vartype http_method: str
     :ivar http_code: HTTP status code.
     :vartype http_code: int
     :ivar http_headers: Response headers.
     :vartype http_headers: dict
-    :ivar error_code: Error code from ArangoDB server.
+    :ivar error_code: Error code from DbmsDB server.
     :vartype error_code: int
-    :ivar error_message: Raw error message from ArangoDB server.
+    :ivar error_message: Raw error message from DbmsDB server.
     :vartype error_message: str
     """
 
@@ -93,67 +93,67 @@ class ArangoServerError(ArangoError):
 ##################
 
 
-class AQLQueryListError(ArangoServerError):
+class AQLQueryListError(DbmsServerError):
     """Failed to retrieve running AQL queries."""
 
 
-class AQLQueryExplainError(ArangoServerError):
+class AQLQueryExplainError(DbmsServerError):
     """Failed to parse and explain query."""
 
 
-class AQLQueryValidateError(ArangoServerError):
+class AQLQueryValidateError(DbmsServerError):
     """Failed to parse and validate query."""
 
 
-class AQLQueryExecuteError(ArangoServerError):
+class AQLQueryExecuteError(DbmsServerError):
     """Failed to execute query."""
 
 
-class AQLQueryKillError(ArangoServerError):
+class AQLQueryKillError(DbmsServerError):
     """Failed to kill the query."""
 
 
-class AQLQueryClearError(ArangoServerError):
+class AQLQueryClearError(DbmsServerError):
     """Failed to clear slow AQL queries."""
 
 
-class AQLQueryTrackingGetError(ArangoServerError):
+class AQLQueryTrackingGetError(DbmsServerError):
     """Failed to retrieve AQL tracking properties."""
 
 
-class AQLQueryTrackingSetError(ArangoServerError):
+class AQLQueryTrackingSetError(DbmsServerError):
     """Failed to configure AQL tracking properties."""
 
 
-class AQLCachePropertiesError(ArangoServerError):
+class AQLCachePropertiesError(DbmsServerError):
     """Failed to retrieve query cache properties."""
 
 
-class AQLCacheConfigureError(ArangoServerError):
+class AQLCacheConfigureError(DbmsServerError):
     """Failed to configure query cache properties."""
 
 
-class AQLCacheEntriesError(ArangoServerError):
+class AQLCacheEntriesError(DbmsServerError):
     """Failed to retrieve AQL cache entries."""
 
 
-class AQLCacheClearError(ArangoServerError):
+class AQLCacheClearError(DbmsServerError):
     """Failed to clear the query cache."""
 
 
-class AQLFunctionListError(ArangoServerError):
+class AQLFunctionListError(DbmsServerError):
     """Failed to retrieve AQL user functions."""
 
 
-class AQLFunctionCreateError(ArangoServerError):
+class AQLFunctionCreateError(DbmsServerError):
     """Failed to create AQL user function."""
 
 
-class AQLFunctionDeleteError(ArangoServerError):
+class AQLFunctionDeleteError(DbmsServerError):
     """Failed to delete AQL user function."""
 
 
-class AQLQueryRulesGetError(ArangoServerError):
+class AQLQueryRulesGetError(DbmsServerError):
     """Failed to retrieve AQL query rules."""
 
 
@@ -162,27 +162,27 @@ class AQLQueryRulesGetError(ArangoServerError):
 ##############################
 
 
-class AsyncExecuteError(ArangoServerError):
+class AsyncExecuteError(DbmsServerError):
     """Failed to execute async API request."""
 
 
-class AsyncJobListError(ArangoServerError):
+class AsyncJobListError(DbmsServerError):
     """Failed to retrieve async jobs."""
 
 
-class AsyncJobCancelError(ArangoServerError):
+class AsyncJobCancelError(DbmsServerError):
     """Failed to cancel async job."""
 
 
-class AsyncJobStatusError(ArangoServerError):
+class AsyncJobStatusError(DbmsServerError):
     """Failed to retrieve async job status."""
 
 
-class AsyncJobResultError(ArangoServerError):
+class AsyncJobResultError(DbmsServerError):
     """Failed to retrieve async job result."""
 
 
-class AsyncJobClearError(ArangoServerError):
+class AsyncJobClearError(DbmsServerError):
     """Failed to clear async job results."""
 
 
@@ -191,27 +191,27 @@ class AsyncJobClearError(ArangoServerError):
 ##############################
 
 
-class BackupCreateError(ArangoServerError):
+class BackupCreateError(DbmsServerError):
     """Failed to create a backup."""
 
 
-class BackupDeleteError(ArangoServerError):
+class BackupDeleteError(DbmsServerError):
     """Failed to delete a backup."""
 
 
-class BackupDownloadError(ArangoServerError):
+class BackupDownloadError(DbmsServerError):
     """Failed to download a backup from remote repository."""
 
 
-class BackupGetError(ArangoServerError):
+class BackupGetError(DbmsServerError):
     """Failed to retrieve backup details."""
 
 
-class BackupRestoreError(ArangoServerError):
+class BackupRestoreError(DbmsServerError):
     """Failed to restore from backup."""
 
 
-class BackupUploadError(ArangoServerError):
+class BackupUploadError(DbmsServerError):
     """Failed to upload a backup to remote repository."""
 
 
@@ -220,15 +220,15 @@ class BackupUploadError(ArangoServerError):
 ##############################
 
 
-class BatchStateError(ArangoClientError):
+class BatchStateError(DbmsClientError):
     """The batch object was in a bad state."""
 
 
-class BatchJobResultError(ArangoClientError):
+class BatchJobResultError(DbmsClientError):
     """Failed to retrieve batch job result."""
 
 
-class BatchExecuteError(ArangoServerError):
+class BatchExecuteError(DbmsServerError):
     """Failed to execute batch API request."""
 
 
@@ -237,59 +237,59 @@ class BatchExecuteError(ArangoServerError):
 #########################
 
 
-class CollectionListError(ArangoServerError):
+class CollectionListError(DbmsServerError):
     """Failed to retrieve collections."""
 
 
-class CollectionPropertiesError(ArangoServerError):
+class CollectionPropertiesError(DbmsServerError):
     """Failed to retrieve collection properties."""
 
 
-class CollectionConfigureError(ArangoServerError):
+class CollectionConfigureError(DbmsServerError):
     """Failed to configure collection properties."""
 
 
-class CollectionStatisticsError(ArangoServerError):
+class CollectionStatisticsError(DbmsServerError):
     """Failed to retrieve collection statistics."""
 
 
-class CollectionRevisionError(ArangoServerError):
+class CollectionRevisionError(DbmsServerError):
     """Failed to retrieve collection revision."""
 
 
-class CollectionChecksumError(ArangoServerError):
+class CollectionChecksumError(DbmsServerError):
     """Failed to retrieve collection checksum."""
 
 
-class CollectionCreateError(ArangoServerError):
+class CollectionCreateError(DbmsServerError):
     """Failed to create collection."""
 
 
-class CollectionDeleteError(ArangoServerError):
+class CollectionDeleteError(DbmsServerError):
     """Failed to delete collection."""
 
 
-class CollectionRenameError(ArangoServerError):
+class CollectionRenameError(DbmsServerError):
     """Failed to rename collection."""
 
 
-class CollectionTruncateError(ArangoServerError):
+class CollectionTruncateError(DbmsServerError):
     """Failed to truncate collection."""
 
 
-class CollectionLoadError(ArangoServerError):
+class CollectionLoadError(DbmsServerError):
     """Failed to load collection."""
 
 
-class CollectionUnloadError(ArangoServerError):
+class CollectionUnloadError(DbmsServerError):
     """Failed to unload collection."""
 
 
-class CollectionRecalculateCountError(ArangoServerError):
+class CollectionRecalculateCountError(DbmsServerError):
     """Failed to recalculate document count."""
 
 
-class CollectionResponsibleShardError(ArangoServerError):
+class CollectionResponsibleShardError(DbmsServerError):
     """Failed to retrieve responsible shard."""
 
 
@@ -298,23 +298,23 @@ class CollectionResponsibleShardError(ArangoServerError):
 #####################
 
 
-class CursorStateError(ArangoClientError):
+class CursorStateError(DbmsClientError):
     """The cursor object was in a bad state."""
 
 
-class CursorCountError(ArangoClientError, TypeError):
+class CursorCountError(DbmsClientError, TypeError):
     """The cursor count was not enabled."""
 
 
-class CursorEmptyError(ArangoClientError):
+class CursorEmptyError(DbmsClientError):
     """The current batch in cursor was empty."""
 
 
-class CursorNextError(ArangoServerError):
+class CursorNextError(DbmsServerError):
     """Failed to retrieve the next result batch from server."""
 
 
-class CursorCloseError(ArangoServerError):
+class CursorCloseError(DbmsServerError):
     """Failed to delete the cursor result from server."""
 
 
@@ -323,19 +323,19 @@ class CursorCloseError(ArangoServerError):
 #######################
 
 
-class DatabaseListError(ArangoServerError):
+class DatabaseListError(DbmsServerError):
     """Failed to retrieve databases."""
 
 
-class DatabasePropertiesError(ArangoServerError):
+class DatabasePropertiesError(DbmsServerError):
     """Failed to retrieve database properties."""
 
 
-class DatabaseCreateError(ArangoServerError):
+class DatabaseCreateError(DbmsServerError):
     """Failed to create database."""
 
 
-class DatabaseDeleteError(ArangoServerError):
+class DatabaseDeleteError(DbmsServerError):
     """Failed to delete database."""
 
 
@@ -344,47 +344,47 @@ class DatabaseDeleteError(ArangoServerError):
 #######################
 
 
-class DocumentParseError(ArangoClientError):
+class DocumentParseError(DbmsClientError):
     """Failed to parse document input."""
 
 
-class DocumentCountError(ArangoServerError):
+class DocumentCountError(DbmsServerError):
     """Failed to retrieve document count."""
 
 
-class DocumentInError(ArangoServerError):
+class DocumentInError(DbmsServerError):
     """Failed to check whether document exists."""
 
 
-class DocumentGetError(ArangoServerError):
+class DocumentGetError(DbmsServerError):
     """Failed to retrieve document."""
 
 
-class DocumentKeysError(ArangoServerError):
+class DocumentKeysError(DbmsServerError):
     """Failed to retrieve document keys."""
 
 
-class DocumentIDsError(ArangoServerError):
+class DocumentIDsError(DbmsServerError):
     """Failed to retrieve document IDs."""
 
 
-class DocumentInsertError(ArangoServerError):
+class DocumentInsertError(DbmsServerError):
     """Failed to insert document."""
 
 
-class DocumentReplaceError(ArangoServerError):
+class DocumentReplaceError(DbmsServerError):
     """Failed to replace document."""
 
 
-class DocumentUpdateError(ArangoServerError):
+class DocumentUpdateError(DbmsServerError):
     """Failed to update document."""
 
 
-class DocumentDeleteError(ArangoServerError):
+class DocumentDeleteError(DbmsServerError):
     """Failed to delete document."""
 
 
-class DocumentRevisionError(ArangoServerError):
+class DocumentRevisionError(DbmsServerError):
     """The expected and actual document revisions mismatched."""
 
 
@@ -393,87 +393,87 @@ class DocumentRevisionError(ArangoServerError):
 ###################
 
 
-class FoxxServiceListError(ArangoServerError):
+class FoxxServiceListError(DbmsServerError):
     """Failed to retrieve Foxx services."""
 
 
-class FoxxServiceGetError(ArangoServerError):
+class FoxxServiceGetError(DbmsServerError):
     """Failed to retrieve Foxx service metadata."""
 
 
-class FoxxServiceCreateError(ArangoServerError):
+class FoxxServiceCreateError(DbmsServerError):
     """Failed to create Foxx service."""
 
 
-class FoxxServiceUpdateError(ArangoServerError):
+class FoxxServiceUpdateError(DbmsServerError):
     """Failed to update Foxx service."""
 
 
-class FoxxServiceReplaceError(ArangoServerError):
+class FoxxServiceReplaceError(DbmsServerError):
     """Failed to replace Foxx service."""
 
 
-class FoxxServiceDeleteError(ArangoServerError):
+class FoxxServiceDeleteError(DbmsServerError):
     """Failed to delete Foxx services."""
 
 
-class FoxxConfigGetError(ArangoServerError):
+class FoxxConfigGetError(DbmsServerError):
     """Failed to retrieve Foxx service configuration."""
 
 
-class FoxxConfigUpdateError(ArangoServerError):
+class FoxxConfigUpdateError(DbmsServerError):
     """Failed to update Foxx service configuration."""
 
 
-class FoxxConfigReplaceError(ArangoServerError):
+class FoxxConfigReplaceError(DbmsServerError):
     """Failed to replace Foxx service configuration."""
 
 
-class FoxxDependencyGetError(ArangoServerError):
+class FoxxDependencyGetError(DbmsServerError):
     """Failed to retrieve Foxx service dependencies."""
 
 
-class FoxxDependencyUpdateError(ArangoServerError):
+class FoxxDependencyUpdateError(DbmsServerError):
     """Failed to update Foxx service dependencies."""
 
 
-class FoxxDependencyReplaceError(ArangoServerError):
+class FoxxDependencyReplaceError(DbmsServerError):
     """Failed to replace Foxx service dependencies."""
 
 
-class FoxxScriptListError(ArangoServerError):
+class FoxxScriptListError(DbmsServerError):
     """Failed to retrieve Foxx service scripts."""
 
 
-class FoxxScriptRunError(ArangoServerError):
+class FoxxScriptRunError(DbmsServerError):
     """Failed to run Foxx service script."""
 
 
-class FoxxTestRunError(ArangoServerError):
+class FoxxTestRunError(DbmsServerError):
     """Failed to run Foxx service tests."""
 
 
-class FoxxDevModeEnableError(ArangoServerError):
+class FoxxDevModeEnableError(DbmsServerError):
     """Failed to enable development mode for Foxx service."""
 
 
-class FoxxDevModeDisableError(ArangoServerError):
+class FoxxDevModeDisableError(DbmsServerError):
     """Failed to disable development mode for Foxx service."""
 
 
-class FoxxReadmeGetError(ArangoServerError):
+class FoxxReadmeGetError(DbmsServerError):
     """Failed to retrieve Foxx service readme."""
 
 
-class FoxxSwaggerGetError(ArangoServerError):
+class FoxxSwaggerGetError(DbmsServerError):
     """Failed to retrieve Foxx service swagger."""
 
 
-class FoxxDownloadError(ArangoServerError):
+class FoxxDownloadError(DbmsServerError):
     """Failed to download Foxx service bundle."""
 
 
-class FoxxCommitError(ArangoServerError):
+class FoxxCommitError(DbmsServerError):
     """Failed to commit local Foxx service state."""
 
 
@@ -482,55 +482,55 @@ class FoxxCommitError(ArangoServerError):
 ####################
 
 
-class GraphListError(ArangoServerError):
+class GraphListError(DbmsServerError):
     """Failed to retrieve graphs."""
 
 
-class GraphCreateError(ArangoServerError):
+class GraphCreateError(DbmsServerError):
     """Failed to create the graph."""
 
 
-class GraphDeleteError(ArangoServerError):
+class GraphDeleteError(DbmsServerError):
     """Failed to delete the graph."""
 
 
-class GraphPropertiesError(ArangoServerError):
+class GraphPropertiesError(DbmsServerError):
     """Failed to retrieve graph properties."""
 
 
-class GraphTraverseError(ArangoServerError):
+class GraphTraverseError(DbmsServerError):
     """Failed to execute graph traversal."""
 
 
-class VertexCollectionListError(ArangoServerError):
+class VertexCollectionListError(DbmsServerError):
     """Failed to retrieve vertex collections."""
 
 
-class VertexCollectionCreateError(ArangoServerError):
+class VertexCollectionCreateError(DbmsServerError):
     """Failed to create vertex collection."""
 
 
-class VertexCollectionDeleteError(ArangoServerError):
+class VertexCollectionDeleteError(DbmsServerError):
     """Failed to delete vertex collection."""
 
 
-class EdgeDefinitionListError(ArangoServerError):
+class EdgeDefinitionListError(DbmsServerError):
     """Failed to retrieve edge definitions."""
 
 
-class EdgeDefinitionCreateError(ArangoServerError):
+class EdgeDefinitionCreateError(DbmsServerError):
     """Failed to create edge definition."""
 
 
-class EdgeDefinitionReplaceError(ArangoServerError):
+class EdgeDefinitionReplaceError(DbmsServerError):
     """Failed to replace edge definition."""
 
 
-class EdgeDefinitionDeleteError(ArangoServerError):
+class EdgeDefinitionDeleteError(DbmsServerError):
     """Failed to delete edge definition."""
 
 
-class EdgeListError(ArangoServerError):
+class EdgeListError(DbmsServerError):
     """Failed to retrieve edges coming in and out of a vertex."""
 
 
@@ -539,19 +539,19 @@ class EdgeListError(ArangoServerError):
 ####################
 
 
-class IndexListError(ArangoServerError):
+class IndexListError(DbmsServerError):
     """Failed to retrieve collection indexes."""
 
 
-class IndexCreateError(ArangoServerError):
+class IndexCreateError(DbmsServerError):
     """Failed to create collection index."""
 
 
-class IndexDeleteError(ArangoServerError):
+class IndexDeleteError(DbmsServerError):
     """Failed to delete collection index."""
 
 
-class IndexLoadError(ArangoServerError):
+class IndexLoadError(DbmsServerError):
     """Failed to load indexes into memory."""
 
 
@@ -560,15 +560,15 @@ class IndexLoadError(ArangoServerError):
 #####################
 
 
-class PregelJobCreateError(ArangoServerError):
+class PregelJobCreateError(DbmsServerError):
     """Failed to create Pregel job."""
 
 
-class PregelJobGetError(ArangoServerError):
+class PregelJobGetError(DbmsServerError):
     """Failed to retrieve Pregel job details."""
 
 
-class PregelJobDeleteError(ArangoServerError):
+class PregelJobDeleteError(DbmsServerError):
     """Failed to delete Pregel job."""
 
 
@@ -577,83 +577,83 @@ class PregelJobDeleteError(ArangoServerError):
 #####################
 
 
-class ServerConnectionError(ArangoClientError):
-    """Failed to connect to ArangoDB server."""
+class ServerConnectionError(DbmsClientError):
+    """Failed to connect to DbmsDB server."""
 
 
-class ServerEngineError(ArangoServerError):
+class ServerEngineError(DbmsServerError):
     """Failed to retrieve database engine."""
 
 
-class ServerVersionError(ArangoServerError):
+class ServerVersionError(DbmsServerError):
     """Failed to retrieve server version."""
 
 
-class ServerDetailsError(ArangoServerError):
+class ServerDetailsError(DbmsServerError):
     """Failed to retrieve server details."""
 
 
-class ServerStatusError(ArangoServerError):
+class ServerStatusError(DbmsServerError):
     """Failed to retrieve server status."""
 
 
-class ServerTimeError(ArangoServerError):
+class ServerTimeError(DbmsServerError):
     """Failed to retrieve server system time."""
 
 
-class ServerEchoError(ArangoServerError):
+class ServerEchoError(DbmsServerError):
     """Failed to retrieve details on last request."""
 
 
-class ServerShutdownError(ArangoServerError):
+class ServerShutdownError(DbmsServerError):
     """Failed to initiate shutdown sequence."""
 
 
-class ServerRunTestsError(ArangoServerError):
+class ServerRunTestsError(DbmsServerError):
     """Failed to execute server tests."""
 
 
-class ServerRequiredDBVersionError(ArangoServerError):
+class ServerRequiredDBVersionError(DbmsServerError):
     """Failed to retrieve server target version."""
 
 
-class ServerReadLogError(ArangoServerError):
+class ServerReadLogError(DbmsServerError):
     """Failed to retrieve global log."""
 
 
-class ServerLogLevelError(ArangoServerError):
+class ServerLogLevelError(DbmsServerError):
     """Failed to retrieve server log levels."""
 
 
-class ServerLogLevelSetError(ArangoServerError):
+class ServerLogLevelSetError(DbmsServerError):
     """Failed to set server log levels."""
 
 
-class ServerReloadRoutingError(ArangoServerError):
+class ServerReloadRoutingError(DbmsServerError):
     """Failed to reload routing details."""
 
 
-class ServerStatisticsError(ArangoServerError):
+class ServerStatisticsError(DbmsServerError):
     """Failed to retrieve server statistics."""
 
 
-class ServerMetricsError(ArangoServerError):
+class ServerMetricsError(DbmsServerError):
     """Failed to retrieve server metrics."""
 
 
-class ServerRoleError(ArangoServerError):
+class ServerRoleError(DbmsServerError):
     """Failed to retrieve server role in a cluster."""
 
 
-class ServerTLSError(ArangoServerError):
+class ServerTLSError(DbmsServerError):
     """Failed to retrieve TLS data."""
 
 
-class ServerTLSReloadError(ArangoServerError):
+class ServerTLSReloadError(DbmsServerError):
     """Failed to reload TLS."""
 
 
-class ServerEncryptionError(ArangoServerError):
+class ServerEncryptionError(DbmsServerError):
     """Failed to reload user-defined encryption keys."""
 
 
@@ -662,19 +662,19 @@ class ServerEncryptionError(ArangoServerError):
 #####################
 
 
-class TaskListError(ArangoServerError):
+class TaskListError(DbmsServerError):
     """Failed to retrieve server tasks."""
 
 
-class TaskGetError(ArangoServerError):
+class TaskGetError(DbmsServerError):
     """Failed to retrieve server task details."""
 
 
-class TaskCreateError(ArangoServerError):
+class TaskCreateError(DbmsServerError):
     """Failed to create server task."""
 
 
-class TaskDeleteError(ArangoServerError):
+class TaskDeleteError(DbmsServerError):
     """Failed to delete server task."""
 
 
@@ -683,23 +683,23 @@ class TaskDeleteError(ArangoServerError):
 ##########################
 
 
-class TransactionExecuteError(ArangoServerError):
+class TransactionExecuteError(DbmsServerError):
     """Failed to execute raw transaction."""
 
 
-class TransactionInitError(ArangoServerError):
+class TransactionInitError(DbmsServerError):
     """Failed to initialize transaction."""
 
 
-class TransactionStatusError(ArangoServerError):
+class TransactionStatusError(DbmsServerError):
     """Failed to retrieve transaction status."""
 
 
-class TransactionCommitError(ArangoServerError):
+class TransactionCommitError(DbmsServerError):
     """Failed to commit transaction."""
 
 
-class TransactionAbortError(ArangoServerError):
+class TransactionAbortError(DbmsServerError):
     """Failed to abort transaction."""
 
 
@@ -708,27 +708,27 @@ class TransactionAbortError(ArangoServerError):
 ###################
 
 
-class UserListError(ArangoServerError):
+class UserListError(DbmsServerError):
     """Failed to retrieve users."""
 
 
-class UserGetError(ArangoServerError):
+class UserGetError(DbmsServerError):
     """Failed to retrieve user details."""
 
 
-class UserCreateError(ArangoServerError):
+class UserCreateError(DbmsServerError):
     """Failed to create user."""
 
 
-class UserUpdateError(ArangoServerError):
+class UserUpdateError(DbmsServerError):
     """Failed to update user."""
 
 
-class UserReplaceError(ArangoServerError):
+class UserReplaceError(DbmsServerError):
     """Failed to replace user."""
 
 
-class UserDeleteError(ArangoServerError):
+class UserDeleteError(DbmsServerError):
     """Failed to delete user."""
 
 
@@ -737,31 +737,31 @@ class UserDeleteError(ArangoServerError):
 ###################
 
 
-class ViewListError(ArangoServerError):
+class ViewListError(DbmsServerError):
     """Failed to retrieve views."""
 
 
-class ViewGetError(ArangoServerError):
+class ViewGetError(DbmsServerError):
     """Failed to retrieve view details."""
 
 
-class ViewCreateError(ArangoServerError):
+class ViewCreateError(DbmsServerError):
     """Failed to create view."""
 
 
-class ViewUpdateError(ArangoServerError):
+class ViewUpdateError(DbmsServerError):
     """Failed to update view."""
 
 
-class ViewReplaceError(ArangoServerError):
+class ViewReplaceError(DbmsServerError):
     """Failed to replace view."""
 
 
-class ViewDeleteError(ArangoServerError):
+class ViewDeleteError(DbmsServerError):
     """Failed to delete view."""
 
 
-class ViewRenameError(ArangoServerError):
+class ViewRenameError(DbmsServerError):
     """Failed to rename view."""
 
 
@@ -770,19 +770,19 @@ class ViewRenameError(ArangoServerError):
 #######################
 
 
-class AnalyzerListError(ArangoServerError):
+class AnalyzerListError(DbmsServerError):
     """Failed to retrieve analyzers."""
 
 
-class AnalyzerGetError(ArangoServerError):
+class AnalyzerGetError(DbmsServerError):
     """Failed to retrieve analyzer details."""
 
 
-class AnalyzerCreateError(ArangoServerError):
+class AnalyzerCreateError(DbmsServerError):
     """Failed to create analyzer."""
 
 
-class AnalyzerDeleteError(ArangoServerError):
+class AnalyzerDeleteError(DbmsServerError):
     """Failed to delete analyzer."""
 
 
@@ -791,19 +791,19 @@ class AnalyzerDeleteError(ArangoServerError):
 #########################
 
 
-class PermissionListError(ArangoServerError):
+class PermissionListError(DbmsServerError):
     """Failed to list user permissions."""
 
 
-class PermissionGetError(ArangoServerError):
+class PermissionGetError(DbmsServerError):
     """Failed to retrieve user permission."""
 
 
-class PermissionUpdateError(ArangoServerError):
+class PermissionUpdateError(DbmsServerError):
     """Failed to update user permission."""
 
 
-class PermissionResetError(ArangoServerError):
+class PermissionResetError(DbmsServerError):
     """Failed to reset user permission."""
 
 
@@ -812,31 +812,31 @@ class PermissionResetError(ArangoServerError):
 ##################
 
 
-class WALPropertiesError(ArangoServerError):
+class WALPropertiesError(DbmsServerError):
     """Failed to retrieve WAL properties."""
 
 
-class WALConfigureError(ArangoServerError):
+class WALConfigureError(DbmsServerError):
     """Failed to configure WAL properties."""
 
 
-class WALTransactionListError(ArangoServerError):
+class WALTransactionListError(DbmsServerError):
     """Failed to retrieve running WAL transactions."""
 
 
-class WALFlushError(ArangoServerError):
+class WALFlushError(DbmsServerError):
     """Failed to flush WAL."""
 
 
-class WALTickRangesError(ArangoServerError):
+class WALTickRangesError(DbmsServerError):
     """Failed to return WAL tick ranges."""
 
 
-class WALLastTickError(ArangoServerError):
+class WALLastTickError(DbmsServerError):
     """Failed to return WAL tick ranges."""
 
 
-class WALTailError(ArangoServerError):
+class WALTailError(DbmsServerError):
     """Failed to return WAL tick ranges."""
 
 
@@ -845,67 +845,67 @@ class WALTailError(ArangoServerError):
 ##########################
 
 
-class ReplicationInventoryError(ArangoServerError):
+class ReplicationInventoryError(DbmsServerError):
     """Failed to retrieve inventory of collection and indexes."""
 
 
-class ReplicationDumpBatchCreateError(ArangoServerError):
+class ReplicationDumpBatchCreateError(DbmsServerError):
     """Failed to create dump batch."""
 
 
-class ReplicationDumpBatchDeleteError(ArangoServerError):
+class ReplicationDumpBatchDeleteError(DbmsServerError):
     """Failed to delete a dump batch."""
 
 
-class ReplicationDumpBatchExtendError(ArangoServerError):
+class ReplicationDumpBatchExtendError(DbmsServerError):
     """Failed to extend a dump batch."""
 
 
-class ReplicationDumpError(ArangoServerError):
+class ReplicationDumpError(DbmsServerError):
     """Failed to retrieve collection content."""
 
 
-class ReplicationSyncError(ArangoServerError):
+class ReplicationSyncError(DbmsServerError):
     """Failed to synchronize data from remote."""
 
 
-class ReplicationClusterInventoryError(ArangoServerError):
+class ReplicationClusterInventoryError(DbmsServerError):
     """Failed to retrieve overview of collection and indexes in a cluster."""
 
 
-class ReplicationLoggerStateError(ArangoServerError):
+class ReplicationLoggerStateError(DbmsServerError):
     """Failed to retrieve logger state."""
 
 
-class ReplicationLoggerFirstTickError(ArangoServerError):
+class ReplicationLoggerFirstTickError(DbmsServerError):
     """Failed to retrieve logger first tick."""
 
 
-class ReplicationApplierConfigError(ArangoServerError):
+class ReplicationApplierConfigError(DbmsServerError):
     """Failed to retrieve replication applier configuration."""
 
 
-class ReplicationApplierConfigSetError(ArangoServerError):
+class ReplicationApplierConfigSetError(DbmsServerError):
     """Failed to update replication applier configuration."""
 
 
-class ReplicationApplierStartError(ArangoServerError):
+class ReplicationApplierStartError(DbmsServerError):
     """Failed to start replication applier."""
 
 
-class ReplicationApplierStopError(ArangoServerError):
+class ReplicationApplierStopError(DbmsServerError):
     """Failed to stop replication applier."""
 
 
-class ReplicationApplierStateError(ArangoServerError):
+class ReplicationApplierStateError(DbmsServerError):
     """Failed to retrieve replication applier state."""
 
 
-class ReplicationMakeSlaveError(ArangoServerError):
+class ReplicationMakeSlaveError(DbmsServerError):
     """Failed to change role to slave."""
 
 
-class ReplicationServerIDError(ArangoServerError):
+class ReplicationServerIDError(DbmsServerError):
     """Failed to retrieve server ID."""
 
 
@@ -914,39 +914,39 @@ class ReplicationServerIDError(ArangoServerError):
 ######################
 
 
-class ClusterHealthError(ArangoServerError):
+class ClusterHealthError(DbmsServerError):
     """Failed to retrieve DBServer health."""
 
 
-class ClusterServerIDError(ArangoServerError):
+class ClusterServerIDError(DbmsServerError):
     """Failed to retrieve server ID."""
 
 
-class ClusterServerRoleError(ArangoServerError):
+class ClusterServerRoleError(DbmsServerError):
     """Failed to retrieve server role."""
 
 
-class ClusterServerStatisticsError(ArangoServerError):
+class ClusterServerStatisticsError(DbmsServerError):
     """Failed to retrieve DBServer statistics."""
 
 
-class ClusterServerVersionError(ArangoServerError):
+class ClusterServerVersionError(DbmsServerError):
     """Failed to retrieve server node version."""
 
 
-class ClusterServerEngineError(ArangoServerError):
+class ClusterServerEngineError(DbmsServerError):
     """Failed to retrieve server node engine."""
 
 
-class ClusterMaintenanceModeError(ArangoServerError):
+class ClusterMaintenanceModeError(DbmsServerError):
     """Failed to enable/disable cluster supervision maintenance mode."""
 
 
-class ClusterEndpointsError(ArangoServerError):
+class ClusterEndpointsError(DbmsServerError):
     """Failed to retrieve cluster endpoints."""
 
 
-class ClusterServerCountError(ArangoServerError):
+class ClusterServerCountError(DbmsServerError):
     """Failed to retrieve cluster server count."""
 
 
@@ -955,13 +955,13 @@ class ClusterServerCountError(ArangoServerError):
 ##################
 
 
-class JWTAuthError(ArangoServerError):
-    """Failed to get a new JWT token from ArangoDB."""
+class JWTAuthError(DbmsServerError):
+    """Failed to get a new JWT token from DbmsDB."""
 
 
-class JWTSecretListError(ArangoServerError):
+class JWTSecretListError(DbmsServerError):
     """Failed to retrieve information on currently loaded JWT secrets."""
 
 
-class JWTSecretReloadError(ArangoServerError):
+class JWTSecretReloadError(DbmsServerError):
     """Failed to reload JWT secrets."""

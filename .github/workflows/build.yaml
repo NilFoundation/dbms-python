@@ -14,16 +14,16 @@ jobs:
         python-version: [ 3.7, 3.8, 3.9 ]
     steps:
       - uses: actions/checkout@v2
-      - name: Create ArangoDB Docker container
+      - name: Create DbmsDB Docker container
         run: >
-          docker create --name arango -p 8529:8529 -e ARANGO_ROOT_PASSWORD=passwd
-          arangodb/arangodb:3.7.7 --server.jwt-secret-keyfile=/tmp/keyfile
-      - name: Copy Foxx service zip into ArangoDB Docker container
-        run: docker cp tests/static/service.zip arango:/tmp/service.zip
-      - name: Copy keyfile into ArangoDB Docker container
-        run: docker cp tests/static/keyfile arango:/tmp/keyfile
-      - name: Start ArangoDB Docker container
-        run: docker start arango
+          docker create --name dbms -p 8529:8529 -e ARANGO_ROOT_PASSWORD=""
+          dbmsdb/dbmsdb:3.7.7 --server.jwt-secret-keyfile=/tmp/keyfile
+      - name: Copy Foxx service zip into DbmsDB Docker container
+        run: docker cp tests/static/service.zip dbms:/tmp/service.zip
+      - name: Copy keyfile into DbmsDB Docker container
+        run: docker cp tests/static/keyfile dbms:/tmp/keyfile
+      - name: Start DbmsDB Docker container
+        run: docker start dbms
       - name: Fetch complete history for all tags and branches
         run: git fetch --prune --unshallow
       - name: Set up Python ${{ matrix.python-version }}
@@ -41,9 +41,9 @@ jobs:
       - name: Run isort
         run: isort --check --profile=black .
       - name: Run mypy
-        run: mypy arango
+        run: mypy dbms
       - name: Run pytest
-        run: py.test --complete --cov=arango --cov-report=xml
+        run: py.test --complete --cov=dbms --cov-report=xml
       - name: Run Sphinx doctest
         run: python -m sphinx -b doctest docs docs/_build
       - name: Run Sphinx HTML

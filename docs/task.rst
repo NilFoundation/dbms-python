@@ -1,7 +1,7 @@
 Tasks
 -----
 
-ArangoDB can schedule user-defined Javascript snippets as one-time or periodic
+DbmsDB can schedule user-defined Javascript snippets as one-time or periodic
 (re-scheduled after each execution) tasks. Tasks are executed in the context of
 the database they are defined in.
 
@@ -9,10 +9,10 @@ the database they are defined in.
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -25,7 +25,7 @@ the database they are defined in.
         name='test_task',
         command='''
             var task = function(params){
-                var db = require('@arangodb');
+                var db = require('@dbmsdb');
                 db.print(params);
             }
             task(params);

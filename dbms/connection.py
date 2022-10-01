@@ -16,18 +16,18 @@ import jwt
 from requests import ConnectionError, Session
 from requests_toolbelt import MultipartEncoder
 
-from arango.exceptions import JWTAuthError, ServerConnectionError
-from arango.http import HTTPClient
-from arango.request import Request
-from arango.resolver import HostResolver
-from arango.response import Response
-from arango.typings import Fields, Json
+from dbms.exceptions import JWTAuthError, ServerConnectionError
+from dbms.http import HTTPClient
+from dbms.request import Request
+from dbms.resolver import HostResolver
+from dbms.response import Response
+from dbms.typings import Fields, Json
 
 Connection = Union["BasicConnection", "JwtConnection", "JwtSuperuserConnection"]
 
 
 class BaseConnection:
-    """Base connection to a specific ArangoDB database."""
+    """Base connection to a specific DbmsDB database."""
 
     def __init__(
         self,
@@ -95,9 +95,9 @@ class BaseConnection:
         :param deserialize: Deserialize the response body.
         :type deserialize: bool
         :param resp: HTTP response.
-        :type resp: arango.response.Response
+        :type resp: dbms.response.Response
         :return: HTTP response.
-        :rtype: arango.response.Response
+        :rtype: dbms.response.Response
         """
         if deserialize:
             resp.body = self.deserialize(resp.raw_body)
@@ -121,9 +121,9 @@ class BaseConnection:
         :param host_index: The index of the first host to try
         :type host_index: int
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :return: HTTP response.
-        :rtype: arango.response.Response
+        :rtype: dbms.response.Response
         """
         tries = 0
         indexes_to_filter: Set[int] = set()
@@ -159,11 +159,11 @@ class BaseConnection:
         """Build and return a bulk error response.
 
         :param parent_response: Parent response.
-        :type parent_response: arango.response.Response
+        :type parent_response: dbms.response.Response
         :param body: Error response body.
         :type body: dict
         :return: Child bulk error response.
-        :rtype: arango.response.Response
+        :rtype: dbms.response.Response
         """
         resp = Response(
             method=parent_response.method,
@@ -200,7 +200,7 @@ class BaseConnection:
         :return: Response status code.
         :rtype: int
         """
-        request = Request(method="get", endpoint="/_api/collection")
+        request = Request(method="get", endpoint="/_api/relation")
         resp = self.send_request(request)
         if resp.status_code in {401, 403}:
             raise ServerConnectionError("bad username and/or password")
@@ -210,23 +210,23 @@ class BaseConnection:
 
     @abstractmethod
     def send_request(self, request: Request) -> Response:  # pragma: no cover
-        """Send an HTTP request to ArangoDB server.
+        """Send an HTTP request to DbmsDB server.
 
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :return: HTTP response.
-        :rtype: arango.response.Response
+        :rtype: dbms.response.Response
         """
         raise NotImplementedError
 
 
 class BasicConnection(BaseConnection):
-    """Connection to specific ArangoDB database using basic authentication.
+    """Connection to specific DbmsDB database using basic authentication.
 
     :param hosts: Host URL or list of URLs (coordinators in a cluster).
     :type hosts: [str]
     :param host_resolver: Host resolver (used for clusters).
-    :type host_resolver: arango.resolver.HostResolver
+    :type host_resolver: dbms.resolver.HostResolver
     :param sessions: HTTP session objects per host.
     :type sessions: [requests.Session]
     :param db_name: Database name.
@@ -236,7 +236,7 @@ class BasicConnection(BaseConnection):
     :param password: Password.
     :type password: str
     :param http_client: User-defined HTTP client.
-    :type http_client: arango.http.HTTPClient
+    :type http_client: dbms.http.HTTPClient
     """
 
     def __init__(
@@ -264,24 +264,24 @@ class BasicConnection(BaseConnection):
         self._auth = (username, password)
 
     def send_request(self, request: Request) -> Response:
-        """Send an HTTP request to ArangoDB server.
+        """Send an HTTP request to DbmsDB server.
 
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :return: HTTP response.
-        :rtype: arango.response.Response
+        :rtype: dbms.response.Response
         """
         host_index = self._host_resolver.get_host_index()
         return self.process_request(host_index, request, auth=self._auth)
 
 
 class JwtConnection(BaseConnection):
-    """Connection to specific ArangoDB database using JWT authentication.
+    """Connection to specific DbmsDB database using JWT authentication.
 
     :param hosts: Host URL or list of URLs (coordinators in a cluster).
     :type hosts: [str]
     :param host_resolver: Host resolver (used for clusters).
-    :type host_resolver: arango.resolver.HostResolver
+    :type host_resolver: dbms.resolver.HostResolver
     :param sessions: HTTP session objects per host.
     :type sessions: [requests.Session]
     :param db_name: Database name.
@@ -291,7 +291,7 @@ class JwtConnection(BaseConnection):
     :param password: Password.
     :type password: str
     :param http_client: User-defined HTTP client.
-    :type http_client: arango.http.HTTPClient
+    :type http_client: dbms.http.HTTPClient
     """
 
     def __init__(
@@ -326,12 +326,12 @@ class JwtConnection(BaseConnection):
         self.refresh_token()
 
     def send_request(self, request: Request) -> Response:
-        """Send an HTTP request to ArangoDB server.
+        """Send an HTTP request to DbmsDB server.
 
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :return: HTTP response.
-        :rtype: arango.response.Response
+        :rtype: dbms.response.Response
         """
         host_index = self._host_resolver.get_host_index()
 
@@ -379,7 +379,7 @@ class JwtConnection(BaseConnection):
 
         jwt_payload = jwt.decode(
             self._token,
-            issuer="arangodb",
+            issuer="dbmsdb",
             algorithms=["HS256"],
             options={
                 "require_exp": True,
@@ -394,18 +394,18 @@ class JwtConnection(BaseConnection):
 
 
 class JwtSuperuserConnection(BaseConnection):
-    """Connection to specific ArangoDB database using superuser JWT.
+    """Connection to specific DbmsDB database using superuser JWT.
 
     :param hosts: Host URL or list of URLs (coordinators in a cluster).
     :type hosts: [str]
     :param host_resolver: Host resolver (used for clusters).
-    :type host_resolver: arango.resolver.HostResolver
+    :type host_resolver: dbms.resolver.HostResolver
     :param sessions: HTTP session objects per host.
     :type sessions: [requests.Session]
     :param db_name: Database name.
     :type db_name: str
     :param http_client: User-defined HTTP client.
-    :type http_client: arango.http.HTTPClient
+    :type http_client: dbms.http.HTTPClient
     :param superuser_token: User generated token for superuser access.
     :type superuser_token: str
     """
@@ -433,12 +433,12 @@ class JwtSuperuserConnection(BaseConnection):
         self._auth_header = f"bearer {superuser_token}"
 
     def send_request(self, request: Request) -> Response:
-        """Send an HTTP request to ArangoDB server.
+        """Send an HTTP request to DbmsDB server.
 
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :return: HTTP response.
-        :rtype: arango.response.Response
+        :rtype: dbms.response.Response
         """
         host_index = self._host_resolver.get_host_index()
         request.headers["Authorization"] = self._auth_header

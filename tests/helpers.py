@@ -5,8 +5,8 @@ from uuid import uuid4
 import jwt
 import pytest
 
-from arango.cursor import Cursor
-from arango.exceptions import AsyncExecuteError, BatchExecuteError, TransactionInitError
+from dbms.cursor import Cursor
+from dbms.exceptions import AsyncExecuteError, BatchExecuteError, TransactionInitError
 
 
 def generate_db_name():
@@ -123,7 +123,7 @@ def generate_jwt(secret, exp=3600):
         payload={
             "iat": now,
             "exp": now + exp,
-            "iss": "arangodb",
+            "iss": "dbmsdb",
             "server_id": "client",
         },
         key=secret,
@@ -134,7 +134,7 @@ def clean_doc(obj):
     """Return the document(s) with all extra system keys stripped.
 
     :param obj: document(s)
-    :type obj: list | dict | arango.cursor.Cursor
+    :type obj: list | dict | dbms.cursor.Cursor
     :return: Document(s) with the system keys stripped
     :rtype: list | dict
     """
@@ -154,8 +154,8 @@ def empty_collection(collection):
     """Empty all the documents in the collection.
 
     :param collection: Collection name
-    :type collection: arango.collection.StandardCollection |
-        arango.collection.VertexCollection | arango.collection.EdgeCollection
+    :type collection: dbms.collection.StandardCollection |
+        dbms.collection.VertexCollection | dbms.collection.EdgeCollection
     """
     for doc_id in collection.ids():
         collection.delete(doc_id, sync=True)

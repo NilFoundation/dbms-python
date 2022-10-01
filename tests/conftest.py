@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 import pytest
 
-from arango import ArangoClient, formatter
-from arango.database import StandardDatabase
-from arango.typings import Json
+from dbms import DbmsClient, formatter
+from dbms.database import StandardDatabase
+from dbms.typings import Json
 from tests.executors import (
     TestAsyncApiExecutor,
     TestBatchExecutor,
@@ -24,7 +24,7 @@ from tests.helpers import (
 @dataclass
 class GlobalData:
     url: str = None
-    client: ArangoClient = None
+    client: DbmsClient = None
     username: str = None
     password: str = None
     db_name: str = None
@@ -52,7 +52,7 @@ global_data = GlobalData()
 def pytest_addoption(parser):
     parser.addoption("--host", action="store", default="127.0.0.1")
     parser.addoption("--port", action="store", default="8529")
-    parser.addoption("--passwd", action="store", default="passwd")
+    parser.addoption("--passwd", action="store", default="")
     parser.addoption("--complete", action="store_true")
     parser.addoption("--cluster", action="store_true")
     parser.addoption("--replication", action="store_true")
@@ -63,7 +63,7 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     url = f"http://{config.getoption('host')}:{config.getoption('port')}"
     secret = config.getoption("secret")
-    client = ArangoClient(hosts=[url, url, url])
+    client = DbmsClient(hosts=[url, url, url])
     sys_db = client.db(
         name="_system",
         username="root",

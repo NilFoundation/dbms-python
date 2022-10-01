@@ -5,8 +5,8 @@ from typing import Any, BinaryIO, Dict, Optional, Tuple, Union
 
 from requests_toolbelt import MultipartEncoder
 
-from arango.api import ApiGroup
-from arango.exceptions import (
+from dbms.api import ApiGroup
+from dbms.exceptions import (
     FoxxCommitError,
     FoxxConfigGetError,
     FoxxConfigReplaceError,
@@ -29,11 +29,11 @@ from arango.exceptions import (
     FoxxSwaggerGetError,
     FoxxTestRunError,
 )
-from arango.formatter import format_service_data
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Json, Jsons, Params
+from dbms.formatter import format_service_data
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Json, Jsons, Params
 
 
 class Foxx(ApiGroup):
@@ -86,7 +86,7 @@ class Foxx(ApiGroup):
         :type exclude_system: bool
         :return: List of installed service.
         :rtype: [dict]
-        :raise arango.exceptions.FoxxServiceListError: If retrieval fails.
+        :raise dbms.exceptions.FoxxServiceListError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -108,7 +108,7 @@ class Foxx(ApiGroup):
         :type mount: str
         :return: Service metadata.
         :rtype: dict
-        :raise arango.exceptions.FoxxServiceGetError: If retrieval fails.
+        :raise dbms.exceptions.FoxxServiceGetError: If retrieval fails.
         """
         request = Request(
             method="get", endpoint="/_api/foxx/service", params={"mount": mount}
@@ -151,7 +151,7 @@ class Foxx(ApiGroup):
         :type legacy: bool | None
         :return: Service metadata.
         :rtype: dict
-        :raise arango.exceptions.FoxxServiceCreateError: If install fails.
+        :raise dbms.exceptions.FoxxServiceCreateError: If install fails.
         """
         params: Params = {"mount": mount}
         if development is not None:
@@ -209,7 +209,7 @@ class Foxx(ApiGroup):
         :type dependencies: dict | None
         :return: Service metadata.
         :rtype: dict
-        :raise arango.exceptions.FoxxServiceCreateError: If install fails.
+        :raise dbms.exceptions.FoxxServiceCreateError: If install fails.
         """
         params: Params = {"mount": mount}
         if development is not None:
@@ -268,7 +268,7 @@ class Foxx(ApiGroup):
         :type force: bool | None
         :return: Updated service metadata.
         :rtype: dict
-        :raise arango.exceptions.FoxxServiceUpdateError: If update fails.
+        :raise dbms.exceptions.FoxxServiceUpdateError: If update fails.
         """
         params: Params = {"mount": mount}
         if teardown is not None:
@@ -333,7 +333,7 @@ class Foxx(ApiGroup):
         :type dependencies: dict | None
         :return: Updated service metadata.
         :rtype: dict
-        :raise arango.exceptions.FoxxServiceUpdateError: If update fails.
+        :raise dbms.exceptions.FoxxServiceUpdateError: If update fails.
         """
         params: Params = {"mount": mount}
         if teardown is not None:
@@ -394,7 +394,7 @@ class Foxx(ApiGroup):
         :type force: bool | None
         :return: Replaced service metadata.
         :rtype: dict
-        :raise arango.exceptions.FoxxServiceReplaceError: If replace fails.
+        :raise dbms.exceptions.FoxxServiceReplaceError: If replace fails.
         """
         params: Params = {"mount": mount}
         if teardown is not None:
@@ -459,7 +459,7 @@ class Foxx(ApiGroup):
         :type dependencies: dict | None
         :return: Replaced service metadata.
         :rtype: dict
-        :raise arango.exceptions.FoxxServiceReplaceError: If replace fails.
+        :raise dbms.exceptions.FoxxServiceReplaceError: If replace fails.
         """
         params: Params = {"mount": mount}
         if teardown is not None:
@@ -498,7 +498,7 @@ class Foxx(ApiGroup):
         :type teardown: bool | None
         :return: True if service was deleted successfully.
         :rtype: bool
-        :raise arango.exceptions.FoxxServiceDeleteError: If delete fails.
+        :raise dbms.exceptions.FoxxServiceDeleteError: If delete fails.
         """
         params: Params = {"mount": mount}
         if teardown is not None:
@@ -520,7 +520,7 @@ class Foxx(ApiGroup):
         :type mount: str
         :return: Configuration values.
         :rtype: dict
-        :raise arango.exceptions.FoxxConfigGetError: If retrieval fails.
+        :raise dbms.exceptions.FoxxConfigGetError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -544,7 +544,7 @@ class Foxx(ApiGroup):
         :type config: dict
         :return: Updated configuration values.
         :rtype: dict
-        :raise arango.exceptions.FoxxConfigUpdateError: If update fails.
+        :raise dbms.exceptions.FoxxConfigUpdateError: If update fails.
         """
         request = Request(
             method="patch",
@@ -570,7 +570,7 @@ class Foxx(ApiGroup):
         :type config: dict
         :return: Replaced configuration values.
         :rtype: dict
-        :raise arango.exceptions.FoxxConfigReplaceError: If replace fails.
+        :raise dbms.exceptions.FoxxConfigReplaceError: If replace fails.
         """
         request = Request(
             method="put",
@@ -593,7 +593,7 @@ class Foxx(ApiGroup):
         :type mount: str
         :return: Dependency settings.
         :rtype: dict
-        :raise arango.exceptions.FoxxDependencyGetError: If retrieval fails.
+        :raise dbms.exceptions.FoxxDependencyGetError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -617,7 +617,7 @@ class Foxx(ApiGroup):
         :type dependencies: dict
         :return: Updated dependency settings.
         :rtype: dict
-        :raise arango.exceptions.FoxxDependencyUpdateError: If update fails.
+        :raise dbms.exceptions.FoxxDependencyUpdateError: If update fails.
         """
         request = Request(
             method="patch",
@@ -642,7 +642,7 @@ class Foxx(ApiGroup):
         :type dependencies: dict
         :return: Replaced dependency settings.
         :rtype: dict
-        :raise arango.exceptions.FoxxDependencyReplaceError: If replace fails.
+        :raise dbms.exceptions.FoxxDependencyReplaceError: If replace fails.
         """
         request = Request(
             method="put",
@@ -672,7 +672,7 @@ class Foxx(ApiGroup):
         :type mount: str
         :return: Service metadata.
         :rtype: dict
-        :raise arango.exceptions.FoxxDevModeEnableError: If operation fails.
+        :raise dbms.exceptions.FoxxDevModeEnableError: If operation fails.
         """
         request = Request(
             method="post",
@@ -697,7 +697,7 @@ class Foxx(ApiGroup):
         :type mount: str
         :return: Service metadata.
         :rtype: dict
-        :raise arango.exceptions.FoxxDevModeDisableError: If operation fails.
+        :raise dbms.exceptions.FoxxDevModeDisableError: If operation fails.
         """
         request = Request(
             method="delete",
@@ -719,7 +719,7 @@ class Foxx(ApiGroup):
         :type mount: str
         :return: Service readme.
         :rtype: str
-        :raise arango.exceptions.FoxxReadmeGetError: If retrieval fails.
+        :raise dbms.exceptions.FoxxReadmeGetError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -741,7 +741,7 @@ class Foxx(ApiGroup):
         :type mount: str
         :return: Swagger API description.
         :rtype: dict
-        :raise arango.exceptions.FoxxSwaggerGetError: If retrieval fails.
+        :raise dbms.exceptions.FoxxSwaggerGetError: If retrieval fails.
         """
         request = Request(
             method="get", endpoint="/_api/foxx/swagger", params={"mount": mount}
@@ -769,7 +769,7 @@ class Foxx(ApiGroup):
         :type mount: str
         :return: Service bundle in raw string form.
         :rtype: str
-        :raise arango.exceptions.FoxxDownloadError: If download fails.
+        :raise dbms.exceptions.FoxxDownloadError: If download fails.
         """
         request = Request(
             method="post", endpoint="/_api/foxx/download", params={"mount": mount}
@@ -792,7 +792,7 @@ class Foxx(ApiGroup):
         :type replace: bool | None
         :return: True if the state was committed successfully.
         :rtype: bool
-        :raise arango.exceptions.FoxxCommitError: If commit fails.
+        :raise dbms.exceptions.FoxxCommitError: If commit fails.
         """
         params: Params = {}
         if replace is not None:
@@ -814,7 +814,7 @@ class Foxx(ApiGroup):
         :type mount: str
         :return: Service scripts.
         :rtype: dict
-        :raise arango.exceptions.FoxxScriptListError: If retrieval fails.
+        :raise dbms.exceptions.FoxxScriptListError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -840,7 +840,7 @@ class Foxx(ApiGroup):
         :type arg: Any
         :return: Result of the script, if any.
         :rtype: Any
-        :raise arango.exceptions.FoxxScriptRunError: If script fails.
+        :raise dbms.exceptions.FoxxScriptRunError: If script fails.
         """
         request = Request(
             method="post",
@@ -888,7 +888,7 @@ class Foxx(ApiGroup):
         :type name_filter: str
         :return: Reporter output (e.g. raw JSON string, XML, plain text).
         :rtype: str
-        :raise arango.exceptions.FoxxTestRunError: If test fails.
+        :raise dbms.exceptions.FoxxTestRunError: If test fails.
         """
         params: Params = {"mount": mount, "reporter": reporter}
         if idiomatic is not None:

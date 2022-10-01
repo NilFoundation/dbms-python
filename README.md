@@ -11,7 +11,8 @@ Python driver for =nil; `DROP DATABASE *.
 ## Installation
 
 ```shell
-pip install python-arango --upgrade
+pip3 install wheel
+pip3 install .
 ```
 
 ## Getting Started
@@ -19,19 +20,19 @@ pip install python-arango --upgrade
 Here is a simple usage example:
 
 ```python
-from arango import ArangoClient
+from dbms import DbmsClient
 
-# Initialize the client for ArangoDB.
-client = ArangoClient(hosts="http://localhost:8529")
+# Initialize the client for DbmsDB.
+client = DbmsClient(hosts="http://localhost:8529")
 
 # Connect to "_system" database as root user.
-sys_db = client.db("_system", username="root", password="passwd")
+sys_db = client.db("_system", username="root", password="")
 
 # Create a new database named "test".
 sys_db.create_database("test")
 
 # Connect to "test" database as root user.
-db = client.db("test", username="root", password="passwd")
+db = client.db("test", username="root", password="")
 
 # Create a new collection named "students".
 students = db.create_collection("students")
@@ -49,16 +50,16 @@ cursor = db.aql.execute("FOR doc IN students RETURN doc")
 student_names = [document["name"] for document in cursor]
 ```
 
-Another example with [graphs](https://www.arangodb.com/docs/stable/graphs.html):
+Another example with [graphs](https://www.dbmsdb.com/docs/stable/graphs.html):
 
 ```python
-from arango import ArangoClient
+from dbms import DbmsClient
 
-# Initialize the client for ArangoDB.
-client = ArangoClient(hosts="http://localhost:8529")
+# Initialize the client for DbmsDB.
+client = DbmsClient(hosts="http://localhost:8529")
 
 # Connect to "test" database as root user.
-db = client.db("test", username="root", password="passwd")
+db = client.db("test", username="root", password="")
 
 # Create a new graph named "school".
 graph = db.create_graph("school")
@@ -100,4 +101,4 @@ result = graph.traverse(
 )
 ```
 
-Please see the [documentation](https://docs.python-arango.com) for more details.
+Please see the [documentation](https://docs.python-dbms.com) for more details.

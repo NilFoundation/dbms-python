@@ -3,7 +3,7 @@ Collections
 
 A **collection** contains :doc:`documents <document>`. It is uniquely identified
 by its name which must consist only of hyphen, underscore and alphanumeric
-characters. There are three types of collections in python-arango:
+characters. There are three types of collections in python-dbms:
 
 * **Standard Collection:** contains regular documents.
 * **Vertex Collection:** contains vertex documents for graphs. See
@@ -15,10 +15,10 @@ Here is an example showing how you can manage standard collections:
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

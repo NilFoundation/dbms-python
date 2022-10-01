@@ -2,7 +2,7 @@ from typing import Set
 
 import pytest
 
-from arango.resolver import (
+from dbms.resolver import (
     RandomHostResolver,
     RoundRobinHostResolver,
     SingleHostResolver,

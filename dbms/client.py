@@ -1,20 +1,20 @@
-__all__ = ["ArangoClient"]
+__all__ = ["DbmsClient"]
 
 from json import dumps, loads
 from typing import Any, Callable, Optional, Sequence, Union
 
 from pkg_resources import get_distribution
 
-from arango.connection import (
+from dbms.connection import (
     BasicConnection,
     Connection,
     JwtConnection,
     JwtSuperuserConnection,
 )
-from arango.database import StandardDatabase
-from arango.exceptions import ServerConnectionError
-from arango.http import DefaultHTTPClient, HTTPClient
-from arango.resolver import (
+from dbms.database import StandardDatabase
+from dbms.exceptions import ServerConnectionError
+from dbms.http import DefaultHTTPClient, HTTPClient
+from dbms.resolver import (
     HostResolver,
     RandomHostResolver,
     RoundRobinHostResolver,
@@ -22,8 +22,8 @@ from arango.resolver import (
 )
 
 
-class ArangoClient:
-    """ArangoDB client.
+class DbmsClient:
+    """DbmsDB client.
 
     :param hosts: Host URL or list of URLs (coordinators in a cluster).
     :type hosts: str | [str]
@@ -36,7 +36,7 @@ class ArangoClient:
         number of hosts.
     :type resolver_max_tries: int
     :param http_client: User-defined HTTP client.
-    :type http_client: arango.http.HTTPClient
+    :type http_client: dbms.http.HTTPClient
     :param serializer: User-defined JSON serializer. Must be a callable
         which takes a JSON data type object as its only argument and return
         the serialized string. If not given, ``json.dumps`` is used by default.
@@ -104,7 +104,7 @@ class ArangoClient:
                 session.verify = verify_override
 
     def __repr__(self) -> str:
-        return f"<ArangoClient {','.join(self._hosts)}>"
+        return f"<DbmsClient {','.join(self._hosts)}>"
 
     def close(self) -> None:  # pragma: no cover
         """Close HTTP sessions."""
@@ -113,9 +113,9 @@ class ArangoClient:
 
     @property
     def hosts(self) -> Sequence[str]:
-        """Return the list of ArangoDB host URLs.
+        """Return the list of DbmsDB host URLs.
 
-        :return: List of ArangoDB host URLs.
+        :return: List of DbmsDB host URLs.
         :rtype: [str]
         """
         return self._hosts
@@ -127,7 +127,7 @@ class ArangoClient:
         :return: Client version.
         :rtype: str
         """
-        version: str = get_distribution("python-arango").version
+        version: str = get_distribution("python-dbms").version
         return version
 
     @property
@@ -154,7 +154,7 @@ class ArangoClient:
         superuser_token: Optional[str] = None,
         verify_certificate: bool = True,
     ) -> StandardDatabase:
-        """Connect to an ArangoDB database and return the database API wrapper.
+        """Connect to an DbmsDB database and return the database API wrapper.
 
         :param name: Database name.
         :type name: str
@@ -166,7 +166,7 @@ class ArangoClient:
         :type verify: bool
         :param auth_method: HTTP authentication method. Accepted values are
             "basic" (default) and "jwt". If set to "jwt", the token is
-            refreshed automatically using ArangoDB username and password. This
+            refreshed automatically using DbmsDB username and password. This
             assumes that the clocks of the server and client are synchronized.
         :type auth_method: str
         :param superuser_token: User generated token for superuser access.
@@ -176,8 +176,8 @@ class ArangoClient:
         :param verify_certificate: Verify TLS certificates.
         :type verify_certificate: bool
         :return: Standard database API wrapper.
-        :rtype: arango.database.StandardDatabase
-        :raise arango.exceptions.ServerConnectionError: If **verify** was set
+        :rtype: dbms.database.StandardDatabase
+        :raise dbms.exceptions.ServerConnectionError: If **verify** was set
             to True and the connection fails.
         """
         connection: Connection

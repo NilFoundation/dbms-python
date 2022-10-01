@@ -2,17 +2,17 @@ __all__ = ["Pregel"]
 
 from typing import Optional, Sequence
 
-from arango.api import ApiGroup
-from arango.exceptions import (
+from dbms.api import ApiGroup
+from dbms.exceptions import (
     PregelJobCreateError,
     PregelJobDeleteError,
     PregelJobGetError,
 )
-from arango.formatter import format_pregel_job_data, format_pregel_job_list
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Json
+from dbms.formatter import format_pregel_job_data, format_pregel_job_list
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Json
 
 
 class Pregel(ApiGroup):
@@ -28,7 +28,7 @@ class Pregel(ApiGroup):
         :type job_id: int
         :return: Details of the Pregel job.
         :rtype: dict
-        :raise arango.exceptions.PregelJobGetError: If retrieval fails.
+        :raise dbms.exceptions.PregelJobGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint=f"/_api/control_pregel/{job_id}")
 
@@ -82,7 +82,7 @@ class Pregel(ApiGroup):
         :type edgeCollections: Sequence[str] | None
         :return: Pregel job ID.
         :rtype: int
-        :raise arango.exceptions.PregelJobCreateError: If create fails.
+        :raise dbms.exceptions.PregelJobCreateError: If create fails.
         """
         data: Json = {"algorithm": algorithm, "graphName": graph}
 
@@ -123,7 +123,7 @@ class Pregel(ApiGroup):
         :type job_id: int
         :return: True if Pregel job was deleted successfully.
         :rtype: bool
-        :raise arango.exceptions.PregelJobDeleteError: If delete fails.
+        :raise dbms.exceptions.PregelJobDeleteError: If delete fails.
         """
         request = Request(method="delete", endpoint=f"/_api/control_pregel/{job_id}")
 
@@ -140,7 +140,7 @@ class Pregel(ApiGroup):
 
         :return: Details of each running or recently finished Pregel job.
         :rtype: dict
-        :raise arango.exceptions.PregelJobGetError: If retrieval fails.
+        :raise dbms.exceptions.PregelJobGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/control_pregel")
 

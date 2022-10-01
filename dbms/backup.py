@@ -3,8 +3,8 @@ __all__ = ["Backup"]
 from numbers import Number
 from typing import Optional
 
-from arango.api import ApiGroup
-from arango.exceptions import (
+from dbms.api import ApiGroup
+from dbms.exceptions import (
     BackupCreateError,
     BackupDeleteError,
     BackupDownloadError,
@@ -12,16 +12,16 @@ from arango.exceptions import (
     BackupRestoreError,
     BackupUploadError,
 )
-from arango.formatter import (
+from dbms.formatter import (
     format_backup,
     format_backup_restore,
     format_backup_transfer,
     format_backups,
 )
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Json
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Json
 
 
 class Backup(ApiGroup):  # pragma: no cover
@@ -33,7 +33,7 @@ class Backup(ApiGroup):  # pragma: no cover
         :type backup_id: str
         :return: Backup details.
         :rtype: dict
-        :raise arango.exceptions.BackupGetError: If delete fails.
+        :raise dbms.exceptions.BackupGetError: If delete fails.
         """
         request = Request(
             method="post",
@@ -73,7 +73,7 @@ class Backup(ApiGroup):  # pragma: no cover
         :type timeout: int
         :return: Result of the create operation.
         :rtype: dict
-        :raise arango.exceptions.BackupCreateError: If create fails.
+        :raise dbms.exceptions.BackupCreateError: If create fails.
         """
         data: Json = {"label": label}
 
@@ -100,7 +100,7 @@ class Backup(ApiGroup):  # pragma: no cover
         :type backup_id: str
         :return: True if the backup was deleted successfully.
         :rtype: bool
-        :raise arango.exceptions.BackupDeleteError: If delete fails.
+        :raise dbms.exceptions.BackupDeleteError: If delete fails.
         """
         request = Request(
             method="post", endpoint="/_admin/backup/delete", data={"id": backup_id}
@@ -141,7 +141,7 @@ class Backup(ApiGroup):  # pragma: no cover
         :type download_id: str
         :return: Download details.
         :rtype: dict
-        :raise arango.exceptions.BackupDownloadError: If operation fails.
+        :raise dbms.exceptions.BackupDownloadError: If operation fails.
         """
         data: Json = {}
         if download_id is not None:
@@ -192,7 +192,7 @@ class Backup(ApiGroup):  # pragma: no cover
         :type abort: bool
         :return: Upload details.
         :rtype: dict
-        :raise arango.exceptions.BackupUploadError: If upload operation fails.
+        :raise dbms.exceptions.BackupUploadError: If upload operation fails.
         """
         data: Json = {}
 
@@ -223,7 +223,7 @@ class Backup(ApiGroup):  # pragma: no cover
         :type backup_id: str
         :return: Result of the restore operation.
         :rtype: dict
-        :raise arango.exceptions.BackupRestoreError: If restore fails.
+        :raise dbms.exceptions.BackupRestoreError: If restore fails.
         """
         request = Request(
             method="post", endpoint="/_admin/backup/restore", data={"id": backup_id}

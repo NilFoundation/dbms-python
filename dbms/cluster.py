@@ -2,8 +2,8 @@ __all__ = ["Cluster"]
 
 from typing import List
 
-from arango.api import ApiGroup
-from arango.exceptions import (
+from dbms.api import ApiGroup
+from dbms.exceptions import (
     ClusterEndpointsError,
     ClusterHealthError,
     ClusterMaintenanceModeError,
@@ -14,11 +14,11 @@ from arango.exceptions import (
     ClusterServerStatisticsError,
     ClusterServerVersionError,
 )
-from arango.formatter import format_body
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Json
+from dbms.formatter import format_body
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Json
 
 
 class Cluster(ApiGroup):  # pragma: no cover
@@ -27,7 +27,7 @@ class Cluster(ApiGroup):  # pragma: no cover
 
         :return: Server ID.
         :rtype: str
-        :raise arango.exceptions.ClusterServerIDError: If retrieval fails.
+        :raise dbms.exceptions.ClusterServerIDError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_admin/server/id")
 
@@ -45,7 +45,7 @@ class Cluster(ApiGroup):  # pragma: no cover
             not in a cluster), "COORDINATOR" (cluster coordinator), "PRIMARY",
             "SECONDARY", "AGENT" (Agency server in a cluster) or "UNDEFINED".
         :rtype: str
-        :raise arango.exceptions.ClusterServerRoleError: If retrieval fails.
+        :raise dbms.exceptions.ClusterServerRoleError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_admin/server/role")
 
@@ -63,7 +63,7 @@ class Cluster(ApiGroup):  # pragma: no cover
         :type server_id: str
         :return: Version of the given server.
         :rtype: dict
-        :raise arango.exceptions.ClusterServerVersionError: If retrieval fails.
+        :raise dbms.exceptions.ClusterServerVersionError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -85,7 +85,7 @@ class Cluster(ApiGroup):  # pragma: no cover
         :type server_id: str
         :return: Engine details of the given server.
         :rtype: dict
-        :raise arango.exceptions.ClusterServerEngineError: If retrieval fails.
+        :raise dbms.exceptions.ClusterServerEngineError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -105,7 +105,7 @@ class Cluster(ApiGroup):  # pragma: no cover
 
         :return: Number of servers in the cluster.
         :rtype: int
-        :raise arango.exceptions.ClusterServerCountError: If retrieval fails.
+        :raise dbms.exceptions.ClusterServerCountError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_admin/cluster/numberOfServers")
 
@@ -124,7 +124,7 @@ class Cluster(ApiGroup):  # pragma: no cover
         :type server_id: str
         :return: Statistics for the given server.
         :rtype: dict
-        :raise arango.exceptions.ClusterServerStatisticsError: If retrieval fails.
+        :raise dbms.exceptions.ClusterServerStatisticsError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -144,7 +144,7 @@ class Cluster(ApiGroup):  # pragma: no cover
 
         :return: Cluster health.
         :rtype: dict
-        :raise arango.exceptions.ClusterHealthError: If retrieval fails.
+        :raise dbms.exceptions.ClusterHealthError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -165,7 +165,7 @@ class Cluster(ApiGroup):  # pragma: no cover
         :type mode: str
         :return: Result of the operation.
         :rtype: dict
-        :raise arango.exceptions.ClusterMaintenanceModeError: If toggle fails.
+        :raise dbms.exceptions.ClusterMaintenanceModeError: If toggle fails.
         """
         request = Request(
             method="put",
@@ -185,7 +185,7 @@ class Cluster(ApiGroup):  # pragma: no cover
 
         :return: List of endpoints.
         :rtype: [str]
-        :raise arango.exceptions.ServerEndpointsError: If retrieval fails.
+        :raise dbms.exceptions.ServerEndpointsError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/cluster/endpoints")
 

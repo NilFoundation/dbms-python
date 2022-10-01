@@ -1,15 +1,15 @@
 from datetime import datetime
 
-from arango.aql import AQL
-from arango.backup import Backup
-from arango.cluster import Cluster
-from arango.errno import (
+from dbms.aql import AQL
+from dbms.backup import Backup
+from dbms.cluster import Cluster
+from dbms.errno import (
     DATABASE_NOT_FOUND,
     DUPLICATE_NAME,
     FORBIDDEN,
     USE_SYSTEM_DATABASE,
 )
-from arango.exceptions import (
+from dbms.exceptions import (
     DatabaseCreateError,
     DatabaseDeleteError,
     DatabaseListError,
@@ -29,10 +29,10 @@ from arango.exceptions import (
     ServerTimeError,
     ServerVersionError,
 )
-from arango.foxx import Foxx
-from arango.pregel import Pregel
-from arango.replication import Replication
-from arango.wal import WAL
+from dbms.foxx import Foxx
+from dbms.pregel import Pregel
+from dbms.replication import Replication
+from dbms.wal import WAL
 from tests.helpers import assert_raises, generate_db_name
 
 

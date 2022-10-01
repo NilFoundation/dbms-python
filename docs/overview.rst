@@ -1,14 +1,14 @@
 Getting Started
 ---------------
 
-Here is an example showing how **python-arango** client can be used:
+Here is an example showing how **python-dbms** client can be used:
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient(hosts='http://localhost:8529')
+    # Initialize the DbmsDB client.
+    client = DbmsClient(hosts='http://localhost:8529')
 
     # Connect to "_system" database as root user.
     # This returns an API wrapper for "_system" database.

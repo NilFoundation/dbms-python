@@ -1,7 +1,7 @@
 import pytest
 
-from arango.errno import DATABASE_NOT_FOUND, FORBIDDEN
-from arango.exceptions import (
+from dbms.errno import DATABASE_NOT_FOUND, FORBIDDEN
+from dbms.exceptions import (
     ClusterEndpointsError,
     ClusterHealthError,
     ClusterMaintenanceModeError,

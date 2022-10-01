@@ -1,21 +1,21 @@
 Authentication
 --------------
 
-Python-arango supports two HTTP authentication methods: basic and JSON Web
+Python-dbms supports two HTTP authentication methods: basic and JSON Web
 Tokens (JWT).
 
 Basic Authentication
 ====================
 
-This is python-arango's default authentication method.
+This is python-dbms's default authentication method.
 
 **Example:**
 
 .. testcode::
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user using basic auth.
     db = client.db('test', username='root', password='passwd')
@@ -31,7 +31,7 @@ This is python-arango's default authentication method.
 JSON Web Tokens (JWT)
 =====================
 
-Python-arango automatically obtains JSON web tokens from the server using
+Python-dbms automatically obtains JSON web tokens from the server using
 username and password. It also refreshes expired tokens and retries requests.
 The client and server clocks must be synchronized for the automatic refresh
 to work correctly.
@@ -39,10 +39,10 @@ to work correctly.
 **Example:**
 
 .. testcode::
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user using JWT.
     db = client.db(
@@ -70,10 +70,10 @@ User generated JWT token can be used for superuser access.
 
     import jwt
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Generate the JWT token manually.
     now = timegm(datetime.utcnow().utctimetuple())
@@ -81,7 +81,7 @@ User generated JWT token can be used for superuser access.
         payload={
             'iat': now,
             'exp': now + 3600,
-            'iss': 'arangodb',
+            'iss': 'dbmsdb',
             'server_id': 'client'
         },
         key='secret',

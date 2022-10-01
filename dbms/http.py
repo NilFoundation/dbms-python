@@ -8,8 +8,8 @@ from requests.adapters import HTTPAdapter
 from requests_toolbelt import MultipartEncoder
 from urllib3.util.retry import Retry
 
-from arango.response import Response
-from arango.typings import Headers
+from dbms.response import Response
+from dbms.typings import Headers
 
 
 class HTTPClient(ABC):  # pragma: no cover
@@ -21,7 +21,7 @@ class HTTPClient(ABC):  # pragma: no cover
 
         This method must be overridden by the user.
 
-        :param host: ArangoDB host URL.
+        :param host: DbmsDB host URL.
         :type host: str
         :returns: Requests session object.
         :rtype: requests.Session
@@ -58,7 +58,7 @@ class HTTPClient(ABC):  # pragma: no cover
         :param auth: Username and password.
         :type auth: tuple
         :returns: HTTP response.
-        :rtype: arango.response.Response
+        :rtype: dbms.response.Response
         """
         raise NotImplementedError
 
@@ -73,7 +73,7 @@ class DefaultHTTPClient(HTTPClient):
     def create_session(self, host: str) -> Session:
         """Create and return a new session/connection.
 
-        :param host: ArangoDB host URL.
+        :param host: DbmsDB host URL.
         :type host: str
         :returns: requests session object
         :rtype: requests.Session
@@ -119,7 +119,7 @@ class DefaultHTTPClient(HTTPClient):
         :param auth: Username and password.
         :type auth: tuple
         :returns: HTTP response.
-        :rtype: arango.response.Response
+        :rtype: dbms.response.Response
         """
         response = session.request(
             method=method,

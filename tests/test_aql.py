@@ -1,4 +1,4 @@
-from arango.exceptions import (
+from dbms.exceptions import (
     AQLCacheClearError,
     AQLCacheConfigureError,
     AQLCacheEntriesError,

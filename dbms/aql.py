@@ -3,10 +3,10 @@ __all__ = ["AQL", "AQLQueryCache"]
 from numbers import Number
 from typing import MutableMapping, Optional, Sequence, Union
 
-from arango.api import ApiGroup
-from arango.connection import Connection
-from arango.cursor import Cursor
-from arango.exceptions import (
+from dbms.api import ApiGroup
+from dbms.connection import Connection
+from dbms.cursor import Cursor
+from dbms.exceptions import (
     AQLCacheClearError,
     AQLCacheConfigureError,
     AQLCacheEntriesError,
@@ -24,8 +24,8 @@ from arango.exceptions import (
     AQLQueryTrackingSetError,
     AQLQueryValidateError,
 )
-from arango.executor import ApiExecutor
-from arango.formatter import (
+from dbms.executor import ApiExecutor
+from dbms.formatter import (
     format_aql_cache,
     format_aql_query,
     format_aql_tracking,
@@ -33,10 +33,10 @@ from arango.formatter import (
     format_query_cache_entry,
     format_query_rule_item,
 )
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Json, Jsons
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Json, Jsons
 
 
 class AQLQueryCache(ApiGroup):
@@ -50,7 +50,7 @@ class AQLQueryCache(ApiGroup):
 
         :return: Query cache properties.
         :rtype: dict
-        :raise arango.exceptions.AQLCachePropertiesError: If retrieval fails.
+        :raise dbms.exceptions.AQLCachePropertiesError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query-cache/properties")
 
@@ -87,7 +87,7 @@ class AQLQueryCache(ApiGroup):
         :type include_system: bool
         :return: Query cache properties.
         :rtype: dict
-        :raise arango.exceptions.AQLCacheConfigureError: If operation fails.
+        :raise dbms.exceptions.AQLCacheConfigureError: If operation fails.
         """
         data: Json = {}
         if mode is not None:
@@ -133,7 +133,7 @@ class AQLQueryCache(ApiGroup):
 
         :return: True if query cache was cleared successfully.
         :rtype: bool
-        :raise arango.exceptions.AQLCacheClearError: If operation fails.
+        :raise dbms.exceptions.AQLCacheClearError: If operation fails.
         """
         request = Request(method="delete", endpoint="/_api/query-cache")
 
@@ -146,7 +146,7 @@ class AQLQueryCache(ApiGroup):
 
 
 class AQL(ApiGroup):
-    """AQL (ArangoDB Query Language) API wrapper.
+    """AQL (DbmsDB Query Language) API wrapper.
 
     :param connection: HTTP connection.
     :param executor: API executor.
@@ -163,7 +163,7 @@ class AQL(ApiGroup):
         """Return the query cache API wrapper.
 
         :return: Query cache API wrapper.
-        :rtype: arango.aql.AQLQueryCache
+        :rtype: dbms.aql.AQLQueryCache
         """
         return AQLQueryCache(self._conn, self._executor)
 
@@ -191,7 +191,7 @@ class AQL(ApiGroup):
         :type bind_vars: dict
         :return: Execution plan, or plans if **all_plans** was set to True.
         :rtype: dict | list
-        :raise arango.exceptions.AQLQueryExplainError: If explain fails.
+        :raise dbms.exceptions.AQLQueryExplainError: If explain fails.
         """
         options: Json = {"allPlans": all_plans}
         if max_plans is not None:
@@ -228,7 +228,7 @@ class AQL(ApiGroup):
         :type query: str
         :return: Query details.
         :rtype: dict
-        :raise arango.exceptions.AQLQueryValidateError: If validation fails.
+        :raise dbms.exceptions.AQLQueryValidateError: If validation fails.
         """
         request = Request(method="post", endpoint="/_api/query", data={"query": query})
 
@@ -321,7 +321,7 @@ class AQL(ApiGroup):
         :param satellite_sync_wait: Number of seconds in which the server must
             synchronize the satellite collections involved in the query. When
             the threshold is reached, the query is stopped. Available only for
-            enterprise version of ArangoDB.
+            enterprise version of DbmsDB.
         :type satellite_sync_wait: int | float
         :param stream: If set to True, query is executed in streaming fashion:
             query result is not stored server-side but calculated on the fly.
@@ -341,7 +341,7 @@ class AQL(ApiGroup):
             collections, and users with different access levels may execute the
             same query. This parameter lets you limit the result set by user
             access. Cannot be used in :doc:`transactions <transaction>` and is
-            available only for enterprise version of ArangoDB. Default value is
+            available only for enterprise version of DbmsDB. Default value is
             False.
         :type skip_inaccessible_cols: bool
         :param max_runtime: Query must be executed within this given timeout or
@@ -359,8 +359,8 @@ class AQL(ApiGroup):
             in there, thus leaving more room for the actual hot set.
         :type fill_block_cache: bool
         :return: Result cursor.
-        :rtype: arango.cursor.Cursor
-        :raise arango.exceptions.AQLQueryExecuteError: If execute fails.
+        :rtype: dbms.cursor.Cursor
+        :raise dbms.exceptions.AQLQueryExecuteError: If execute fails.
         """
         data: Json = {"query": query, "count": count}
         if batch_size is not None:
@@ -424,7 +424,7 @@ class AQL(ApiGroup):
         :type query_id: str
         :return: True if kill request was sent successfully.
         :rtype: bool
-        :raise arango.exceptions.AQLQueryKillError: If the send fails.
+        :raise dbms.exceptions.AQLQueryKillError: If the send fails.
         """
         request = Request(method="delete", endpoint=f"/_api/query/{query_id}")
 
@@ -440,7 +440,7 @@ class AQL(ApiGroup):
 
         :return: Running AQL queries.
         :rtype: [dict]
-        :raise arango.exceptions.AQLQueryListError: If retrieval fails.
+        :raise dbms.exceptions.AQLQueryListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query/current")
 
@@ -456,7 +456,7 @@ class AQL(ApiGroup):
 
         :return: Slow AQL queries.
         :rtype: [dict]
-        :raise arango.exceptions.AQLQueryListError: If retrieval fails.
+        :raise dbms.exceptions.AQLQueryListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query/slow")
 
@@ -472,7 +472,7 @@ class AQL(ApiGroup):
 
         :return: True if slow queries were cleared successfully.
         :rtype: bool
-        :raise arango.exceptions.AQLQueryClearError: If operation fails.
+        :raise dbms.exceptions.AQLQueryClearError: If operation fails.
         """
         request = Request(method="delete", endpoint="/_api/query/slow")
 
@@ -488,7 +488,7 @@ class AQL(ApiGroup):
 
         :return: AQL query tracking properties.
         :rtype: dict
-        :raise arango.exceptions.AQLQueryTrackingGetError: If retrieval fails.
+        :raise dbms.exceptions.AQLQueryTrackingGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query/properties")
 
@@ -528,7 +528,7 @@ class AQL(ApiGroup):
         :type track_slow_queries: bool
         :return: Updated AQL query tracking properties.
         :rtype: dict
-        :raise arango.exceptions.AQLQueryTrackingSetError: If operation fails.
+        :raise dbms.exceptions.AQLQueryTrackingSetError: If operation fails.
         """
         data: Json = {}
         if enabled is not None:
@@ -558,7 +558,7 @@ class AQL(ApiGroup):
 
         :return: AQL functions.
         :rtype: [dict]
-        :raise arango.exceptions.AQLFunctionListError: If retrieval fails.
+        :raise dbms.exceptions.AQLFunctionListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/aqlfunction")
 
@@ -585,7 +585,7 @@ class AQL(ApiGroup):
         :return: Whether the AQL function was newly created or an existing one
             was replaced.
         :rtype: dict
-        :raise arango.exceptions.AQLFunctionCreateError: If create fails.
+        :raise dbms.exceptions.AQLFunctionCreateError: If create fails.
         """
         request = Request(
             method="post",
@@ -618,7 +618,7 @@ class AQL(ApiGroup):
             False if function(s) was not found and **ignore_missing** was set
             to True.
         :rtype: dict | bool
-        :raise arango.exceptions.AQLFunctionDeleteError: If delete fails.
+        :raise dbms.exceptions.AQLFunctionDeleteError: If delete fails.
         """
         request = Request(
             method="delete",
@@ -640,7 +640,7 @@ class AQL(ApiGroup):
 
         :return: The available optimizer rules for AQL queries
         :rtype: dict
-        :raise arango.exceptions.AQLQueryRulesGetError: If retrieval fails.
+        :raise dbms.exceptions.AQLQueryRulesGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query/rules")
 

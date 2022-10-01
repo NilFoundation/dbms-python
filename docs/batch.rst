@@ -1,7 +1,7 @@
 Batch API Execution
 -------------------
 
-In **batch API executions**, requests to ArangoDB server are stored in client-side
+In **batch API executions**, requests to DbmsDB server are stored in client-side
 in-memory queue, and committed together in a single HTTP call. After the commit,
 results can be retrieved later from :ref:`BatchJob` objects.
 
@@ -9,10 +9,10 @@ results can be retrieved later from :ref:`BatchJob` objects.
 
 .. code-block:: python
 
-    from arango import ArangoClient, AQLQueryExecuteError
+    from dbms import DbmsClient, AQLQueryExecuteError
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

@@ -1,7 +1,7 @@
 Schema Validation
 -----------------
 
-ArangoDB supports document validation using JSON schemas. You can use this
+DbmsDB supports document validation using JSON schemas. You can use this
 feature by providing a schema during collection creation using the ``schema``
 parameter.
 
@@ -9,10 +9,10 @@ parameter.
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

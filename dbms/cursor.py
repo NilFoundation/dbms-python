@@ -3,22 +3,22 @@ __all__ = ["Cursor"]
 from collections import deque
 from typing import Any, Deque, Optional, Sequence
 
-from arango.connection import BaseConnection
-from arango.exceptions import (
+from dbms.connection import BaseConnection
+from dbms.exceptions import (
     CursorCloseError,
     CursorCountError,
     CursorEmptyError,
     CursorNextError,
     CursorStateError,
 )
-from arango.request import Request
-from arango.typings import Json
+from dbms.request import Request
+from dbms.typings import Json
 
 
 class Cursor:
     """Cursor API wrapper.
 
-    Cursors fetch query results from ArangoDB server in batches. Cursor objects
+    Cursors fetch query results from DbmsDB server in batches. Cursor objects
     are *stateful* as they store the fetched items in-memory. They must not be
     shared across threads without proper locking mechanism.
 
@@ -80,9 +80,9 @@ class Cursor:
         return f"<Cursor {self._id}>" if self._id else "<Cursor>"
 
     def _update(self, data: Json) -> Json:
-        """Update the cursor using data from ArangoDB server.
+        """Update the cursor using data from DbmsDB server.
 
-        :param data: Cursor data from ArangoDB server (e.g. results).
+        :param data: Cursor data from DbmsDB server (e.g. results).
         :type data: dict
         :return: Update cursor data.
         :rtype: dict
@@ -230,12 +230,12 @@ class Cursor:
         """Pop the next item from the current batch.
 
         If current batch is empty/depleted, an API request is automatically
-        sent to ArangoDB server to fetch the next batch and update the cursor.
+        sent to DbmsDB server to fetch the next batch and update the cursor.
 
         :return: Next item in current batch.
         :raise StopIteration: If the result set is depleted.
-        :raise arango.exceptions.CursorNextError: If batch retrieval fails.
-        :raise arango.exceptions.CursorStateError: If cursor ID is not set.
+        :raise dbms.exceptions.CursorNextError: If batch retrieval fails.
+        :raise dbms.exceptions.CursorStateError: If cursor ID is not set.
         """
         if self.empty():
             if not self.has_more():
@@ -248,11 +248,11 @@ class Cursor:
         """Pop the next item from current batch.
 
         If current batch is empty/depleted, an exception is raised. You must
-        call :func:`arango.cursor.Cursor.fetch` to manually fetch the next
+        call :func:`dbms.cursor.Cursor.fetch` to manually fetch the next
         batch from server.
 
         :return: Next item in current batch.
-        :raise arango.exceptions.CursorEmptyError: If current batch is empty.
+        :raise dbms.exceptions.CursorEmptyError: If current batch is empty.
         """
         if len(self._batch) == 0:
             raise CursorEmptyError("current batch is empty")
@@ -263,8 +263,8 @@ class Cursor:
 
         :return: New batch details.
         :rtype: dict
-        :raise arango.exceptions.CursorNextError: If batch retrieval fails.
-        :raise arango.exceptions.CursorStateError: If cursor ID is not set.
+        :raise dbms.exceptions.CursorNextError: If batch retrieval fails.
+        :raise dbms.exceptions.CursorStateError: If cursor ID is not set.
         """
         if self._id is None:
             raise CursorStateError("cursor ID not set")
@@ -286,8 +286,8 @@ class Cursor:
             if there are no cursors to close server-side (e.g. result set is
             smaller than the batch size).
         :rtype: bool | None
-        :raise arango.exceptions.CursorCloseError: If operation fails.
-        :raise arango.exceptions.CursorStateError: If cursor ID is not set.
+        :raise dbms.exceptions.CursorCloseError: If operation fails.
+        :raise dbms.exceptions.CursorStateError: If cursor ID is not set.
         """
         if self._id is None:
             return None

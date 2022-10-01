@@ -1,13 +1,13 @@
 Transactions
 ------------
 
-In **transactions**, requests to ArangoDB server are committed as a single,
+In **transactions**, requests to DbmsDB server are committed as a single,
 logical unit of work (ACID compliant).
 
 .. warning::
 
-    New transaction REST API was added to ArangoDB version 3.5. In order to use
-    it python-arango's own transaction API had to be overhauled in version
+    New transaction REST API was added to DbmsDB version 3.5. In order to use
+    it python-dbms's own transaction API had to be overhauled in version
     5.0.0. **The changes are not backward-compatible**: context managers are no
     longer offered (you must always commit the transaction youself), method
     signatures are different when beginning the transaction, and results are
@@ -17,10 +17,10 @@ logical unit of work (ACID compliant).
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -43,7 +43,7 @@ logical unit of work (ACID compliant).
     assert txn_aql.context == 'transaction'
     assert txn_col.context == 'transaction'
 
-    # From python-arango version 5+, results are returned immediately instead
+    # From python-dbms version 5+, results are returned immediately instead
     # of job objects on API execution.
     assert '_rev' in txn_col.insert({'_key': 'Abby'})
     assert '_rev' in txn_col.insert({'_key': 'John'})
@@ -78,17 +78,17 @@ logical unit of work (ACID compliant).
 See :ref:`TransactionDatabase` for API specification.
 
 Alternatively, you can use
-:func:`arango.database.StandardDatabase.execute_transaction` to run raw
+:func:`dbms.database.StandardDatabase.execute_transaction` to run raw
 Javascript code in a transaction.
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

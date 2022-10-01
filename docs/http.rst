@@ -3,20 +3,20 @@
 HTTP Clients
 ------------
 
-Python-arango lets you define your own HTTP client for sending requests to
-ArangoDB server. The default implementation uses the requests_ library.
+Python-dbms lets you define your own HTTP client for sending requests to
+DbmsDB server. The default implementation uses the requests_ library.
 
-Your HTTP client must inherit :class:`arango.http.HTTPClient` and implement the
+Your HTTP client must inherit :class:`dbms.http.HTTPClient` and implement the
 following abstract methods:
 
-* :func:`arango.http.HTTPClient.create_session`
-* :func:`arango.http.HTTPClient.send_request`
+* :func:`dbms.http.HTTPClient.create_session`
+* :func:`dbms.http.HTTPClient.send_request`
 
 The **create_session** method must return a `requests.Session`_ instance per
 connected host (coordinator). The session objects are stored in the client.
 
 The **send_request** method must use the session to send an HTTP request, and
-return a fully populated instance of :class:`arango.response.Response`.
+return a fully populated instance of :class:`dbms.response.Response`.
 
 For example, let's say your HTTP client needs:
 
@@ -35,8 +35,8 @@ Your ``CustomHTTPClient`` class might look something like this:
     from requests import Session
     from requests.packages.urllib3.util.retry import Retry
 
-    from arango.response import Response
-    from arango.http import HTTPClient
+    from dbms.response import Response
+    from dbms.http import HTTPClient
 
 
     class CustomHTTPClient(HTTPClient):
@@ -89,7 +89,7 @@ Your ``CustomHTTPClient`` class might look something like this:
             )
             self._logger.debug(f'Got {response.status_code}')
 
-            # Return an instance of arango.response.Response.
+            # Return an instance of dbms.response.Response.
             return Response(
                 method=response.request.method,
                 url=response.url,
@@ -103,11 +103,11 @@ Then you would inject your client as follows:
 
 .. code-block:: python
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
     from my_module import CustomHTTPClient
 
-    client = ArangoClient(
+    client = DbmsClient(
         hosts='http://localhost:8529',
         http_client=CustomHTTPClient()
     )

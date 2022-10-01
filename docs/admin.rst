@@ -1,7 +1,7 @@
 Server Administration
 ---------------------
 
-Python-arango provides operations for server administration and monitoring.
+Python-dbms provides operations for server administration and monitoring.
 Most of these operations can only be performed by admin users via ``_system``
 database.
 
@@ -9,13 +9,13 @@ database.
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "_system" database as root user.
-    sys_db = client.db('_system', username='root', password='passwd')
+    sys_db = client.db('_system', username='root', password='')
 
     # Retrieve the server version.
     sys_db.version()
@@ -65,16 +65,16 @@ Features available in enterprise edition only:
 
 .. code-block:: python
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "_system" database as root user using JWT authentication.
     sys_db = client.db(
         '_system',
         username='root',
-        password='passwd',
+        password='',
         auth_method='jwt'
     )
 

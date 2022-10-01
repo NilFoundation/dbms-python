@@ -1,6 +1,6 @@
 import pytest
 
-from arango.exceptions import (
+from dbms.exceptions import (
     CursorCloseError,
     CursorCountError,
     CursorEmptyError,

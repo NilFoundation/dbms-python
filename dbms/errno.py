@@ -86,7 +86,7 @@ DEADLOCK = 29
 # Call failed as server shutdown is in progress.
 SHUTTING_DOWN = 30
 
-# Feature only for enterprise version of ArangoDB.
+# Feature only for enterprise version of DbmsDB.
 ONLY_ENTERPRISE = 31
 
 # Resource usage exceeded maximum value.
@@ -98,7 +98,7 @@ ICU_ERROR = 33
 # Cannot read a file.
 CANNOT_READ_FILE = 34
 
-# Incompatible version of ArangoDB.
+# Incompatible version of DbmsDB.
 INCOMPATIBLE_VERSION = 35
 
 # Requested resource disabled.
@@ -135,7 +135,7 @@ HTTP_SERVER_ERROR = 500
 # Service temporarily unavailable.
 HTTP_SERVICE_UNAVAILABLE = 503
 
-# Service contacted by ArangoDB did not respond in time.
+# Service contacted by DbmsDB did not respond in time.
 HTTP_GATEWAY_TIMEOUT = 504
 
 ##########################
@@ -149,7 +149,7 @@ HTTP_CORRUPTED_JSON = 600
 HTTP_SUPERFLUOUS_SUFFICES = 601
 
 ####################################
-# Internal ArangoDB Storage Errors #
+# Internal DbmsDB Storage Errors #
 ####################################
 
 # Datafile in illegal state.
@@ -177,7 +177,7 @@ RECOVERY = 1008
 DATAFILE_STATISTICS_NOT_FOUND = 1009
 
 ####################################
-# External ArangoDB Storage Errors #
+# External DbmsDB Storage Errors #
 ####################################
 
 # Datafile corrupted.
@@ -217,7 +217,7 @@ DATADIR_UNLOCKABLE = 1110
 SYNC_TIMEOUT = 1111
 
 ###################################
-# General ArangoDB Storage Errors #
+# General DbmsDB Storage Errors #
 ###################################
 
 # Conflict detected while updating or deleting a document.
@@ -326,7 +326,7 @@ DOCUMENT_REV_BAD = 1239
 INCOMPLETE_READ = 1240
 
 ###################################
-# Checked ArangoDB Storage Errors #
+# Checked DbmsDB Storage Errors #
 ###################################
 
 # Datafile full.
@@ -348,7 +348,7 @@ MERGE_IN_PROGRESS = 1304
 IO_ERROR = 1305
 
 ###############################
-# ArangoDB Replication Errors #
+# DbmsDB Replication Errors #
 ###############################
 
 # Replication applier received no (or incomplete) response from master.
@@ -400,7 +400,7 @@ REPLICATION_WRONG_CHECKSUM = 1416
 REPLICATION_SHARD_NONEMPTY = 1417
 
 ###########################
-# ArangoDB Cluster Errors #
+# DbmsDB Cluster Errors #
 ###########################
 
 # Raised on some occasions when one server gets a request from another.
@@ -532,7 +532,7 @@ CLUSTER_VIEW_ID_EXISTS = 1498
 CLUSTER_COULD_NOT_DROP_COLLECTION = 1499
 
 #########################
-# ArangoDB Query Errors #
+# DbmsDB Query Errors #
 #########################
 
 # Running query killed by an explicit admin command.
@@ -673,7 +673,7 @@ QUERY_USER_ASSERT = 1593
 QUERY_USER_WARN = 1594
 
 ##########################
-# ArangoDB Cursor Errors #
+# DbmsDB Cursor Errors #
 ##########################
 
 # Cursor ID not found.
@@ -683,7 +683,7 @@ CURSOR_NOT_FOUND = 1600
 CURSOR_BUSY = 1601
 
 ##############################
-# ArangoDB Validation Errors #
+# DbmsDB Validation Errors #
 ##############################
 
 # Document does not pass schema validation.
@@ -693,7 +693,7 @@ VALIDATION_FAILED = 1620
 VALIDATION_BAD_PARAMETER = 1621
 
 ###############################
-# ArangoDB Transaction Errors #
+# DbmsDB Transaction Errors #
 ###############################
 
 # Wrong usage of transactions. This is an internal error.
@@ -737,7 +737,7 @@ USER_EXTERNAL = 1705
 # Cannot download service from central repository.
 SERVICE_DOWNLOAD_FAILED = 1752
 
-# Service upload from the client to the ArangoDB server failed.
+# Service upload from the client to the DbmsDB server failed.
 SERVICE_UPLOAD_FAILED = 1753
 
 ###############

@@ -2,20 +2,20 @@ Replication
 -----------
 
 **Replication** allows you to replicate data onto another machine. It forms the
-basis of all disaster recovery and failover features ArangoDB offers. For more
-information, refer to `ArangoDB manual`_.
+basis of all disaster recovery and failover features DbmsDB offers. For more
+information, refer to `DbmsDB manual`_.
 
-.. _ArangoDB manual: https://www.arangodb.com/docs/stable/architecture-replication.html
+.. _DbmsDB manual: https://www.dbmsdb.com/docs/stable/architecture-replication.html
 
 
 **Example:**
 
 .. code-block:: python
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

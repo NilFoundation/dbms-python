@@ -11,8 +11,8 @@ from typing import Any, Callable, Optional, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urlencode
 from uuid import uuid4
 
-from arango.connection import Connection
-from arango.exceptions import (
+from dbms.connection import Connection
+from dbms.exceptions import (
     AsyncExecuteError,
     BatchExecuteError,
     BatchStateError,
@@ -21,11 +21,11 @@ from arango.exceptions import (
     TransactionInitError,
     TransactionStatusError,
 )
-from arango.job import AsyncJob, BatchJob
-from arango.request import Request
-from arango.response import Response
-from arango.typings import Fields, Json
-from arango.utils import suppress_warning
+from dbms.job import AsyncJob, BatchJob
+from dbms.request import Request
+from dbms.response import Response
+from dbms.typings import Fields, Json
+from dbms.utils import suppress_warning
 
 ApiExecutor = Union[
     "DefaultApiExecutor",
@@ -41,8 +41,8 @@ class DefaultApiExecutor:
     """Default API executor.
 
     :param connection: HTTP connection.
-    :type connection: arango.connection.BasicConnection |
-        arango.connection.JwtConnection | arango.connection.JwtSuperuserConnection
+    :type connection: dbms.connection.BasicConnection |
+        dbms.connection.JwtConnection | dbms.connection.JwtSuperuserConnection
     """
 
     def __init__(self, connection: Connection) -> None:
@@ -56,7 +56,7 @@ class DefaultApiExecutor:
         """Execute an API request and return the result.
 
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :param response_handler: HTTP response handler.
         :type response_handler: callable
         :return: API execution result.
@@ -69,10 +69,10 @@ class AsyncApiExecutor:
     """Async API Executor.
 
     :param connection: HTTP connection.
-    :type connection: arango.connection.BasicConnection |
-        arango.connection.JwtConnection | arango.connection.JwtSuperuserConnection
+    :type connection: dbms.connection.BasicConnection |
+        dbms.connection.JwtConnection | dbms.connection.JwtSuperuserConnection
     :param return_result: If set to True, API executions return instances of
-        :class:`arango.job.AsyncJob` and results can be retrieved from server
+        :class:`dbms.job.AsyncJob` and results can be retrieved from server
         once available. If set to False, API executions return None and no
         results are stored on server.
     :type return_result: bool
@@ -92,17 +92,17 @@ class AsyncApiExecutor:
         """Execute an API request asynchronously.
 
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :param response_handler: HTTP response handler.
         :type response_handler: callable
         :return: Async job or None if **return_result** parameter was set to
             False during initialization.
-        :rtype: arango.job.AsyncJob | None
+        :rtype: dbms.job.AsyncJob | None
         """
         if self._return_result:
-            request.headers["x-arango-async"] = "store"
+            request.headers["x-dbms-async"] = "store"
         else:
-            request.headers["x-arango-async"] = "true"
+            request.headers["x-dbms-async"] = "true"
 
         resp = self._conn.send_request(request)
         if not resp.is_success:
@@ -110,7 +110,7 @@ class AsyncApiExecutor:
         if not self._return_result:
             return None
 
-        job_id = resp.headers["x-arango-async-id"]
+        job_id = resp.headers["x-dbms-async-id"]
         return AsyncJob(self._conn, job_id, response_handler)
 
 
@@ -119,7 +119,7 @@ class BatchApiExecutor:
 
     :param connection: HTTP connection.
     :param return_result: If set to True, API executions return instances of
-        :class:`arango.job.BatchJob` that are populated with results on commit.
+        :class:`dbms.job.BatchJob` that are populated with results on commit.
         If set to False, API executions return None and no results are tracked
         client-side.
     :type return_result: bool
@@ -158,7 +158,7 @@ class BatchApiExecutor:
 
         :return: Batch jobs or None if **return_result** parameter was set to
             False during initialization.
-        :rtype: [arango.job.BatchJob] | None
+        :rtype: [dbms.job.BatchJob] | None
         """
         if not self._return_result:
             return None
@@ -170,13 +170,13 @@ class BatchApiExecutor:
         """Place the request in the batch queue.
 
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :param response_handler: HTTP response handler.
         :type response_handler: callable
         :return: Batch job or None if **return_result** parameter was set to
             False during initialization.
-        :rtype: arango.job.BatchJob | None
-        :raise arango.exceptions.BatchStateError: If batch was already
+        :rtype: dbms.job.BatchJob | None
+        :raise dbms.exceptions.BatchStateError: If batch was already
             committed.
         """
         if self._committed:
@@ -190,15 +190,15 @@ class BatchApiExecutor:
         """Execute the queued requests in a single batch API request.
 
         If **return_result** parameter was set to True during initialization,
-        :class:`arango.job.BatchJob` instances are populated with results.
+        :class:`dbms.job.BatchJob` instances are populated with results.
 
         :return: Batch jobs or None if **return_result** parameter was set to
             False during initialization.
-        :rtype: [arango.job.BatchJob] | None
-        :raise arango.exceptions.BatchStateError: If batch state is invalid
+        :rtype: [dbms.job.BatchJob] | None
+        :raise dbms.exceptions.BatchStateError: If batch state is invalid
             (e.g. batch was already committed or size of response from server
             did not match the expected).
-        :raise arango.exceptions.BatchExecuteError: If commit fails.
+        :raise dbms.exceptions.BatchExecuteError: If commit fails.
         """
         if self._committed:
             raise BatchStateError("batch already committed")
@@ -215,7 +215,7 @@ class BatchApiExecutor:
         buffer = []
         for req, job in self._queue.values():
             buffer.append(f"--{boundary}")
-            buffer.append("Content-Type: application/x-arango-batchpart")
+            buffer.append("Content-Type: application/x-dbms-batchpart")
             buffer.append(f"Content-Id: {job.id}")
             buffer.append("\r\n" + self._stringify_request(req))
         buffer.append(f"--{boundary}--")
@@ -352,12 +352,12 @@ class TransactionApiExecutor:
         """Execute API request in a transaction and return the result.
 
         :param request: HTTP request.
-        :type request: arango.request.Request
+        :type request: dbms.request.Request
         :param response_handler: HTTP response handler.
         :type response_handler: callable
         :return: API execution result.
         """
-        request.headers["x-arango-trx-id"] = self._id
+        request.headers["x-dbms-trx-id"] = self._id
         resp = self._conn.send_request(request)
         return response_handler(resp)
 
@@ -366,7 +366,7 @@ class TransactionApiExecutor:
 
         :return: Transaction status.
         :rtype: str
-        :raise arango.exceptions.TransactionStatusError: If retrieval fails.
+        :raise dbms.exceptions.TransactionStatusError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -383,7 +383,7 @@ class TransactionApiExecutor:
 
         :return: True if commit was successful.
         :rtype: bool
-        :raise arango.exceptions.TransactionCommitError: If commit fails.
+        :raise dbms.exceptions.TransactionCommitError: If commit fails.
         """
         request = Request(
             method="put",
@@ -400,7 +400,7 @@ class TransactionApiExecutor:
 
         :return: True if the abort operation was successful.
         :rtype: bool
-        :raise arango.exceptions.TransactionAbortError: If abort fails.
+        :raise dbms.exceptions.TransactionAbortError: If abort fails.
         """
         request = Request(
             method="delete",

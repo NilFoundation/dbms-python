@@ -1,4 +1,4 @@
-from arango.response import Response
+from dbms.response import Response
 
 
 def test_response(conn):

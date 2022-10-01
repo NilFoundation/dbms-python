@@ -1,13 +1,13 @@
 AQL
 ----
 
-**ArangoDB Query Language (AQL)** is used to read and write data. It is similar
+**DbmsDB Query Language (AQL)** is used to read and write data. It is similar
 to SQL for relational databases, but without the support for data definition
 operations such as creating or deleting :doc:`databases <database>`,
 :doc:`collections <collection>` or :doc:`indexes <indexes>`. For more
-information, refer to `ArangoDB manual`_.
+information, refer to `DbmsDB manual`_.
 
-.. _ArangoDB manual: https://docs.arangodb.com
+.. _DbmsDB manual: https://docs.dbmsdb.com
 
 AQL Queries
 ===========
@@ -19,10 +19,10 @@ AQL queries are invoked from AQL API wrapper. Executing queries returns
 
 .. testcode::
 
-    from arango import ArangoClient, AQLQueryKillError
+    from dbms import DbmsClient, AQLQueryKillError
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -90,10 +90,10 @@ AQL functionality. They are somewhat similar to SQL procedures.
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -127,10 +127,10 @@ are not.
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

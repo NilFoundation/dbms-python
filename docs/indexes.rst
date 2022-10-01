@@ -5,18 +5,18 @@ Indexes
 collection has a primary hash index on ``_key`` field by default. This index
 cannot be deleted or modified. Every edge collection has additional indexes
 on fields ``_from`` and ``_to``. For more information on indexes, refer to
-`ArangoDB manual`_.
+`DbmsDB manual`_.
 
-.. _ArangoDB manual: https://docs.arangodb.com
+.. _DbmsDB manual: https://docs.dbmsdb.com
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

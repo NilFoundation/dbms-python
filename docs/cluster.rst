@@ -1,31 +1,31 @@
 Clusters
 --------
 
-Python-arango provides APIs for working with ArangoDB clusters. For more
-information on the design and architecture, refer to `ArangoDB manual`_.
+Python-dbms provides APIs for working with DbmsDB clusters. For more
+information on the design and architecture, refer to `DbmsDB manual`_.
 
-.. _ArangoDB manual: https://docs.arangodb.com
+.. _DbmsDB manual: https://docs.dbmsdb.com
 
 Coordinators
 ============
 
-To connect to multiple ArangoDB coordinators, you must provide either a list of
+To connect to multiple DbmsDB coordinators, you must provide either a list of
 host strings or a comma-separated string during client initialization.
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
     # Single host
-    client = ArangoClient(hosts='http://localhost:8529')
+    client = DbmsClient(hosts='http://localhost:8529')
 
     # Multiple hosts (option 1: list)
-    client = ArangoClient(hosts=['http://host1:8529', 'http://host2:8529'])
+    client = DbmsClient(hosts=['http://host1:8529', 'http://host2:8529'])
 
     # Multiple hosts (option 2: comma-separated string)
-    client = ArangoClient(hosts='http://host1:8529,http://host2:8529')
+    client = DbmsClient(hosts='http://host1:8529,http://host2:8529')
 
 By default, a `requests.Session`_ instance is created per coordinator. HTTP
 requests to a host are sent using only its corresponding session. For more
@@ -43,27 +43,27 @@ There are two load-balancing strategies available: "roundrobin" and "random"
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
     hosts = ['http://host1:8529', 'http://host2:8529']
 
     # Round-robin
-    client = ArangoClient(hosts=hosts, host_resolver='roundrobin')
+    client = DbmsClient(hosts=hosts, host_resolver='roundrobin')
 
     # Random
-    client = ArangoClient(hosts=hosts, host_resolver='random')
+    client = DbmsClient(hosts=hosts, host_resolver='random')
 
 Administration
 ==============
 
-Below is an example on how to manage clusters using python-arango.
+Below is an example on how to manage clusters using python-dbms.
 
 .. code-block:: python
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "_system" database as root user.
     sys_db = client.db('_system', username='root', password='passwd')
@@ -91,4 +91,4 @@ Below is an example on how to manage clusters using python-arango.
     cluster.toggle_maintenance_mode('on')
     cluster.toggle_maintenance_mode('off')
 
-See :ref:`ArangoClient` and :ref:`Cluster` for API specification.
+See :ref:`DbmsClient` and :ref:`Cluster` for API specification.

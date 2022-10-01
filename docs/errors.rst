@@ -1,25 +1,25 @@
 Error Handling
 --------------
 
-All python-arango exceptions inherit :class:`arango.exceptions.ArangoError`,
-which splits into subclasses :class:`arango.exceptions.ArangoServerError` and
-:class:`arango.exceptions.ArangoClientError`.
+All python-dbms exceptions inherit :class:`dbms.exceptions.DbmsError`,
+which splits into subclasses :class:`dbms.exceptions.DbmsServerError` and
+:class:`dbms.exceptions.DbmsClientError`.
 
 Server Errors
 =============
 
-:class:`arango.exceptions.ArangoServerError` exceptions lightly wrap non-2xx
-HTTP responses coming from ArangoDB. Each exception object contains the error
+:class:`dbms.exceptions.DbmsServerError` exceptions lightly wrap non-2xx
+HTTP responses coming from DbmsDB. Each exception object contains the error
 message, error code and HTTP request response details.
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient, ArangoServerError, DocumentInsertError
+    from dbms import DbmsClient, DbmsServerError, DocumentInsertError
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -33,18 +33,18 @@ message, error code and HTTP request response details.
 
     except DocumentInsertError as exc:
 
-        assert isinstance(exc, ArangoServerError)
+        assert isinstance(exc, DbmsServerError)
         assert exc.source == 'server'
 
-        exc.message           # Exception message usually from ArangoDB
-        exc.error_message     # Raw error message from ArangoDB
-        exc.error_code        # Error code from ArangoDB
+        exc.message           # Exception message usually from DbmsDB
+        exc.error_message     # Raw error message from DbmsDB
+        exc.error_code        # Error code from DbmsDB
         exc.url               # URL (API endpoint)
         exc.http_method       # HTTP method (e.g. "POST")
         exc.http_headers      # Response headers
         exc.http_code         # Status code (e.g. 200)
 
-        # You can inspect the ArangoDB response directly.
+        # You can inspect the DbmsDB response directly.
         response = exc.response
         response.method       # HTTP method (e.g. "POST")
         response.headers      # Response headers
@@ -54,9 +54,9 @@ message, error code and HTTP request response details.
         response.raw_body     # Raw string response body
         response.status_text  # Status text (e.g "OK")
         response.status_code  # Status code (e.g. 200)
-        response.error_code   # Error code from ArangoDB
+        response.error_code   # Error code from DbmsDB
 
-        # You can also inspect the request sent to ArangoDB.
+        # You can also inspect the request sent to DbmsDB.
         request = exc.request
         request.method        # HTTP method (e.g. "post")
         request.endpoint      # API endpoint starting with "/_api"
@@ -69,18 +69,18 @@ See :ref:`Response` and :ref:`Request` for reference.
 Client Errors
 =============
 
-:class:`arango.exceptions.ArangoClientError` exceptions originate from
-python-arango client itself. They do not contain error codes nor HTTP request
+:class:`dbms.exceptions.DbmsClientError` exceptions originate from
+python-dbms client itself. They do not contain error codes nor HTTP request
 response details.
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient, ArangoClientError, DocumentParseError
+    from dbms import DbmsClient, DbmsClientError, DocumentParseError
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -93,7 +93,7 @@ response details.
 
     except DocumentParseError as exc:
 
-        assert isinstance(exc, ArangoClientError)
+        assert isinstance(exc, DbmsClientError)
         assert exc.source == 'client'
 
         # Only the error message is set.
@@ -110,17 +110,17 @@ response details.
 Exceptions
 ==========
 
-Below are all exceptions from python-arango.
+Below are all exceptions from python-dbms.
 
-.. automodule:: arango.exceptions
+.. automodule:: dbms.exceptions
     :members:
 
 
 Error Codes
 ===========
 
-The `errno` module contains a constant mapping to `ArangoDB's error codes
-<https://www.arangodb.com/docs/stable/appendix-error-codes.html>`_.
+The `errno` module contains a constant mapping to `DbmsDB's error codes
+<https://www.dbmsdb.com/docs/stable/appendix-error-codes.html>`_.
 
-.. automodule:: arango.errno
+.. automodule:: dbms.errno
     :members:

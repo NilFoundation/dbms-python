@@ -2,8 +2,8 @@ __all__ = ["WAL"]
 
 from typing import Optional
 
-from arango.api import ApiGroup
-from arango.exceptions import (
+from dbms.api import ApiGroup
+from dbms.exceptions import (
     WALConfigureError,
     WALFlushError,
     WALLastTickError,
@@ -12,16 +12,16 @@ from arango.exceptions import (
     WALTickRangesError,
     WALTransactionListError,
 )
-from arango.formatter import (
+from dbms.formatter import (
     format_replication_header,
     format_tick_values,
     format_wal_properties,
     format_wal_transactions,
 )
-from arango.request import Request
-from arango.response import Response
-from arango.result import Result
-from arango.typings import Json, Params
+from dbms.request import Request
+from dbms.response import Response
+from dbms.result import Result
+from dbms.typings import Json, Params
 
 
 class WAL(ApiGroup):  # pragma: no cover
@@ -32,7 +32,7 @@ class WAL(ApiGroup):  # pragma: no cover
 
         :return: WAL properties.
         :rtype: dict
-        :raise arango.exceptions.WALPropertiesError: If retrieval fails.
+        :raise dbms.exceptions.WALPropertiesError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_admin/wal/properties")
 
@@ -72,7 +72,7 @@ class WAL(ApiGroup):  # pragma: no cover
         :type throttle_limit: int
         :return: New WAL properties.
         :rtype: dict
-        :raise arango.exceptions.WALConfigureError: If operation fails.
+        :raise dbms.exceptions.WALConfigureError: If operation fails.
         """
         data: Json = {}
         if oversized_ops is not None:
@@ -116,7 +116,7 @@ class WAL(ApiGroup):  # pragma: no cover
 
         :return: Details on currently running WAL transactions.
         :rtype: dict
-        :raise arango.exceptions.WALTransactionListError: If retrieval fails.
+        :raise dbms.exceptions.WALTransactionListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_admin/wal/transactions")
 
@@ -136,7 +136,7 @@ class WAL(ApiGroup):  # pragma: no cover
         :type garbage_collect: bool
         :return: True if WAL was flushed successfully.
         :rtype: bool
-        :raise arango.exceptions.WALFlushError: If flush operation fails.
+        :raise dbms.exceptions.WALFlushError: If flush operation fails.
         """
         request = Request(
             method="put",
@@ -156,7 +156,7 @@ class WAL(ApiGroup):  # pragma: no cover
 
         :return: Ranges of tick values.
         :rtype: dict
-        :raise arango.exceptions.WALTickRangesError: If retrieval fails.
+        :raise dbms.exceptions.WALTickRangesError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/wal/range")
 
@@ -172,7 +172,7 @@ class WAL(ApiGroup):  # pragma: no cover
 
         :return: Last tick value in the WAL.
         :rtype: dict
-        :raise arango.exceptions.WALLastTickError: If retrieval fails.
+        :raise dbms.exceptions.WALLastTickError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/wal/lastTick")
 
@@ -239,7 +239,7 @@ class WAL(ApiGroup):  # pragma: no cover
             a string. If **deserialize** is set to True, it is deserialized and
             returned as a list of dictionaries.
         :rtype: dict
-        :raise arango.exceptions.WALTailError: If tail operation fails.
+        :raise dbms.exceptions.WALTailError: If tail operation fails.
         """
         params: Params = {}
         if lower is not None:

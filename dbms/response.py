@@ -33,9 +33,9 @@ class Response:
     :vartype raw_body: str
     :ivar body: JSON-deserialized response body.
     :vartype body: str | bool | int | float | list | dict | None
-    :ivar error_code: Error code from ArangoDB server.
+    :ivar error_code: Error code from DbmsDB server.
     :vartype error_code: int
-    :ivar error_message: Error message from ArangoDB server.
+    :ivar error_message: Error message from DbmsDB server.
     :vartype error_message: str
     :ivar is_success: True if response status code was 2XX.
     :vartype is_success: bool

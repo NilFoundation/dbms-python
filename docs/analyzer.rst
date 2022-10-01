@@ -1,19 +1,19 @@
 Analyzers
 ---------
 
-Python-arango supports **analyzers**. For more information on analyzers, refer
-to `ArangoDB manual`_.
+Python-dbms supports **analyzers**. For more information on analyzers, refer
+to `DbmsDB manual`_.
 
-.. _ArangoDB manual: https://docs.arangodb.com
+.. _DbmsDB manual: https://docs.dbmsdb.com
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')

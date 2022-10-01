@@ -2,7 +2,7 @@ Write-Ahead Log (WAL)
 ---------------------
 
 **Write-Ahead Log (WAL)** is a set of append-only files recording all writes
-on ArangoDB server. It is typically used to perform data recovery after a crash
+on DbmsDB server. It is typically used to perform data recovery after a crash
 or synchronize slave databases with master databases in replicated environments.
 WAL operations can only be performed by admin users via ``_system`` database.
 
@@ -10,10 +10,10 @@ WAL operations can only be performed by admin users via ``_system`` database.
 
 .. code-block:: python
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "_system" database as root user.
     sys_db = client.db('_system', username='root', password='passwd')

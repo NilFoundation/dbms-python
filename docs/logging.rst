@@ -2,7 +2,7 @@ Logging
 -------
 
 To see full HTTP request and response details, you can modify the logger
-settings for the Requests_ library, which python-arango uses under the hood:
+settings for the Requests_ library, which python-dbms uses under the hood:
 
 .. _Requests: https://github.com/requests/requests
 
@@ -25,5 +25,5 @@ settings for the Requests_ library, which python-arango uses under the hood:
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
 
-If python-arango's default HTTP client is overridden, the code snippet above
+If python-dbms's default HTTP client is overridden, the code snippet above
 may not work as expected. See :doc:`http` for more information.

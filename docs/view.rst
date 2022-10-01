@@ -1,19 +1,19 @@
-Views and ArangoSearch
+Views and DbmsSearch
 ----------------------
 
-Python-arango supports **view** management. For more information on view
-properties, refer to `ArangoDB manual`_.
+Python-dbms supports **view** management. For more information on view
+properties, refer to `DbmsDB manual`_.
 
-.. _ArangoDB manual: https://docs.arangodb.com
+.. _DbmsDB manual: https://docs.dbmsdb.com
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
@@ -24,7 +24,7 @@ properties, refer to `ArangoDB manual`_.
     # Create a view.
     db.create_view(
         name='foo',
-        view_type='arangosearch',
+        view_type='dbmssearch',
         properties={
             'cleanupIntervalStep': 0,
             'consolidationIntervalMsec': 0
@@ -56,44 +56,44 @@ properties, refer to `ArangoDB manual`_.
     db.delete_view('bar')
 
 
-Python-arango also supports **ArangoSearch** views.
+Python-dbms also supports **DbmsSearch** views.
 
 **Example:**
 
 .. testcode::
 
-    from arango import ArangoClient
+    from dbms import DbmsClient
 
-    # Initialize the ArangoDB client.
-    client = ArangoClient()
+    # Initialize the DbmsDB client.
+    client = DbmsClient()
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # Create an ArangoSearch view.
-    db.create_arangosearch_view(
-        name='arangosearch_view',
+    # Create an DbmsSearch view.
+    db.create_dbmssearch_view(
+        name='dbmssearch_view',
         properties={'cleanupIntervalStep': 0}
     )
 
-    # Partially update an ArangoSearch view.
-    db.update_arangosearch_view(
-        name='arangosearch_view',
+    # Partially update an DbmsSearch view.
+    db.update_dbmssearch_view(
+        name='dbmssearch_view',
         properties={'cleanupIntervalStep': 1000}
     )
 
-    # Replace an ArangoSearch view.
-    db.replace_arangosearch_view(
-        name='arangosearch_view',
+    # Replace an DbmsSearch view.
+    db.replace_dbmssearch_view(
+        name='dbmssearch_view',
         properties={'cleanupIntervalStep': 2000}
     )
 
-    # ArangoSearch views can be retrieved or deleted using regular view API
-    db.view('arangosearch_view')
-    db.delete_view('arangosearch_view')
+    # DbmsSearch views can be retrieved or deleted using regular view API
+    db.view('dbmssearch_view')
+    db.delete_view('dbmssearch_view')
 
 
 For more information on the content of view **properties**, see
-https://www.arangodb.com/docs/stable/http/views-arangosearch.html
+https://www.dbmsdb.com/docs/stable/http/views-dbmssearch.html
 
 Refer to :ref:`StandardDatabase` class for API specification.
