@@ -1,20 +1,11 @@
-![Logo](https://user-images.githubusercontent.com/2701938/108583516-c3576680-72ee-11eb-883f-2d9b52e74e45.png)
-
-[![Build](https://github.com/ArangoDB-Community/python-arango/actions/workflows/build.yaml/badge.svg)](https://github.com/ArangoDB-Community/python-arango/actions/workflows/build.yaml)
-[![CodeQL](https://github.com/ArangoDB-Community/python-arango/actions/workflows/codeql.yaml/badge.svg)](https://github.com/ArangoDB-Community/python-arango/actions/workflows/codeql.yaml)
-[![codecov](https://codecov.io/gh/ArangoDB-Community/python-arango/branch/main/graph/badge.svg?token=M8zrjrzsUY)](https://codecov.io/gh/ArangoDB-Community/python-arango)
-[![PyPI version](https://badge.fury.io/py/python-arango.svg)](https://badge.fury.io/py/python-arango)
-[![GitHub license](https://img.shields.io/github/license/ArangoDB-Community/python-arango?color=brightgreen)](https://github.com/ArangoDB-Community/python-arango/blob/main/LICENSE)
 ![Python version](https://img.shields.io/badge/python-3.7%2B-blue)
 
-# Python-Arango
+# =nil; `DROP DATABASE * Python SDK
 
-Python driver for [ArangoDB](https://www.arangodb.com), a scalable multi-model
-database natively supporting documents, graphs and search.
+Python driver for =nil; `DROP DATABASE *.
 
 ## Requirements
 
-- ArangoDB version 3.7+
 - Python version 3.7+
 
 ## Installation
