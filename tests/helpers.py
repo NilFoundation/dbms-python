@@ -123,7 +123,7 @@ def generate_jwt(secret, exp=3600):
         payload={
             "iat": now,
             "exp": now + exp,
-            "iss": "dbmsdb",
+            "iss": "dbms",
             "server_id": "client",
         },
         key=secret,
