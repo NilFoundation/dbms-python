@@ -11,7 +11,7 @@ from tests.helpers import clean_doc
 
 
 @pytest.fixture(autouse=True)
-def setup_collection(col, docs):
+def setup_relation(col, docs):
     col.import_bulk(docs)
 
 

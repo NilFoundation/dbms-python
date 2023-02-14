@@ -83,7 +83,7 @@ class AQLQueryCache(ApiGroup):
         :param max_entry_size: Max entry size of each query result stored per
             database-specific cache.
         :type max_entry_size: int
-        :param include_system: Store results of queries in system collections.
+        :param include_system: Store results of queries in system relations.
         :type include_system: bool
         :return: Query cache properties.
         :rtype: dict
@@ -319,13 +319,13 @@ class AQL(ApiGroup):
             which an intermediate commit is performed automatically.
         :type intermediate_commit_size: int
         :param satellite_sync_wait: Number of seconds in which the server must
-            synchronize the satellite collections involved in the query. When
+            synchronize the satellite relations involved in the query. When
             the threshold is reached, the query is stopped. Available only for
             enterprise version of DbmsDB.
         :type satellite_sync_wait: int | float
         :param stream: If set to True, query is executed in streaming fashion:
             query result is not stored server-side but calculated on the fly.
-            Note: long-running queries hold collection locks for as long as the
+            Note: long-running queries hold relation locks for as long as the
             cursor exists. If set to False, query is executed right away in its
             entirety. Results are either returned right away (if the result set
             is small enough), or stored server-side and accessible via cursors
@@ -335,10 +335,10 @@ class AQL(ApiGroup):
             queries. Query statistics, warnings and profiling data are made
             available only after the query is finished. Default value is False.
         :type stream: bool
-        :param skip_inaccessible_cols: If set to True, collections without user
+        :param skip_inaccessible_cols: If set to True, relations without user
             access are skipped, and query executes normally instead of raising
             an error. This helps certain use cases: a graph may contain several
-            collections, and users with different access levels may execute the
+            relations, and users with different access levels may execute the
             same query. This parameter lets you limit the result set by user
             access. Cannot be used in :doc:`transactions <transaction>` and is
             available only for enterprise version of DbmsDB. Default value is
@@ -400,7 +400,7 @@ class AQL(ApiGroup):
         if stream is not None:
             options["stream"] = stream
         if skip_inaccessible_cols is not None:
-            options["skipInaccessibleCollections"] = skip_inaccessible_cols
+            options["skipInaccessibleRelations"] = skip_inaccessible_cols
         if max_runtime is not None:
             options["maxRuntime"] = max_runtime
 
@@ -560,7 +560,7 @@ class AQL(ApiGroup):
         :rtype: [dict]
         :raise dbms.exceptions.AQLFunctionListError: If retrieval fails.
         """
-        request = Request(method="get", endpoint="/_api/aqlfunction")
+        request = Request(method="get", endpoint="/_api/sqlfunction")
 
         def response_handler(resp: Response) -> Jsons:
             if not resp.is_success:
@@ -589,7 +589,7 @@ class AQL(ApiGroup):
         """
         request = Request(
             method="post",
-            endpoint="/_api/aqlfunction",
+            endpoint="/_api/sqlfunction",
             data={"name": name, "code": code},
         )
 
@@ -622,7 +622,7 @@ class AQL(ApiGroup):
         """
         request = Request(
             method="delete",
-            endpoint=f"/_api/aqlfunction/{name}",
+            endpoint=f"/_api/sqlfunction/{name}",
             params={"group": group},
         )
 

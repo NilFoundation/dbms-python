@@ -233,63 +233,63 @@ class BatchExecuteError(DbmsServerError):
 
 
 #########################
-# Collection Exceptions #
+# Relation Exceptions #
 #########################
 
 
-class CollectionListError(DbmsServerError):
-    """Failed to retrieve collections."""
+class RelationListError(DbmsServerError):
+    """Failed to retrieve relations."""
 
 
-class CollectionPropertiesError(DbmsServerError):
-    """Failed to retrieve collection properties."""
+class RelationPropertiesError(DbmsServerError):
+    """Failed to retrieve relation properties."""
 
 
-class CollectionConfigureError(DbmsServerError):
-    """Failed to configure collection properties."""
+class RelationConfigureError(DbmsServerError):
+    """Failed to configure relation properties."""
 
 
-class CollectionStatisticsError(DbmsServerError):
-    """Failed to retrieve collection statistics."""
+class RelationStatisticsError(DbmsServerError):
+    """Failed to retrieve relation statistics."""
 
 
-class CollectionRevisionError(DbmsServerError):
-    """Failed to retrieve collection revision."""
+class RelationRevisionError(DbmsServerError):
+    """Failed to retrieve relation revision."""
 
 
-class CollectionChecksumError(DbmsServerError):
-    """Failed to retrieve collection checksum."""
+class RelationChecksumError(DbmsServerError):
+    """Failed to retrieve relation checksum."""
 
 
-class CollectionCreateError(DbmsServerError):
-    """Failed to create collection."""
+class RelationCreateError(DbmsServerError):
+    """Failed to create relation."""
 
 
-class CollectionDeleteError(DbmsServerError):
-    """Failed to delete collection."""
+class RelationDeleteError(DbmsServerError):
+    """Failed to delete relation."""
 
 
-class CollectionRenameError(DbmsServerError):
-    """Failed to rename collection."""
+class RelationRenameError(DbmsServerError):
+    """Failed to rename relation."""
 
 
-class CollectionTruncateError(DbmsServerError):
-    """Failed to truncate collection."""
+class RelationTruncateError(DbmsServerError):
+    """Failed to truncate relation."""
 
 
-class CollectionLoadError(DbmsServerError):
-    """Failed to load collection."""
+class RelationLoadError(DbmsServerError):
+    """Failed to load relation."""
 
 
-class CollectionUnloadError(DbmsServerError):
-    """Failed to unload collection."""
+class RelationUnloadError(DbmsServerError):
+    """Failed to unload relation."""
 
 
-class CollectionRecalculateCountError(DbmsServerError):
+class RelationRecalculateCountError(DbmsServerError):
     """Failed to recalculate document count."""
 
 
-class CollectionResponsibleShardError(DbmsServerError):
+class RelationResponsibleShardError(DbmsServerError):
     """Failed to retrieve responsible shard."""
 
 
@@ -502,16 +502,16 @@ class GraphTraverseError(DbmsServerError):
     """Failed to execute graph traversal."""
 
 
-class VertexCollectionListError(DbmsServerError):
-    """Failed to retrieve vertex collections."""
+class VertexRelationListError(DbmsServerError):
+    """Failed to retrieve vertex relations."""
 
 
-class VertexCollectionCreateError(DbmsServerError):
-    """Failed to create vertex collection."""
+class VertexRelationCreateError(DbmsServerError):
+    """Failed to create vertex relation."""
 
 
-class VertexCollectionDeleteError(DbmsServerError):
-    """Failed to delete vertex collection."""
+class VertexRelationDeleteError(DbmsServerError):
+    """Failed to delete vertex relation."""
 
 
 class EdgeDefinitionListError(DbmsServerError):
@@ -540,15 +540,15 @@ class EdgeListError(DbmsServerError):
 
 
 class IndexListError(DbmsServerError):
-    """Failed to retrieve collection indexes."""
+    """Failed to retrieve relation indexes."""
 
 
 class IndexCreateError(DbmsServerError):
-    """Failed to create collection index."""
+    """Failed to create relation index."""
 
 
 class IndexDeleteError(DbmsServerError):
-    """Failed to delete collection index."""
+    """Failed to delete relation index."""
 
 
 class IndexLoadError(DbmsServerError):
@@ -846,7 +846,7 @@ class WALTailError(DbmsServerError):
 
 
 class ReplicationInventoryError(DbmsServerError):
-    """Failed to retrieve inventory of collection and indexes."""
+    """Failed to retrieve inventory of relation and indexes."""
 
 
 class ReplicationDumpBatchCreateError(DbmsServerError):
@@ -862,7 +862,7 @@ class ReplicationDumpBatchExtendError(DbmsServerError):
 
 
 class ReplicationDumpError(DbmsServerError):
-    """Failed to retrieve collection content."""
+    """Failed to retrieve relation content."""
 
 
 class ReplicationSyncError(DbmsServerError):
@@ -870,7 +870,7 @@ class ReplicationSyncError(DbmsServerError):
 
 
 class ReplicationClusterInventoryError(DbmsServerError):
-    """Failed to retrieve overview of collection and indexes in a cluster."""
+    """Failed to retrieve overview of relation and indexes in a cluster."""
 
 
 class ReplicationLoggerStateError(DbmsServerError):

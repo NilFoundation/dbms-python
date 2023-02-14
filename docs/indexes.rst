@@ -1,9 +1,9 @@
 Indexes
 -------
 
-**Indexes** can be added to collections to speed up document lookups. Every
-collection has a primary hash index on ``_key`` field by default. This index
-cannot be deleted or modified. Every edge collection has additional indexes
+**Indexes** can be added to relations to speed up document lookups. Every
+relation has a primary hash index on ``_key`` field by default. This index
+cannot be deleted or modified. Every edge relation has additional indexes
 on fields ``_from`` and ``_to``. For more information on indexes, refer to
 `DbmsDB manual`_.
 
@@ -21,10 +21,10 @@ on fields ``_from`` and ``_to``. For more information on indexes, refer to
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # Create a new collection named "cities".
-    cities = db.create_collection('cities')
+    # Create a new relation named "cities".
+    cities = db.create_relation('cities')
 
-    # List the indexes in the collection.
+    # List the indexes in the relation.
     cities.indexes()
 
     # Add a new hash index on document fields "continent" and "country".
@@ -49,7 +49,7 @@ on fields ``_from`` and ``_to``. For more information on indexes, refer to
     # Indexes may be added with a name that can be referred to in AQL queries.
     index = cities.add_hash_index(fields=['country'], name='my_hash_index')
 
-    # Delete the last index from the collection.
+    # Delete the last index from the relation.
     cities.delete_index(index['id'])
 
-See :ref:`StandardCollection` for API specification.
+See :ref:`StandardRelation` for API specification.

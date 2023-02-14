@@ -8,7 +8,7 @@ from dbms.api import ApiGroup
 from dbms.aql import AQL
 from dbms.backup import Backup
 from dbms.cluster import Cluster
-from dbms.collection import StandardCollection
+from dbms.relation import StandardRelation
 from dbms.connection import Connection
 from dbms.exceptions import (
     AnalyzerCreateError,
@@ -17,9 +17,9 @@ from dbms.exceptions import (
     AnalyzerListError,
     AsyncJobClearError,
     AsyncJobListError,
-    CollectionCreateError,
-    CollectionDeleteError,
-    CollectionListError,
+    RelationCreateError,
+    RelationDeleteError,
+    RelationListError,
     DatabaseCreateError,
     DatabaseDeleteError,
     DatabaseListError,
@@ -100,26 +100,26 @@ from dbms.wal import WAL
 class Database(ApiGroup):
     """Base class for Database API wrappers."""
 
-    def __getitem__(self, name: str) -> StandardCollection:
-        """Return the collection API wrapper.
+    def __getitem__(self, name: str) -> StandardRelation:
+        """Return the relation API wrapper.
 
-        :param name: Collection name.
+        :param name: Relation name.
         :type name: str
-        :return: Collection API wrapper.
-        :rtype: dbms.collection.StandardCollection
+        :return: Relation API wrapper.
+        :rtype: dbms.relation.StandardRelation
         """
-        return self.collection(name)
+        return self.relation(name)
 
-    def _get_col_by_doc(self, document: Union[str, Json]) -> StandardCollection:
-        """Return the collection of the given document.
+    def _get_col_by_doc(self, document: Union[str, Json]) -> StandardRelation:
+        """Return the relation of the given document.
 
         :param document: Document ID or body with "_id" field.
         :type document: str | dict
-        :return: Collection API wrapper.
-        :rtype: dbms.collection.StandardCollection
+        :return: Relation API wrapper.
+        :rtype: dbms.relation.StandardRelation
         :raise dbms.exceptions.DocumentParseError: On malformed document.
         """
-        return self.collection(get_col_name(document))
+        return self.relation(get_col_name(document))
 
     @property
     def name(self) -> str:
@@ -229,26 +229,26 @@ class Database(ApiGroup):
 
         :param command: Javascript command to execute.
         :type command: str
-        :param read: Names of collections read during transaction. If parameter
-            **allow_implicit** is set to True, any undeclared read collections
+        :param read: Names of relations read during transaction. If parameter
+            **allow_implicit** is set to True, any undeclared read relations
             are loaded lazily.
         :type read: [str] | None
-        :param write: Names of collections written to during transaction.
-            Transaction fails on undeclared write collections.
+        :param write: Names of relations written to during transaction.
+            Transaction fails on undeclared write relations.
         :type write: [str] | None
         :param params: Optional parameters passed into the Javascript command.
         :type params: dict | None
         :param sync: Block until operation is synchronized to disk.
         :type sync: bool | None
-        :param timeout: Timeout for waiting on collection locks. If set to 0,
+        :param timeout: Timeout for waiting on relation locks. If set to 0,
             DbmsDB server waits indefinitely. If not set, system default
             value is used.
         :type timeout: int | None
         :param max_size: Max transaction size limit in bytes.
         :type max_size: int | None
-        :param allow_implicit: If set to True, undeclared read collections are
+        :param allow_implicit: If set to True, undeclared read relations are
             loaded lazily. If set to False, transaction fails on any undeclared
-            collections.
+            relations.
         :type allow_implicit: bool | None
         :param intermediate_commit_count: Max number of operations after which
             an intermediate commit is performed automatically.
@@ -260,15 +260,15 @@ class Database(ApiGroup):
         :rtype: Any
         :raise dbms.exceptions.TransactionExecuteError: If execution fails.
         """
-        collections: Json = {"allowImplicit": allow_implicit}
+        relations: Json = {"allowImplicit": allow_implicit}
         if read is not None:
-            collections["read"] = read
+            relations["read"] = read
         if write is not None:
-            collections["write"] = write
+            relations["write"] = write
 
         data: Json = {"action": command}
-        if collections:
-            data["collections"] = collections
+        if relations:
+            data["collections"] = relations
         if params is not None:
             data["params"] = params
         if timeout is not None:
@@ -770,12 +770,12 @@ class Database(ApiGroup):
             and "extra" (see below for example). If not set, only the admin and
             current user are granted access.
         :type users: [dict]
-        :param replication_factor: Default replication factor for collections
+        :param replication_factor: Default replication factor for relations
             created in this database. Special values include "satellite" which
-            replicates the collection to every DBServer, and 1 which disables
+            replicates the relation to every DBServer, and 1 which disables
             replication. Used for clusters only.
         :type replication_factor: int | str
-        :param write_concern: Default write concern for collections created in
+        :param write_concern: Default write concern for relations created in
             this database. Determines how many copies of each shard are
             required to be in sync on different DBServers. If there are less
             than these many copies in the cluster a shard will refuse to write.
@@ -783,7 +783,7 @@ class Database(ApiGroup):
             same time, however. Value of this parameter can not be larger than
             the value of **replication_factor**. Used for clusters only.
         :type write_concern: int
-        :param sharding: Sharding method used for new collections in this
+        :param sharding: Sharding method used for new relations in this
             database. Allowed values are: "", "flexible" and "single". The
             first two are equivalent. Used for clusters only.
         :type sharding: str
@@ -858,62 +858,62 @@ class Database(ApiGroup):
         return self._execute(request, response_handler)
 
     #########################
-    # Collection Management #
+    # Relation Management #
     #########################
 
-    def collection(self, name: str) -> StandardCollection:
-        """Return the standard collection API wrapper.
+    def relation(self, name: str) -> StandardRelation:
+        """Return the standard relation API wrapper.
 
-        :param name: Collection name.
+        :param name: Relation name.
         :type name: str
-        :return: Standard collection API wrapper.
-        :rtype: dbms.collection.StandardCollection
+        :return: Standard relation API wrapper.
+        :rtype: dbms.relation.StandardRelation
         """
-        return StandardCollection(self._conn, self._executor, name)
+        return StandardRelation(self._conn, self._executor, name)
 
-    def has_collection(self, name: str) -> Result[bool]:
-        """Check if collection exists in the database.
+    def has_relation(self, name: str) -> Result[bool]:
+        """Check if relation exists in the database.
 
-        :param name: Collection name.
+        :param name: Relation name.
         :type name: str
-        :return: True if collection exists, False otherwise.
+        :return: True if relation exists, False otherwise.
         :rtype: bool
         """
         request = Request(method="get", endpoint="/_api/relation")
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
-                raise CollectionListError(resp, request)
+                raise RelationListError(resp, request)
             return any(col["name"] == name for col in resp.body["result"])
 
         return self._execute(request, response_handler)
 
-    def collections(self) -> Result[Jsons]:
-        """Return the collections in the database.
+    def relations(self) -> Result[Jsons]:
+        """Return the relations in the database.
 
-        :return: Collections in the database and their details.
+        :return: Relations in the database and their details.
         :rtype: [dict]
-        :raise dbms.exceptions.CollectionListError: If retrieval fails.
+        :raise dbms.exceptions.RelationListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/relation")
 
         def response_handler(resp: Response) -> Jsons:
             if not resp.is_success:
-                raise CollectionListError(resp, request)
+                raise RelationListError(resp, request)
             return [
                 {
                     "id": col["id"],
                     "name": col["name"],
                     "system": col["isSystem"],
-                    "type": StandardCollection.types[col["type"]],
-                    "status": StandardCollection.statuses[col["status"]],
+                    "type": StandardRelation.types[col["type"]],
+                    "status": StandardRelation.statuses[col["status"]],
                 }
                 for col in resp.body["result"]
             ]
 
         return self._execute(request, response_handler)
 
-    def create_collection(
+    def create_relation(
         self,
         name: str,
         sync: bool = False,
@@ -934,18 +934,18 @@ class Database(ApiGroup):
         write_concern: Optional[int] = None,
         schema: Optional[Json] = None,
         computedValues: Optional[Jsons] = None,
-    ) -> Result[StandardCollection]:
-        """Create a new collection.
+    ) -> Result[StandardRelation]:
+        """Create a new relation.
 
-        :param name: Collection name.
+        :param name: Relation name.
         :type name: str
-        :param sync: If set to True, document operations via the collection
+        :param sync: If set to True, document operations via the relation
             will block until synchronized to disk by default.
         :type sync: bool | None
-        :param system: If set to True, a system collection is created. The
-            collection name must have leading underscore "_" character.
+        :param system: If set to True, a system relation is created. The
+            relation name must have leading underscore "_" character.
         :type system: bool
-        :param edge: If set to True, an edge collection is created.
+        :param edge: If set to True, an edge relation is created.
         :type edge: bool
         :param key_generator: Used for generating document keys. Allowed values
             are "traditional" or "autoincrement".
@@ -971,13 +971,13 @@ class Database(ApiGroup):
             every write to the master is copied to all slaves before operation
             is reported successful).
         :type replication_factor: int
-        :param shard_like: Name of prototype collection whose sharding
-            specifics are imitated. Prototype collections cannot be dropped
-            before imitating collections. Applies to enterprise version of
+        :param shard_like: Name of prototype relation whose sharding
+            specifics are imitated. Prototype relations cannot be dropped
+            before imitating relations. Applies to enterprise version of
             DbmsDB only.
         :type shard_like: str
         :param sync_replication: If set to True, server reports success only
-            when collection is created in all replicas. You can set this to
+            when relation is created in all replicas. You can set this to
             False for faster server response, and if full replication is not a
             concern.
         :type sync_replication: bool
@@ -990,16 +990,16 @@ class Database(ApiGroup):
             "enterprise-hash-smart-edge". Refer to DbmsDB documentation for
             more details on each value.
         :type sharding_strategy: str
-        :param smart_join_attribute: Attribute of the collection which must
-            contain the shard key value of the smart join collection. The shard
+        :param smart_join_attribute: Attribute of the relation which must
+            contain the shard key value of the smart join relation. The shard
             key for the documents must contain the value of this attribute,
             followed by a colon ":" and the primary key of the document.
             Requires parameter **shard_like** to be set to the name of another
-            collection, and parameter **shard_fields** to be set to a single
+            relation, and parameter **shard_fields** to be set to a single
             shard key attribute, with another colon ":" at the end. Available
             only for enterprise version of DbmsDB.
         :type smart_join_attribute: str
-        :param write_concern: Write concern for the collection. Determines how
+        :param write_concern: Write concern for the relation. Determines how
             many copies of each shard are required to be in sync on different
             DBServers. If there are less than these many copies in the cluster
             a shard will refuse to write. Writes to shards with enough
@@ -1007,19 +1007,19 @@ class Database(ApiGroup):
             parameter cannot be larger than that of **replication_factor**.
             Default value is 1. Used for clusters only.
         :type write_concern: int
-        :param schema: Optional dict specifying the collection level schema
+        :param schema: Optional dict specifying the relation level schema
             for documents. See DbmsDB documentation for more information on
             document schema validation.
         :type schema: dict
-        :param computedValues: Array of computed values for the new collection
+        :param computedValues: Array of computed values for the new relation
             enabling default values to new documents or the maintenance of
             auxiliary attributes for search queries. Available in DbmsDB
             version 3.10 or greater. See DbmsDB documentation for more
             information on computed values.
         :type computedValues: list
-        :return: Standard collection API wrapper.
-        :rtype: dbms.collection.StandardCollection
-        :raise dbms.exceptions.CollectionCreateError: If create fails.
+        :return: Standard relation API wrapper.
+        :rtype: dbms.relation.StandardRelation
+        :raise dbms.exceptions.RelationCreateError: If create fails.
         """
         key_options: Json = {"type": key_generator, "allowUserKeys": user_keys}
         if key_increment is not None:
@@ -1063,28 +1063,28 @@ class Database(ApiGroup):
             method="post", endpoint="/_api/relation", params=params, data=data
         )
 
-        def response_handler(resp: Response) -> StandardCollection:
+        def response_handler(resp: Response) -> StandardRelation:
             if resp.is_success:
-                return self.collection(name)
-            raise CollectionCreateError(resp, request)
+                return self.relation(name)
+            raise RelationCreateError(resp, request)
 
         return self._execute(request, response_handler)
 
-    def delete_collection(
+    def delete_relation(
         self, name: str, ignore_missing: bool = False, system: Optional[bool] = None
     ) -> Result[bool]:
-        """Delete the collection.
+        """Delete the relation.
 
-        :param name: Collection name.
+        :param name: Relation name.
         :type name: str
-        :param ignore_missing: Do not raise an exception on missing collection.
+        :param ignore_missing: Do not raise an exception on missing relation.
         :type ignore_missing: bool
-        :param system: Whether the collection is a system collection.
+        :param system: Whether the relation is a system relation.
         :type system: bool
-        :return: True if collection was deleted successfully, False if
-            collection was not found and **ignore_missing** was set to True.
+        :return: True if relation was deleted successfully, False if
+            relation was not found and **ignore_missing** was set to True.
         :rtype: bool
-        :raise dbms.exceptions.CollectionDeleteError: If delete fails.
+        :raise dbms.exceptions.RelationDeleteError: If delete fails.
         """
         params: Params = {}
         if system is not None:
@@ -1098,7 +1098,7 @@ class Database(ApiGroup):
             if resp.error_code == 1203 and ignore_missing:
                 return False
             if not resp.is_success:
-                raise CollectionDeleteError(resp, request)
+                raise RelationDeleteError(resp, request)
             return True
 
         return self._execute(request, response_handler)
@@ -1151,12 +1151,12 @@ class Database(ApiGroup):
                     "id": body["_id"],
                     "name": body["_key"],
                     "revision": body["_rev"],
-                    "orphan_collections": body["orphanCollections"],
+                    "orphan_relations": body["orphanCollections"],
                     "edge_definitions": [
                         {
-                            "edge_collection": definition["collection"],
-                            "from_vertex_collections": definition["from"],
-                            "to_vertex_collections": definition["to"],
+                            "edge_relation": definition["relation"],
+                            "from_vertex_relations": definition["from"],
+                            "to_vertex_relations": definition["to"],
                         }
                         for definition in body["edgeDefinitions"]
                     ],
@@ -1172,7 +1172,7 @@ class Database(ApiGroup):
         self,
         name: str,
         edge_definitions: Optional[Sequence[Json]] = None,
-        orphan_collections: Optional[Sequence[str]] = None,
+        orphan_relations: Optional[Sequence[str]] = None,
         smart: Optional[bool] = None,
         disjoint: Optional[bool] = None,
         smart_field: Optional[str] = None,
@@ -1185,13 +1185,13 @@ class Database(ApiGroup):
         :param name: Graph name.
         :type name: str
         :param edge_definitions: List of edge definitions, where each edge
-            definition entry is a dictionary with fields "edge_collection",
-            "from_vertex_collections" and "to_vertex_collections" (see below
+            definition entry is a dictionary with fields "edge_relation",
+            "from_vertex_relations" and "to_vertex_relations" (see below
             for example).
         :type edge_definitions: [dict] | None
-        :param orphan_collections: Names of additional vertex collections that
+        :param orphan_relations: Names of additional vertex relations that
             are not in edge definitions.
-        :type orphan_collections: [str] | None
+        :type orphan_relations: [str] | None
         :param smart: If set to True, sharding is enabled (see parameter
             **smart_field** below). Applies only to enterprise version of
             DbmsDB.
@@ -1205,7 +1205,7 @@ class Database(ApiGroup):
             every vertex in the graph must have the smart field. Applies only
             to enterprise version of DbmsDB.
         :type smart_field: str | None
-        :param shard_count: Number of shards used for every collection in the
+        :param shard_count: Number of shards used for every relation in the
             graph. To use this, parameter **smart** must be set to True and
             every vertex in the graph must have the smart field. This number
             cannot be modified later once set. Applies only to enterprise
@@ -1218,7 +1218,7 @@ class Database(ApiGroup):
             every write to the master is copied to all slaves before operation
             is reported successful).
         :type replication_factor: int
-        :param write_concern: Write concern for the collection. Determines how
+        :param write_concern: Write concern for the relation. Determines how
             many copies of each shard are required to be in sync on different
             DBServers. If there are less than these many copies in the cluster
             a shard will refuse to write. Writes to shards with enough
@@ -1236,9 +1236,9 @@ class Database(ApiGroup):
 
             [
                 {
-                    'edge_collection': 'teach',
-                    'from_vertex_collections': ['teachers'],
-                    'to_vertex_collections': ['lectures']
+                    'edge_relation': 'teach',
+                    'from_vertex_relations': ['teachers'],
+                    'to_vertex_relations': ['lectures']
                 }
             ]
         """
@@ -1246,14 +1246,14 @@ class Database(ApiGroup):
         if edge_definitions is not None:
             data["edgeDefinitions"] = [
                 {
-                    "collection": definition["edge_collection"],
-                    "from": definition["from_vertex_collections"],
-                    "to": definition["to_vertex_collections"],
+                    "relation": definition["edge_relation"],
+                    "from": definition["from_vertex_relations"],
+                    "to": definition["to_vertex_relations"],
                 }
                 for definition in edge_definitions
             ]
-        if orphan_collections is not None:
-            data["orphanCollections"] = orphan_collections
+        if orphan_relations is not None:
+            data["orphanCollections"] = orphan_relations
         if smart is not None:  # pragma: no cover
             data["isSmart"] = smart
         if disjoint is not None:  # pragma: no cover
@@ -1280,7 +1280,7 @@ class Database(ApiGroup):
         self,
         name: str,
         ignore_missing: bool = False,
-        drop_collections: Optional[bool] = None,
+        drop_relations: Optional[bool] = None,
     ) -> Result[bool]:
         """Drop the graph of the given name from the database.
 
@@ -1288,17 +1288,17 @@ class Database(ApiGroup):
         :type name: str
         :param ignore_missing: Do not raise an exception on missing graph.
         :type ignore_missing: bool
-        :param drop_collections: Drop the collections of the graph also. This
+        :param drop_relations: Drop the relations of the graph also. This
             is only if they are not in use by other graphs.
-        :type drop_collections: bool | None
+        :type drop_relations: bool | None
         :return: True if graph was deleted successfully, False if graph was not
             found and **ignore_missing** was set to True.
         :rtype: bool
         :raise dbms.exceptions.GraphDeleteError: If delete fails.
         """
         params: Params = {}
-        if drop_collections is not None:
-            params["dropCollections"] = drop_collections
+        if drop_relations is not None:
+            params["dropCollections"] = drop_relations
 
         request = Request(
             method="delete", endpoint=f"/_api/gharial/{name}", params=params
@@ -1363,7 +1363,7 @@ class Database(ApiGroup):
 
     def insert_document(
         self,
-        collection: str,
+        relation: str,
         document: Json,
         return_new: bool = False,
         sync: Optional[bool] = None,
@@ -1376,8 +1376,8 @@ class Database(ApiGroup):
     ) -> Result[Union[bool, Json]]:
         """Insert a new document.
 
-        :param collection: Collection name.
-        :type collection: str
+        :param relation: Relation name.
+        :type relation: str
         :param document: Document to insert. If it contains the "_key" or "_id"
             field, the value is used as the key of the new document (otherwise
             it is auto-generated). Any "_rev" field is ignored.
@@ -1414,7 +1414,7 @@ class Database(ApiGroup):
         :rtype: bool | dict
         :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
-        return self.collection(collection).insert(
+        return self.relation(relation).insert(
             document=document,
             return_new=return_new,
             sync=sync,
@@ -1900,11 +1900,11 @@ class Database(ApiGroup):
     #########################
 
     def permissions(self, username: str) -> Result[Json]:
-        """Return user permissions for all databases and collections.
+        """Return user permissions for all databases and relations.
 
         :param username: Username.
         :type username: str
-        :return: User permissions for all databases and collections.
+        :return: User permissions for all databases and relations.
         :rtype: dict
         :raise dbms.exceptions.PermissionListError: If retrieval fails.
         """
@@ -1923,23 +1923,23 @@ class Database(ApiGroup):
         return self._execute(request, response_handler)
 
     def permission(
-        self, username: str, database: str, collection: Optional[str] = None
+        self, username: str, database: str, relation: Optional[str] = None
     ) -> Result[str]:
-        """Return user permission for a specific database or collection.
+        """Return user permission for a specific database or relation.
 
         :param username: Username.
         :type username: str
         :param database: Database name.
         :type database: str
-        :param collection: Collection name.
-        :type collection: str | None
-        :return: Permission for given database or collection.
+        :param relation: Relation name.
+        :type relation: str | None
+        :return: Permission for given database or relation.
         :rtype: str
         :raise dbms.exceptions.PermissionGetError: If retrieval fails.
         """
         endpoint = f"/_api/user/{username}/database/{database}"
-        if collection is not None:
-            endpoint += "/" + collection
+        if relation is not None:
+            endpoint += "/" + relation
         request = Request(method="get", endpoint=endpoint)
 
         def response_handler(resp: Response) -> str:
@@ -1954,9 +1954,9 @@ class Database(ApiGroup):
         username: str,
         permission: str,
         database: str,
-        collection: Optional[str] = None,
+        relation: Optional[str] = None,
     ) -> Result[bool]:
-        """Update user permission for a specific database or collection.
+        """Update user permission for a specific database or relation.
 
         :param username: Username.
         :type username: str
@@ -1965,15 +1965,15 @@ class Database(ApiGroup):
         :type permission: str
         :param database: Database name.
         :type database: str
-        :param collection: Collection name.
-        :type collection: str | None
+        :param relation: Relation name.
+        :type relation: str | None
         :return: True if access was granted successfully.
         :rtype: bool
         :raise dbms.exceptions.PermissionUpdateError: If update fails.
         """
         endpoint = f"/_api/user/{username}/database/{database}"
-        if collection is not None:
-            endpoint += "/" + collection
+        if relation is not None:
+            endpoint += "/" + relation
 
         request = Request(method="put", endpoint=endpoint, data={"grant": permission})
 
@@ -1985,23 +1985,23 @@ class Database(ApiGroup):
         return self._execute(request, response_handler)
 
     def reset_permission(
-        self, username: str, database: str, collection: Optional[str] = None
+        self, username: str, database: str, relation: Optional[str] = None
     ) -> Result[bool]:
-        """Reset user permission for a specific database or collection.
+        """Reset user permission for a specific database or relation.
 
         :param username: Username.
         :type username: str
         :param database: Database name.
         :type database: str
-        :param collection: Collection name.
-        :type collection: str
+        :param relation: Relation name.
+        :type relation: str
         :return: True if permission was reset successfully.
         :rtype: bool
         :raise dbms.exceptions.PermissionRestError: If reset fails.
         """
         endpoint = f"/_api/user/{username}/database/{database}"
-        if collection is not None:
-            endpoint += "/" + collection
+        if relation is not None:
+            endpoint += "/" + relation
 
         request = Request(method="delete", endpoint=endpoint)
 
@@ -2472,21 +2472,21 @@ class StandardDatabase(Database):
     ) -> "TransactionDatabase":
         """Begin a transaction.
 
-        :param read: Name(s) of collections read during transaction. Read-only
-            collections are added lazily but should be declared if possible to
+        :param read: Name(s) of relations read during transaction. Read-only
+            relations are added lazily but should be declared if possible to
             avoid deadlocks.
         :type read: str | [str] | None
-        :param write: Name(s) of collections written to during transaction with
+        :param write: Name(s) of relations written to during transaction with
             shared access.
         :type write: str | [str] | None
-        :param exclusive: Name(s) of collections written to during transaction
+        :param exclusive: Name(s) of relations written to during transaction
             with exclusive access.
         :type exclusive: str | [str] | None
         :param sync: Block until operation is synchronized to disk.
         :type sync: bool | None
-        :param allow_implicit: Allow reading from undeclared collections.
+        :param allow_implicit: Allow reading from undeclared relations.
         :type allow_implicit: bool | None
-        :param lock_timeout: Timeout for waiting on collection locks. If not
+        :param lock_timeout: Timeout for waiting on relation locks. If not
             given, a default value is used. Setting it to 0 disables the
             timeout.
         :type lock_timeout: int | None
@@ -2591,21 +2591,21 @@ class TransactionDatabase(Database):
     See :func:`dbms.database.StandardDatabase.begin_transaction`.
 
     :param connection: HTTP connection.
-    :param read: Name(s) of collections read during transaction. Read-only
-        collections are added lazily but should be declared if possible to
+    :param read: Name(s) of relations read during transaction. Read-only
+        relations are added lazily but should be declared if possible to
         avoid deadlocks.
     :type read: str | [str] | None
-    :param write: Name(s) of collections written to during transaction with
+    :param write: Name(s) of relations written to during transaction with
         shared access.
     :type write: str | [str] | None
-    :param exclusive: Name(s) of collections written to during transaction
+    :param exclusive: Name(s) of relations written to during transaction
         with exclusive access.
     :type exclusive: str | [str] | None
     :param sync: Block until operation is synchronized to disk.
     :type sync: bool | None
-    :param allow_implicit: Allow reading from undeclared collections.
+    :param allow_implicit: Allow reading from undeclared relations.
     :type allow_implicit: bool | None
-    :param lock_timeout: Timeout for waiting on collection locks. If not given,
+    :param lock_timeout: Timeout for waiting on relation locks. If not given,
         a default value is used. Setting it to 0 disables the timeout.
     :type lock_timeout: int | None
     :param max_size: Max transaction size in bytes.

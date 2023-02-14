@@ -28,36 +28,36 @@ if sys_db.has_user('johndoe@gmail.com'):
     sys_db.delete_user('johndoe@gmail.com')
 # Connect to "test" database as root user.
 db = client.db('test', username='root', password='passwd')
-# Create "students" collection if it does not exist.
-if db.has_collection('students'):
-    db.collection('students').truncate()
+# Create "students" relation if it does not exist.
+if db.has_relation('students'):
+    db.relation('students').truncate()
 else:
-    db.create_collection('students')
-# Ensure that "cities" collection does not exist.
-if db.has_collection('cities'):
-    db.delete_collection('cities')
+    db.create_relation('students')
+# Ensure that "cities" relation does not exist.
+if db.has_relation('cities'):
+    db.delete_relation('cities')
 # Create "school" graph if it does not exist.
 if db.has_graph("school"):
     school = db.graph('school')
 else:
     school = db.create_graph('school')
-# Create "teachers" vertex collection if it does not exist.
-if school.has_vertex_collection('teachers'):
-    school.vertex_collection('teachers').truncate()
+# Create "teachers" vertex relation if it does not exist.
+if school.has_vertex_relation('teachers'):
+    school.vertex_relation('teachers').truncate()
 else:
-    school.create_vertex_collection('teachers')
-# Create "lectures" vertex collection if it does not exist.
-if school.has_vertex_collection('lectures'):
-    school.vertex_collection('lectures').truncate()
+    school.create_vertex_relation('teachers')
+# Create "lectures" vertex relation if it does not exist.
+if school.has_vertex_relation('lectures'):
+    school.vertex_relation('lectures').truncate()
 else:
-    school.create_vertex_collection('lectures')
+    school.create_vertex_relation('lectures')
 # Create "teach" edge definition if it does not exist.
 if school.has_edge_definition('teach'):
-    school.edge_collection('teach').truncate()
+    school.edge_relation('teach').truncate()
 else:
     school.create_edge_definition(
-        edge_collection='teach',
-        from_vertex_collections=['teachers'],
-        to_vertex_collections=['lectures']
+        edge_relation='teach',
+        from_vertex_relations=['teachers'],
+        to_vertex_relations=['lectures']
     )
 """

@@ -38,7 +38,7 @@ def test_async_wrapper_attributes(db, col, username):
     assert async_db.name == db.name
     assert repr(async_db) == f"<AsyncDatabase {db.name}>"
 
-    async_col = async_db.collection(col.name)
+    async_col = async_db.relation(col.name)
     assert async_col.username == username
     assert async_col.context == "async"
     assert async_col.db_name == db.name
@@ -57,7 +57,7 @@ def test_async_wrapper_attributes(db, col, username):
 
 def test_async_execute_without_result(db, col, docs):
     # Insert test documents asynchronously with return_result set to False
-    async_col = db.begin_async_execution(return_result=False).collection(col.name)
+    async_col = db.begin_async_execution(return_result=False).relation(col.name)
 
     # Ensure that no jobs were returned
     assert async_col.insert(docs[0]) is None
@@ -70,7 +70,7 @@ def test_async_execute_without_result(db, col, docs):
 
 
 def test_async_execute_error_in_result(db, col, docs):
-    db.collection(col.name).import_bulk(docs)
+    db.relation(col.name).import_bulk(docs)
     async_db = db.begin_async_execution(return_result=True)
 
     # Test async execution of a bad AQL query
@@ -189,7 +189,7 @@ def test_async_execute_errors(bad_db):
 
 def test_async_clear_jobs(db, bad_db, col, docs):
     async_db = db.begin_async_execution(return_result=True)
-    async_col = async_db.collection(col.name)
+    async_col = async_db.relation(col.name)
 
     job1 = wait_on_job(async_col.insert(docs[0]))
     job2 = wait_on_job(async_col.insert(docs[1]))
@@ -229,7 +229,7 @@ def test_async_clear_jobs(db, bad_db, col, docs):
 
 def test_async_list_jobs(db, col, docs):
     async_db = db.begin_async_execution(return_result=True)
-    async_col = async_db.collection(col.name)
+    async_col = async_db.relation(col.name)
 
     job1 = wait_on_job(async_col.insert(docs[0]))
     job2 = wait_on_job(async_col.insert(docs[1]))

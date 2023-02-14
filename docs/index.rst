@@ -28,7 +28,7 @@ Contents
 
     overview
     database
-    collection
+    relation
     document
     schema
     indexes

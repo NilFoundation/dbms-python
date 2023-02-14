@@ -20,7 +20,7 @@ number of items in the result set may or may not be known in advance.
     db = client.db('test', username='root', password='passwd')
 
     # Set up some test data to query against.
-    db.collection('students').insert_many([
+    db.relation('students').insert_many([
         {'_key': 'Abby', 'age': 22},
         {'_key': 'John', 'age': 18},
         {'_key': 'Mary', 'age': 21},
@@ -99,7 +99,7 @@ instead.
     db = client.db('test', username='root', password='passwd')
 
     # Set up some test data to query against.
-    db.collection('students').insert_many([
+    db.relation('students').insert_many([
         {'_key': 'Abby', 'age': 22},
         {'_key': 'John', 'age': 18},
         {'_key': 'Mary', 'age': 21}

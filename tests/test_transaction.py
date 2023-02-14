@@ -53,7 +53,7 @@ def test_transaction_init(db, bad_db, col, username):
     assert txn_db.transaction_id is not None
     assert repr(txn_db) == f"<TransactionDatabase {db.name}>"
 
-    txn_col = txn_db.collection(col.name)
+    txn_col = txn_db.relation(col.name)
     assert txn_col.username == username
     assert txn_col.context == "transaction"
     assert txn_col.db_name == db.name
@@ -98,7 +98,7 @@ def test_transaction_commit(db, col, docs):
         lock_timeout=1000,
         max_size=10000,
     )
-    txn_col = txn_db.collection(col.name)
+    txn_col = txn_db.relation(col.name)
 
     assert "_rev" in txn_col.insert(docs[0])
     assert "_rev" in txn_col.delete(docs[0])
@@ -119,7 +119,7 @@ def test_transaction_commit(db, col, docs):
 
 def test_transaction_abort(db, col, docs):
     txn_db = db.begin_transaction(write=col.name)
-    txn_col = txn_db.collection(col.name)
+    txn_col = txn_db.relation(col.name)
 
     assert "_rev" in txn_col.insert(docs[0])
     assert "_rev" in txn_col.delete(docs[0])
@@ -138,9 +138,9 @@ def test_transaction_abort(db, col, docs):
 
 
 def test_transaction_graph(db, graph, fvcol, fvdocs):
-    col_names = [c["name"] for c in db.collections() if c["name"].startswith("test")]
+    col_names = [c["name"] for c in db.relations() if c["name"].startswith("test")]
     txn_db = db.begin_transaction(write=col_names)
-    vcol = txn_db.graph(graph.name).vertex_collection(fvcol.name)
+    vcol = txn_db.graph(graph.name).vertex_relation(fvcol.name)
 
     vcol.insert(fvdocs[0])
     assert len(vcol) == 1

@@ -30,7 +30,7 @@ the results can be retrieved once available via :ref:`AsyncJob` objects.
 
     # Child wrappers are also tailored for async execution.
     async_aql = async_db.aql
-    async_col = async_db.collection('students')
+    async_col = async_db.relation('students')
 
     # API execution context is always set to "async".
     assert async_db.context == 'async'

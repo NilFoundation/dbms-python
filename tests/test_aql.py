@@ -76,7 +76,7 @@ def test_aql_query_management(db, bad_db, col, docs):
     assert err.value.error_code == 1501
 
     # Test execute valid query
-    db.collection(col.name).import_bulk(docs)
+    db.relation(col.name).import_bulk(docs)
     cursor = db.aql.execute(
         """
         FOR d IN {col}

@@ -16,7 +16,7 @@ from dbms.exceptions import (
 from tests.helpers import (
     assert_raises,
     clean_doc,
-    empty_collection,
+    empty_relation,
     extract,
     generate_col_name,
     generate_doc_key,
@@ -28,7 +28,7 @@ def test_document_insert(col, docs):
     result = col.insert({})
     assert result["_key"] in col
     assert len(col) == 1
-    empty_collection(col)
+    empty_relation(col)
 
     # Test insert document with ID
     doc_id = col.name + "/" + "foo"
@@ -36,11 +36,11 @@ def test_document_insert(col, docs):
     assert "foo" in col
     assert doc_id in col
     assert len(col) == 1
-    empty_collection(col)
+    empty_relation(col)
 
     with assert_raises(DocumentParseError) as err:
         col.insert({"_id": generate_col_name() + "/" + "foo"})
-    assert "bad collection name" in err.value.message
+    assert "bad relation name" in err.value.message
 
     # Test insert with default options
     for doc in docs:
@@ -50,7 +50,7 @@ def test_document_insert(col, docs):
         assert isinstance(result["_rev"], str)
         assert col[doc["_key"]]["val"] == doc["val"]
     assert len(col) == len(docs)
-    empty_collection(col)
+    empty_relation(col)
 
     # Test insert with sync set to True
     doc = docs[0]
@@ -150,7 +150,7 @@ def test_document_insert_many(col, bad_col, docs):
         assert isinstance(result["_rev"], str)
         assert col[doc["_key"]]["val"] == doc["val"]
     assert len(col) == len(docs)
-    empty_collection(col)
+    empty_relation(col)
 
     # Test insert_many with document IDs
     docs_with_id = [{"_id": col.name + "/" + doc["_key"]} for doc in docs]
@@ -160,7 +160,7 @@ def test_document_insert_many(col, bad_col, docs):
         assert result["_key"] == doc["_key"]
         assert isinstance(result["_rev"], str)
     assert len(col) == len(docs)
-    empty_collection(col)
+    empty_relation(col)
 
     # Test insert_many with sync set to True
     results = col.insert_many(docs, sync=True)
@@ -170,7 +170,7 @@ def test_document_insert_many(col, bad_col, docs):
         assert isinstance(result["_rev"], str)
         assert col[doc["_key"]]["_key"] == doc["_key"]
         assert col[doc["_key"]]["val"] == doc["val"]
-    empty_collection(col)
+    empty_relation(col)
 
     # Test insert_many with sync set to False
     results = col.insert_many(docs, sync=False)
@@ -180,7 +180,7 @@ def test_document_insert_many(col, bad_col, docs):
         assert isinstance(result["_rev"], str)
         assert col[doc["_key"]]["_key"] == doc["_key"]
         assert col[doc["_key"]]["val"] == doc["val"]
-    empty_collection(col)
+    empty_relation(col)
 
     # Test insert_many with return_new set to True
     results = col.insert_many(docs, return_new=True)
@@ -194,7 +194,7 @@ def test_document_insert_many(col, bad_col, docs):
         assert result["new"]["val"] == doc["val"]
         assert col[doc["_key"]]["_key"] == doc["_key"]
         assert col[doc["_key"]]["val"] == doc["val"]
-    empty_collection(col)
+    empty_relation(col)
 
     # Test insert_many with return_new set to False
     results = col.insert_many(docs, return_new=False)
@@ -205,7 +205,7 @@ def test_document_insert_many(col, bad_col, docs):
         assert "new" not in result
         assert col[doc["_key"]]["_key"] == doc["_key"]
         assert col[doc["_key"]]["val"] == doc["val"]
-    empty_collection(col)
+    empty_relation(col)
 
     # Test insert_many with silent set to True
     assert col.insert_many(docs, silent=True) is True
@@ -1048,7 +1048,7 @@ def test_document_delete_many(col, bad_col, docs):
     assert len(col) == 6
 
     # Test delete_many (documents) with missing documents
-    empty_collection(col)
+    empty_relation(col)
     results = col.delete_many(
         [
             {"_key": generate_doc_key()},
@@ -1159,8 +1159,8 @@ def test_document_find(col, bad_col, docs):
             assert doc["_key"] in extract("_key", docs)
             assert doc["_key"] in col
 
-    # Test find in empty collection
-    empty_collection(col)
+    # Test find in empty relation
+    empty_relation(col)
     assert list(col.find({})) == []
     assert list(col.find({"val": 1})) == []
     assert list(col.find({"val": 2})) == []
@@ -1201,18 +1201,18 @@ def test_document_find_near(col, bad_col, docs):
     result = col.find_near(latitude=5, longitude=5, limit=3)
     assert extract("_key", result) == ["4", "5", "6"]
 
-    # Test random with bad collection
+    # Test random with bad relation
     with assert_raises(DocumentGetError):
         bad_col.find_near(latitude=1, longitude=1, limit=1)
 
-    # Test find_near in an empty collection
-    empty_collection(col)
+    # Test find_near in an empty relation
+    empty_relation(col)
     result = col.find_near(latitude=1, longitude=1, limit=1)
     assert list(result) == []
     result = col.find_near(latitude=5, longitude=5, limit=4)
     assert list(result) == []
 
-    # Test find near with bad collection
+    # Test find near with bad relation
     with assert_raises(DocumentGetError) as err:
         bad_col.find_near(latitude=1, longitude=1, limit=1)
     assert err.value.error_code in {11, 1228}
@@ -1251,7 +1251,7 @@ def test_document_find_in_range(col, bad_col, docs):
     result = col.find_in_range("val", lower=1, upper=5, skip=2)
     assert extract("_key", result) == ["3", "4"]
 
-    # Test find_in_range with bad collection
+    # Test find_in_range with bad relation
     with assert_raises(DocumentGetError) as err:
         bad_col.find_in_range(field="val", lower=1, upper=2, skip=2)
     assert err.value.error_code in {11, 1228}
@@ -1283,7 +1283,7 @@ def test_document_find_in_radius(col, bad_col):
     assert len(result) == 1
     assert clean_doc(result[0]) == {"_key": "1", "loc": [1, 1], "dist": 0}
 
-    # Test find_in_radius with bad collection
+    # Test find_in_radius with bad relation
     with assert_raises(DocumentGetError) as err:
         bad_col.find_in_radius(3, 3, 10)
     assert err.value.error_code in {11, 1228}
@@ -1367,7 +1367,7 @@ def test_document_find_in_box(col, bad_col, geo, cluster):
     )
     assert clean_doc(result) == [doc1, doc2]
 
-    # Test find_in_box with bad collection
+    # Test find_in_box with bad relation
     with assert_raises(DocumentGetError) as err:
         bad_col.find_in_box(
             latitude1=0,
@@ -1487,8 +1487,8 @@ def test_document_has(col, bad_col, docs):
         assert col.has(doc_input, rev=rev, check_rev=True) is False
         assert col.has(doc_input, rev=rev, check_rev=False) is False
 
-    # Test documents with IDs with wrong collection name
-    expected_error_msg = "bad collection name"
+    # Test documents with IDs with wrong relation name
+    expected_error_msg = "bad relation name"
     bad_id = generate_col_name() + "/" + doc_key
     for doc_input in [
         bad_id,
@@ -1620,8 +1620,8 @@ def test_document_get_many(col, bad_col, docs):
     result = col.get_many(docs)
     assert clean_doc(result) == docs
 
-    # Test get_many in empty collection
-    empty_collection(col)
+    # Test get_many in empty relation
+    empty_relation(col)
     assert col.get_many([]) == []
     assert col.get_many(docs[:1]) == []
     assert col.get_many(docs[:3]) == []
@@ -1735,13 +1735,13 @@ def test_document_random(col, bad_col, docs):
     # Set up test documents
     col.import_bulk(docs)
 
-    # Test random in non-empty collection
+    # Test random in non-empty relation
     for attempt in range(10):
         random_doc = col.random()
         assert clean_doc(random_doc) in docs
 
-    # Test random in empty collection
-    empty_collection(col)
+    # Test random in empty relation
+    empty_relation(col)
     for attempt in range(10):
         random_doc = col.random()
         assert random_doc is None
@@ -1767,7 +1767,7 @@ def test_document_import_bulk(col, bad_col, docs):
         assert col[doc_key]["_key"] == doc_key
         assert col[doc_key]["val"] == doc["val"]
         assert col[doc_key]["loc"] == doc["loc"]
-    empty_collection(col)
+    empty_relation(col)
 
     # Test import bulk without details and with sync
     result = col.import_bulk(docs, details=False, sync=True)
@@ -1795,7 +1795,7 @@ def test_document_import_bulk(col, bad_col, docs):
     assert result["empty"] == 0
     assert result["updated"] == 0
     assert result["ignored"] == 0
-    empty_collection(col)
+    empty_relation(col)
 
     # Test import bulk with bad database
     with assert_raises(DocumentInsertError):
@@ -1815,18 +1815,18 @@ def test_document_import_bulk(col, bad_col, docs):
         assert col[doc_key]["_key"] == doc_key
         assert col[doc_key]["val"] == doc["val"]
         assert col[doc_key]["loc"] == doc["loc"]
-    empty_collection(col)
+    empty_relation(col)
 
     # Test import bulk with batch_size
     results = col.import_bulk(docs, batch_size=len(docs) // 2)
     assert type(results) is list
     assert len(results) == 2
-    empty_collection(col)
+    empty_relation(col)
 
     result = col.import_bulk(docs, batch_size=len(docs) * 2)
     assert type(result) is list
     assert len(result) == 1
-    empty_collection(col)
+    empty_relation(col)
 
     # Test import bulk with overwrite and batch_size
     with pytest.raises(ValueError):
@@ -1869,7 +1869,7 @@ def test_document_import_bulk(col, bad_col, docs):
     assert col[doc["_key"]]["foo"] == "2"
     assert col[doc["_key"]]["bar"] == "3"
 
-    empty_collection(col)
+    empty_relation(col)
     col.insert(old_doc)
     result = col.import_bulk([new_doc], on_duplicate="replace", halt_on_error=False)
     assert len(col) == 1

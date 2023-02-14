@@ -1,4 +1,4 @@
-__all__ = ["StandardCollection", "VertexCollection", "EdgeCollection"]
+__all__ = ["StandardRelation", "VertexRelation", "EdgeRelation"]
 
 from numbers import Number
 from typing import List, Optional, Sequence, Tuple, Union
@@ -8,17 +8,17 @@ from dbms.connection import Connection
 from dbms.cursor import Cursor
 from dbms.exceptions import (
     DbmsServerError,
-    CollectionChecksumError,
-    CollectionConfigureError,
-    CollectionLoadError,
-    CollectionPropertiesError,
-    CollectionRecalculateCountError,
-    CollectionRenameError,
-    CollectionResponsibleShardError,
-    CollectionRevisionError,
-    CollectionStatisticsError,
-    CollectionTruncateError,
-    CollectionUnloadError,
+    RelationChecksumError,
+    RelationConfigureError,
+    RelationLoadError,
+    RelationPropertiesError,
+    RelationRecalculateCountError,
+    RelationRenameError,
+    RelationResponsibleShardError,
+    RelationRevisionError,
+    RelationStatisticsError,
+    RelationTruncateError,
+    RelationUnloadError,
     DocumentCountError,
     DocumentDeleteError,
     DocumentGetError,
@@ -37,7 +37,7 @@ from dbms.exceptions import (
     IndexLoadError,
 )
 from dbms.executor import ApiExecutor
-from dbms.formatter import format_collection, format_edge, format_index, format_vertex
+from dbms.formatter import format_relation, format_edge, format_index, format_vertex
 from dbms.request import Request
 from dbms.response import Response
 from dbms.result import Result
@@ -45,12 +45,12 @@ from dbms.typings import Fields, Headers, Json, Params
 from dbms.utils import get_batches, get_doc_id, is_none_or_int, is_none_or_str
 
 
-class Collection(ApiGroup):
-    """Base class for collection API wrappers.
+class Relation(ApiGroup):
+    """Base class for relation API wrappers.
 
     :param connection: HTTP connection.
     :param executor: API executor.
-    :param name: Collection name.
+    :param name: Relation name.
     """
 
     types = {2: "document", 3: "edge"}
@@ -81,26 +81,26 @@ class Collection(ApiGroup):
         return self.has(document, check_rev=False)
 
     def _get_status_text(self, code: int) -> str:  # pragma: no cover
-        """Return the collection status text.
+        """Return the relation status text.
 
-        :param code: Collection status code.
+        :param code: Relation status code.
         :type code: int
-        :return: Collection status text or None if code is None.
+        :return: Relation status text or None if code is None.
         :rtype: str
         """
         return None if code is None else self.statuses[code]
 
     def _validate_id(self, doc_id: str) -> str:
-        """Check the collection name in the document ID.
+        """Check the relation name in the document ID.
 
         :param doc_id: Document ID.
         :type doc_id: str
         :return: Verified document ID.
         :rtype: str
-        :raise dbms.exceptions.DocumentParseError: On bad collection name.
+        :raise dbms.exceptions.DocumentParseError: On bad relation name.
         """
         if not doc_id.startswith(self._id_prefix):
-            raise DocumentParseError(f'bad collection name in document ID "{doc_id}"')
+            raise DocumentParseError(f'bad relation name in document ID "{doc_id}"')
         return doc_id
 
     def _extract_id(self, body: Json) -> str:
@@ -203,9 +203,9 @@ class Collection(ApiGroup):
 
     @property
     def name(self) -> str:
-        """Return collection name.
+        """Return relation name.
 
-        :return: Collection name.
+        :return: Relation name.
         :rtype: str
         """
         return self._name
@@ -215,7 +215,7 @@ class Collection(ApiGroup):
 
         :return: True if recalculation was successful.
         :rtype: bool
-        :raise dbms.exceptions.CollectionRecalculateCountError: If operation fails.
+        :raise dbms.exceptions.RelationRecalculateCountError: If operation fails.
         """
         request = Request(
             method="put",
@@ -225,7 +225,7 @@ class Collection(ApiGroup):
         def response_handler(resp: Response) -> bool:
             if resp.is_success:
                 return True
-            raise CollectionRecalculateCountError(resp, request)
+            raise RelationRecalculateCountError(resp, request)
 
         return self._execute(request, response_handler)
 
@@ -248,22 +248,22 @@ class Collection(ApiGroup):
         def response_handler(resp: Response) -> str:
             if resp.is_success:
                 return str(resp.body["shardId"])
-            raise CollectionResponsibleShardError(resp, request)
+            raise RelationResponsibleShardError(resp, request)
 
         return self._execute(request, response_handler)
 
     def rename(self, new_name: str) -> Result[bool]:
-        """Rename the collection.
+        """Rename the relation.
 
         Renames may not be reflected immediately in async execution, batch
         execution or transactions. It is recommended to initialize new API
         wrappers after a rename.
 
-        :param new_name: New collection name.
+        :param new_name: New relation name.
         :type new_name: str
-        :return: True if collection was renamed successfully.
+        :return: True if relation was renamed successfully.
         :rtype: bool
-        :raise dbms.exceptions.CollectionRenameError: If rename fails.
+        :raise dbms.exceptions.RelationRenameError: If rename fails.
         """
         request = Request(
             method="put",
@@ -273,7 +273,7 @@ class Collection(ApiGroup):
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
-                raise CollectionRenameError(resp, request)
+                raise RelationRenameError(resp, request)
             self._name = new_name
             self._id_prefix = new_name + "/"
             return True
@@ -281,11 +281,11 @@ class Collection(ApiGroup):
         return self._execute(request, response_handler)
 
     def properties(self) -> Result[Json]:
-        """Return collection properties.
+        """Return relation properties.
 
-        :return: Collection properties.
+        :return: Relation properties.
         :rtype: dict
-        :raise dbms.exceptions.CollectionPropertiesError: If retrieval fails.
+        :raise dbms.exceptions.RelationPropertiesError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -295,8 +295,8 @@ class Collection(ApiGroup):
 
         def response_handler(resp: Response) -> Json:
             if resp.is_success:
-                return format_collection(resp.body)
-            raise CollectionPropertiesError(resp, request)
+                return format_relation(resp.body)
+            raise RelationPropertiesError(resp, request)
 
         return self._execute(request, response_handler)
 
@@ -307,7 +307,7 @@ class Collection(ApiGroup):
         replication_factor: Optional[int] = None,
         write_concern: Optional[int] = None,
     ) -> Result[Json]:
-        """Configure collection properties.
+        """Configure relation properties.
 
         :param sync: Block until operations are synchronized to disk.
         :type sync: bool | None
@@ -320,7 +320,7 @@ class Collection(ApiGroup):
             every write to the master is copied to all slaves before operation
             is reported successful).
         :type replication_factor: int
-        :param write_concern: Write concern for the collection. Determines how
+        :param write_concern: Write concern for the relation. Determines how
             many copies of each shard are required to be in sync on different
             DBServers. If there are less than these many copies in the cluster
             a shard will refuse to write. Writes to shards with enough
@@ -328,9 +328,9 @@ class Collection(ApiGroup):
             parameter cannot be larger than that of **replication_factor**.
             Default value is 1. Used for clusters only.
         :type write_concern: int
-        :return: New collection properties.
+        :return: New relation properties.
         :rtype: dict
-        :raise dbms.exceptions.CollectionConfigureError: If operation fails.
+        :raise dbms.exceptions.RelationConfigureError: If operation fails.
         """
         data: Json = {}
         if sync is not None:
@@ -350,17 +350,17 @@ class Collection(ApiGroup):
 
         def response_handler(resp: Response) -> Json:
             if not resp.is_success:
-                raise CollectionConfigureError(resp, request)
-            return format_collection(resp.body)
+                raise RelationConfigureError(resp, request)
+            return format_relation(resp.body)
 
         return self._execute(request, response_handler)
 
     def statistics(self) -> Result[Json]:
-        """Return collection statistics.
+        """Return relation statistics.
 
-        :return: Collection statistics.
+        :return: Relation statistics.
         :rtype: dict
-        :raise dbms.exceptions.CollectionStatisticsError: If retrieval fails.
+        :raise dbms.exceptions.RelationStatisticsError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -370,7 +370,7 @@ class Collection(ApiGroup):
 
         def response_handler(resp: Response) -> Json:
             if not resp.is_success:
-                raise CollectionStatisticsError(resp, request)
+                raise RelationStatisticsError(resp, request)
 
             stats: Json = resp.body.get("figures", resp.body)
             if "documentReferences" in stats:  # pragma: no cover
@@ -396,11 +396,11 @@ class Collection(ApiGroup):
         return self._execute(request, response_handler)
 
     def revision(self) -> Result[str]:
-        """Return collection revision.
+        """Return relation revision.
 
-        :return: Collection revision.
+        :return: Relation revision.
         :rtype: str
-        :raise dbms.exceptions.CollectionRevisionError: If retrieval fails.
+        :raise dbms.exceptions.RelationRevisionError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -411,20 +411,20 @@ class Collection(ApiGroup):
         def response_handler(resp: Response) -> str:
             if resp.is_success:
                 return str(resp.body["revision"])
-            raise CollectionRevisionError(resp, request)
+            raise RelationRevisionError(resp, request)
 
         return self._execute(request, response_handler)
 
     def checksum(self, with_rev: bool = False, with_data: bool = False) -> Result[str]:
-        """Return collection checksum.
+        """Return relation checksum.
 
         :param with_rev: Include document revisions in checksum calculation.
         :type with_rev: bool
         :param with_data: Include document data in checksum calculation.
         :type with_data: bool
-        :return: Collection checksum.
+        :return: Relation checksum.
         :rtype: str
-        :raise dbms.exceptions.CollectionChecksumError: If retrieval fails.
+        :raise dbms.exceptions.RelationChecksumError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -435,48 +435,48 @@ class Collection(ApiGroup):
         def response_handler(resp: Response) -> str:
             if resp.is_success:
                 return str(resp.body["checksum"])
-            raise CollectionChecksumError(resp, request)
+            raise RelationChecksumError(resp, request)
 
         return self._execute(request, response_handler)
 
     def load(self) -> Result[bool]:
-        """Load the collection into memory.
+        """Load the relation into memory.
 
-        :return: True if collection was loaded successfully.
+        :return: True if relation was loaded successfully.
         :rtype: bool
-        :raise dbms.exceptions.CollectionLoadError: If operation fails.
+        :raise dbms.exceptions.RelationLoadError: If operation fails.
         """
         request = Request(method="put", endpoint=f"/_api/relation/{self.name}/load")
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
-                raise CollectionLoadError(resp, request)
+                raise RelationLoadError(resp, request)
             return True
 
         return self._execute(request, response_handler)
 
     def unload(self) -> Result[bool]:
-        """Unload the collection from memory.
+        """Unload the relation from memory.
 
-        :return: True if collection was unloaded successfully.
+        :return: True if relation was unloaded successfully.
         :rtype: bool
-        :raise dbms.exceptions.CollectionUnloadError: If operation fails.
+        :raise dbms.exceptions.RelationUnloadError: If operation fails.
         """
         request = Request(method="put", endpoint=f"/_api/relation/{self.name}/unload")
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
-                raise CollectionUnloadError(resp, request)
+                raise RelationUnloadError(resp, request)
             return True
 
         return self._execute(request, response_handler)
 
     def truncate(self) -> Result[bool]:
-        """Delete all documents in the collection.
+        """Delete all documents in the relation.
 
-        :return: True if collection was truncated successfully.
+        :return: True if relation was truncated successfully.
         :rtype: bool
-        :raise dbms.exceptions.CollectionTruncateError: If operation fails.
+        :raise dbms.exceptions.RelationTruncateError: If operation fails.
         """
         request = Request(
             method="put", endpoint=f"/_api/relation/{self.name}/truncate"
@@ -484,7 +484,7 @@ class Collection(ApiGroup):
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
-                raise CollectionTruncateError(resp, request)
+                raise RelationTruncateError(resp, request)
             return True
 
         return self._execute(request, response_handler)
@@ -512,7 +512,7 @@ class Collection(ApiGroup):
         rev: Optional[str] = None,
         check_rev: bool = True,
     ) -> Result[bool]:
-        """Check if a document exists in the collection.
+        """Check if a document exists in the relation.
 
         :param document: Document ID, key or body. Document body must contain
             the "_id" or "_key" field.
@@ -549,7 +549,7 @@ class Collection(ApiGroup):
         return self._execute(request, response_handler)
 
     def ids(self) -> Result[Cursor]:
-        """Return the IDs of all documents in the collection.
+        """Return the IDs of all documents in the relation.
 
         :return: Document ID cursor.
         :rtype: dbms.cursor.Cursor
@@ -558,7 +558,7 @@ class Collection(ApiGroup):
         request = Request(
             method="put",
             endpoint="/_api/simple/all-keys",
-            data={"collection": self.name, "type": "id"},
+            data={"relation": self.name, "type": "id"},
             read=self.name,
         )
 
@@ -570,7 +570,7 @@ class Collection(ApiGroup):
         return self._execute(request, response_handler)
 
     def keys(self) -> Result[Cursor]:
-        """Return the keys of all documents in the collection.
+        """Return the keys of all documents in the relation.
 
         :return: Document key cursor.
         :rtype: dbms.cursor.Cursor
@@ -579,7 +579,7 @@ class Collection(ApiGroup):
         request = Request(
             method="put",
             endpoint="/_api/simple/all-keys",
-            data={"collection": self.name, "type": "key"},
+            data={"relation": self.name, "type": "key"},
             read=self.name,
         )
 
@@ -593,7 +593,7 @@ class Collection(ApiGroup):
     def all(
         self, skip: Optional[int] = None, limit: Optional[int] = None
     ) -> Result[Cursor]:
-        """Return all documents in the collection.
+        """Return all documents in the relation.
 
         :param skip: Number of documents to skip.
         :type skip: int | None
@@ -606,7 +606,7 @@ class Collection(ApiGroup):
         assert is_none_or_int(skip), "skip must be a non-negative int"
         assert is_none_or_int(limit), "limit must be a non-negative int"
 
-        data: Json = {"collection": self.name}
+        data: Json = {"relation": self.name}
         if skip is not None:
             data["skip"] = skip
         if limit is not None:
@@ -643,7 +643,7 @@ class Collection(ApiGroup):
         assert is_none_or_int(limit), "limit must be a non-negative int"
 
         data: Json = {
-            "collection": self.name,
+            "relation": self.name,
             "example": filters,
             "skip": skip,
         }
@@ -669,7 +669,7 @@ class Collection(ApiGroup):
         Documents returned are sorted according to distance, with the nearest
         document being the first. If there are documents of equal distance,
         they are randomly chosen from the set until the limit is reached. A geo
-        index must be defined in the collection to use this method.
+        index must be defined in the relation to use this method.
 
         :param latitude: Latitude.
         :type latitude: int | float
@@ -686,14 +686,14 @@ class Collection(ApiGroup):
         assert is_none_or_int(limit), "limit must be a non-negative int"
 
         query = """
-        FOR doc IN NEAR(@collection, @latitude, @longitude{})
+        FOR doc IN NEAR(@relation, @latitude, @longitude{})
             RETURN doc
         """.format(
             "" if limit is None else ", @limit "
         )
 
         bind_vars = {
-            "collection": self._name,
+            "relation": self._name,
             "latitude": latitude,
             "longitude": longitude,
         }
@@ -724,7 +724,7 @@ class Collection(ApiGroup):
     ) -> Result[Cursor]:
         """Return documents within a given range in a random order.
 
-        A skiplist index must be defined in the collection to use this method.
+        A skiplist index must be defined in the relation to use this method.
 
         :param field: Document field name.
         :type field: str
@@ -744,7 +744,7 @@ class Collection(ApiGroup):
         assert is_none_or_int(limit), "limit must be a non-negative int"
 
         bind_vars = {
-            "@collection": self._name,
+            "@relation": self._name,
             "field": field,
             "lower": lower,
             "upper": upper,
@@ -753,7 +753,7 @@ class Collection(ApiGroup):
         }
 
         query = """
-        FOR doc IN @@collection
+        FOR doc IN @@relation
             FILTER doc.@field >= @lower && doc.@field < @upper
             LIMIT @skip, @limit
             RETURN doc
@@ -782,7 +782,7 @@ class Collection(ApiGroup):
     ) -> Result[Cursor]:
         """Return documents within a given radius around a coordinate.
 
-        A geo index must be defined in the collection to use this method.
+        A geo index must be defined in the relation to use this method.
 
         :param latitude: Latitude.
         :type latitude: int | float
@@ -803,14 +803,14 @@ class Collection(ApiGroup):
         assert is_none_or_str(distance_field), "distance_field must be a str"
 
         query = """
-        FOR doc IN WITHIN(@@collection, @latitude, @longitude, @radius{})
+        FOR doc IN WITHIN(@@relation, @latitude, @longitude, @radius{})
             RETURN doc
         """.format(
             "" if distance_field is None else ", @distance"
         )
 
         bind_vars = {
-            "@collection": self._name,
+            "@relation": self._name,
             "latitude": latitude,
             "longitude": longitude,
             "radius": radius,
@@ -856,7 +856,7 @@ class Collection(ApiGroup):
         :type skip: int | None
         :param limit: Max number of documents returned.
         :type limit: int | None
-        :param index: ID of the geo index to use (without the collection
+        :param index: ID of the geo index to use (without the relation
             prefix). This parameter is ignored in transactions.
         :type index: str | None
         :returns: Document cursor.
@@ -871,7 +871,7 @@ class Collection(ApiGroup):
         assert is_none_or_int(limit), "limit must be a non-negative int"
 
         data: Json = {
-            "collection": self._name,
+            "relation": self._name,
             "latitude1": latitude1,
             "longitude1": longitude1,
             "latitude2": latitude2,
@@ -916,7 +916,7 @@ class Collection(ApiGroup):
         assert is_none_or_int(limit), "limit must be a non-negative int"
 
         bind_vars: Json = {
-            "collection": self._name,
+            "relation": self._name,
             "field": field,
             "query": query,
         }
@@ -924,7 +924,7 @@ class Collection(ApiGroup):
             bind_vars["limit"] = limit
 
         aql = """
-        FOR doc IN FULLTEXT(@collection, @field, @query{})
+        FOR doc IN FULLTEXT(@relation, @field, @query{})
             RETURN doc
         """.format(
             "" if limit is None else ", @limit"
@@ -974,7 +974,7 @@ class Collection(ApiGroup):
         return self._execute(request, response_handler)
 
     def random(self) -> Result[Json]:
-        """Return a random document from the collection.
+        """Return a random document from the relation.
 
         :return: A random document.
         :rtype: dict
@@ -983,7 +983,7 @@ class Collection(ApiGroup):
         request = Request(
             method="put",
             endpoint="/_api/simple/any",
-            data={"collection": self.name},
+            data={"relation": self.name},
             read=self.name,
         )
 
@@ -1000,16 +1000,16 @@ class Collection(ApiGroup):
     ####################
 
     def indexes(self) -> Result[List[Json]]:
-        """Return the collection indexes.
+        """Return the relation indexes.
 
-        :return: Collection indexes.
+        :return: Relation indexes.
         :rtype: [dict]
         :raise dbms.exceptions.IndexListError: If retrieval fails.
         """
         request = Request(
             method="get",
             endpoint="/_api/index",
-            params={"collection": self.name},
+            params={"relation": self.name},
         )
 
         def response_handler(resp: Response) -> List[Json]:
@@ -1033,7 +1033,7 @@ class Collection(ApiGroup):
             method="post",
             endpoint="/_api/index",
             data=data,
-            params={"collection": self.name},
+            params={"relation": self.name},
         )
 
         def response_handler(resp: Response) -> Json:
@@ -1066,7 +1066,7 @@ class Collection(ApiGroup):
         :type deduplicate: bool | None
         :param name: Optional name for the index.
         :type name: str | None
-        :param in_background: Do not hold the collection lock.
+        :param in_background: Do not hold the relation lock.
         :type in_background: bool | None
         :return: New index details.
         :rtype: dict
@@ -1110,7 +1110,7 @@ class Collection(ApiGroup):
         :type deduplicate: bool | None
         :param name: Optional name for the index.
         :type name: str | None
-        :param in_background: Do not hold the collection lock.
+        :param in_background: Do not hold the relation lock.
         :type in_background: bool | None
         :return: New index details.
         :rtype: dict
@@ -1150,7 +1150,7 @@ class Collection(ApiGroup):
         :type ordered: bool | None
         :param name: Optional name for the index.
         :type name: str | None
-        :param in_background: Do not hold the collection lock.
+        :param in_background: Do not hold the relation lock.
         :type in_background: bool | None
         :param legacyPolygons: Whether or not to use use the old, pre-3.10 rules
             for the parsing GeoJSON polygons
@@ -1189,7 +1189,7 @@ class Collection(ApiGroup):
         :type min_length: int | None
         :param name: Optional name for the index.
         :type name: str | None
-        :param in_background: Do not hold the collection lock.
+        :param in_background: Do not hold the relation lock.
         :type in_background: bool | None
         :return: New index details.
         :rtype: dict
@@ -1231,7 +1231,7 @@ class Collection(ApiGroup):
         :type sparse: bool | None
         :param name: Optional name for the index.
         :type name: str | None
-        :param in_background: Do not hold the collection lock.
+        :param in_background: Do not hold the relation lock.
         :type in_background: bool | None
         :param storedValues: Additional attributes to include in a persistent
             index. These additional attributes cannot be used for index
@@ -1279,7 +1279,7 @@ class Collection(ApiGroup):
         :type expiry_time: int
         :param name: Optional name for the index.
         :type name: str | None
-        :param in_background: Do not hold the collection lock.
+        :param in_background: Do not hold the relation lock.
         :type in_background: bool | None
         :return: New index details.
         :rtype: dict
@@ -1320,7 +1320,7 @@ class Collection(ApiGroup):
         return self._execute(request, response_handler)
 
     def load_indexes(self) -> Result[bool]:
-        """Cache all indexes in the collection into memory.
+        """Cache all indexes in the relation into memory.
 
         :return: True if index was loaded successfully.
         :rtype: bool
@@ -1362,7 +1362,7 @@ class Collection(ApiGroup):
 
         .. note::
 
-            In edge/vertex collections, this method does NOT provide the
+            In edge/vertex relations, this method does NOT provide the
             transactional guarantees and validations that single insert
             operation does for graphs. If these properties are required, see
             :func:`dbms.database.StandardDatabase.begin_batch_execution`
@@ -1476,7 +1476,7 @@ class Collection(ApiGroup):
 
         .. note::
 
-            In edge/vertex collections, this method does NOT provide the
+            In edge/vertex relations, this method does NOT provide the
             transactional guarantees and validations that single update
             operation does for graphs. If these properties are required, see
             :func:`dbms.database.StandardDatabase.begin_batch_execution`
@@ -1573,7 +1573,7 @@ class Collection(ApiGroup):
 
         .. note::
 
-            In edge/vertex collections, this method does NOT provide the
+            In edge/vertex relations, this method does NOT provide the
             transactional guarantees and validations that single update
             operation does for graphs. If these properties are required, see
             :func:`dbms.database.StandardDatabase.begin_batch_execution`
@@ -1585,7 +1585,7 @@ class Collection(ApiGroup):
         :type body: dict
         :param limit: Max number of documents to update. If the limit is lower
             than the number of matched documents, random documents are
-            chosen. This parameter is not supported on sharded collections.
+            chosen. This parameter is not supported on sharded relations.
         :type limit: int | None
         :param keep_none: If set to True, fields with value None are retained
             in the document. Otherwise, they are removed completely.
@@ -1600,7 +1600,7 @@ class Collection(ApiGroup):
         :raise dbms.exceptions.DocumentUpdateError: If update fails.
         """
         data: Json = {
-            "collection": self.name,
+            "relation": self.name,
             "example": filters,
             "newValue": body,
             "keepNull": keep_none,
@@ -1647,7 +1647,7 @@ class Collection(ApiGroup):
 
         .. note::
 
-            In edge/vertex collections, this method does NOT provide the
+            In edge/vertex relations, this method does NOT provide the
             transactional guarantees and validations that single replace
             operation does for graphs. If these properties are required, see
             :func:`dbms.database.StandardDatabase.begin_batch_execution`
@@ -1735,7 +1735,7 @@ class Collection(ApiGroup):
 
         .. note::
 
-            In edge/vertex collections, this method does NOT provide the
+            In edge/vertex relations, this method does NOT provide the
             transactional guarantees and validations that single replace
             operation does for graphs. If these properties are required, see
             :func:`dbms.database.StandardDatabase.begin_batch_execution`
@@ -1754,7 +1754,7 @@ class Collection(ApiGroup):
         :rtype: int
         :raise dbms.exceptions.DocumentReplaceError: If replace fails.
         """
-        data: Json = {"collection": self.name, "example": filters, "newValue": body}
+        data: Json = {"relation": self.name, "example": filters, "newValue": body}
         if limit is not None:
             data["limit"] = limit
         if sync is not None:
@@ -1795,7 +1795,7 @@ class Collection(ApiGroup):
 
         .. note::
 
-            In edge/vertex collections, this method does NOT provide the
+            In edge/vertex relations, this method does NOT provide the
             transactional guarantees and validations that single delete
             operation does for graphs. If these properties are required, see
             :func:`dbms.database.StandardDatabase.begin_batch_execution`
@@ -1874,7 +1874,7 @@ class Collection(ApiGroup):
 
         .. note::
 
-            In edge/vertex collections, this method does NOT provide the
+            In edge/vertex relations, this method does NOT provide the
             transactional guarantees and validations that single delete
             operation does for graphs. If these properties are required, see
             :func:`dbms.database.StandardDatabase.begin_batch_execution`
@@ -1891,7 +1891,7 @@ class Collection(ApiGroup):
         :rtype: int
         :raise dbms.exceptions.DocumentDeleteError: If delete fails.
         """
-        data: Json = {"collection": self.name, "example": filters}
+        data: Json = {"relation": self.name, "example": filters}
         if sync is not None:
             data["waitForSync"] = sync
         if limit is not None and limit != 0:
@@ -1924,16 +1924,16 @@ class Collection(ApiGroup):
         sync: Optional[bool] = None,
         batch_size: Optional[int] = None,
     ) -> Union[Result[Json], List[Result[Json]]]:
-        """Insert multiple documents into the collection.
+        """Insert multiple documents into the relation.
 
         .. note::
 
-            This method is faster than :func:`dbms.collection.Collection.insert_many`
+            This method is faster than :func:`dbms.relation.Relation.insert_many`
             but does not return as many details.
 
         .. note::
 
-            In edge/vertex collections, this method does NOT provide the
+            In edge/vertex relations, this method does NOT provide the
             transactional guarantees and validations that single insert
             operation does for graphs. If these properties are required, see
             :func:`dbms.database.StandardDatabase.begin_batch_execution`
@@ -1951,12 +1951,12 @@ class Collection(ApiGroup):
         :param from_prefix: String prefix prepended to the value of "_from"
             field in each edge document inserted. For example, prefix "foo"
             prepended to "_from": "bar" will result in "_from": "foo/bar".
-            Applies only to edge collections.
+            Applies only to edge relations.
         :type from_prefix: str
         :param to_prefix: String prefix prepended to the value of "_to" field
             in edge document inserted. For example, prefix "foo" prepended to
             "_to": "bar" will result in "_to": "foo/bar". Applies only to edge
-            collections.
+            relations.
         :type to_prefix: str
         :param overwrite: If set to True, all existing documents are removed
             prior to the import. Indexes are still preserved.
@@ -1993,7 +1993,7 @@ class Collection(ApiGroup):
 
         documents = [self._ensure_key_from_id(doc) for doc in documents]
 
-        params: Params = {"type": "array", "collection": self.name}
+        params: Params = {"type": "array", "relation": self.name}
         if halt_on_error is not None:
             params["complete"] = halt_on_error
         if details is not None:
@@ -2040,11 +2040,11 @@ class Collection(ApiGroup):
             return results
 
 
-class StandardCollection(Collection):
-    """Standard DbmsDB collection API wrapper."""
+class StandardRelation(Relation):
+    """Standard DbmsDB relation API wrapper."""
 
     def __repr__(self) -> str:
-        return f"<StandardCollection {self.name}>"
+        return f"<StandardRelation {self.name}>"
 
     def __getitem__(self, key: Union[str, Json]) -> Result[Optional[Json]]:
         return self.get(key)
@@ -2399,13 +2399,13 @@ class StandardCollection(Collection):
         return self._execute(request, response_handler)
 
 
-class VertexCollection(Collection):
-    """Vertex collection API wrapper.
+class VertexRelation(Relation):
+    """Vertex relation API wrapper.
 
     :param connection: HTTP connection.
     :param executor: API executor.
     :param graph: Graph name.
-    :param name: Vertex collection name.
+    :param name: Vertex relation name.
     """
 
     def __init__(
@@ -2415,7 +2415,7 @@ class VertexCollection(Collection):
         self._graph = graph
 
     def __repr__(self) -> str:
-        return f"<VertexCollection {self.name}>"
+        return f"<VertexRelation {self.name}>"
 
     def __getitem__(self, key: Union[str, Json]) -> Result[Optional[Json]]:
         return self.get(key)
@@ -2719,13 +2719,13 @@ class VertexCollection(Collection):
         return self._execute(request, response_handler)
 
 
-class EdgeCollection(Collection):
-    """DbmsDB edge collection API wrapper.
+class EdgeRelation(Relation):
+    """DbmsDB edge relation API wrapper.
 
     :param connection: HTTP connection.
     :param executor: API executor.
     :param graph: Graph name.
-    :param name: Edge collection name.
+    :param name: Edge relation name.
     """
 
     def __init__(
@@ -2735,7 +2735,7 @@ class EdgeCollection(Collection):
         self._graph = graph
 
     def __repr__(self) -> str:
-        return f"<EdgeCollection {self.name}>"
+        return f"<EdgeRelation {self.name}>"
 
     def __getitem__(self, key: Union[str, Json]) -> Result[Optional[Json]]:
         return self.get(key)

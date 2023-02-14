@@ -24,8 +24,8 @@ message, error code and HTTP request response details.
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # Get the API wrapper for "students" collection.
-    students = db.collection('students')
+    # Get the API wrapper for "students" relation.
+    students = db.relation('students')
 
     try:
         students.insert({'_key': 'John'})
@@ -85,8 +85,8 @@ response details.
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # Get the API wrapper for "students" collection.
-    students = db.collection('students')
+    # Get the API wrapper for "students" relation.
+    students = db.relation('students')
 
     try:
         students.get({'_id': 'invalid_id'})  # malformed document

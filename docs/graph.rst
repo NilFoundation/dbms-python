@@ -2,8 +2,8 @@ Graphs
 ------
 
 A **graph** consists of vertices and edges. Vertices are stored as documents in
-:ref:`vertex collections <vertex-collections>` and edges stored as documents in
-:ref:`edge collections <edge-collections>`. The collections used in a graph and
+:ref:`vertex relations <vertex-relations>` and edges stored as documents in
+:ref:`edge relations <edge-relations>`. The relations used in a graph and
 their relations are specified with :ref:`edge definitions <edge-definitions>`.
 For more information, refer to `DbmsDB manual`_.
 
@@ -34,7 +34,7 @@ For more information, refer to `DbmsDB manual`_.
     # Retrieve various graph properties.
     school.name
     school.db_name
-    school.vertex_collections()
+    school.vertex_relations()
     school.edge_definitions()
 
     # Delete the graph.
@@ -49,18 +49,18 @@ An **edge definition** specifies a directed relation in a graph. A graph can
 have arbitrary number of edge definitions. Each edge definition consists of the
 following components:
 
-* **From Vertex Collections:** contain "from" vertices referencing "to" vertices.
-* **To Vertex Collections:** contain "to" vertices referenced by "from" vertices.
-* **Edge Collection:** contains edges that link "from" and "to" vertices.
+* **From Vertex Relations:** contain "from" vertices referencing "to" vertices.
+* **To Vertex Relations:** contain "to" vertices referenced by "from" vertices.
+* **Edge Relation:** contains edges that link "from" and "to" vertices.
 
 Here is an example body of an edge definition:
 
 .. testcode::
 
     {
-        'edge_collection': 'teach',
-        'from_vertex_collections': ['teachers'],
-        'to_vertex_collections': ['lectures']
+        'edge_relation': 'teach',
+        'from_vertex_relations': ['teachers'],
+        'to_vertex_relations': ['lectures']
     }
 
 Here is an example showing how edge definitions are managed:
@@ -82,12 +82,12 @@ Here is an example showing how edge definitions are managed:
         school = db.create_graph('school')
 
     # Create an edge definition named "teach". This creates any missing
-    # collections and returns an API wrapper for "teach" edge collection.
+    # relations and returns an API wrapper for "teach" edge relation.
     if not school.has_edge_definition('teach'):
         teach = school.create_edge_definition(
-            edge_collection='teach',
-            from_vertex_collections=['teachers'],
-            to_vertex_collections=['teachers']
+            edge_relation='teach',
+            from_vertex_relations=['teachers'],
+            to_vertex_relations=['teachers']
         )
 
     # List edge definitions.
@@ -95,24 +95,24 @@ Here is an example showing how edge definitions are managed:
 
     # Replace the edge definition.
     school.replace_edge_definition(
-        edge_collection='teach',
-        from_vertex_collections=['teachers'],
-        to_vertex_collections=['lectures']
+        edge_relation='teach',
+        from_vertex_relations=['teachers'],
+        to_vertex_relations=['lectures']
     )
 
-    # Delete the edge definition (and its collections).
+    # Delete the edge definition (and its relations).
     school.delete_edge_definition('teach', purge=True)
 
-.. _vertex-collections:
+.. _vertex-relations:
 
-Vertex Collections
+Vertex Relations
 ==================
 
-A **vertex collection** contains vertex documents, and shares its namespace
-with all other types of collections. Each graph can have an arbitrary number of
-vertex collections. Vertex collections that are not part of any edge definition
-are called **orphan collections**. You can manage vertex documents via standard
-collection API wrappers, but using vertex collection API wrappers provides
+A **vertex relation** contains vertex documents, and shares its namespace
+with all other types of relations. Each graph can have an arbitrary number of
+vertex relations. Vertex relations that are not part of any edge definition
+are called **orphan relations**. You can manage vertex documents via standard
+relation API wrappers, but using vertex relation API wrappers provides
 additional safeguards:
 
 * All modifications are executed in transactions.
@@ -133,17 +133,17 @@ additional safeguards:
     # Get the API wrapper for graph "school".
     school = db.graph('school')
 
-    # Create a new vertex collection named "teachers" if it does not exist.
-    # This returns an API wrapper for "teachers" vertex collection.
-    if school.has_vertex_collection('teachers'):
-        teachers = school.vertex_collection('teachers')
+    # Create a new vertex relation named "teachers" if it does not exist.
+    # This returns an API wrapper for "teachers" vertex relation.
+    if school.has_vertex_relation('teachers'):
+        teachers = school.vertex_relation('teachers')
     else:
-        teachers = school.create_vertex_collection('teachers')
+        teachers = school.create_vertex_relation('teachers')
 
-    # List vertex collections in the graph.
-    school.vertex_collections()
+    # List vertex relations in the graph.
+    school.vertex_relations()
 
-    # Vertex collections have similar interface as standard collections.
+    # Vertex relations have similar interface as standard relations.
     teachers.properties()
     teachers.insert({'_key': 'jon', 'name': 'Jon'})
     teachers.update({'_key': 'jon', 'age': 35})
@@ -168,12 +168,12 @@ IDs instead of keys where applicable.
     # Get the API wrapper for graph "school".
     school = db.graph('school')
 
-    # Create a new vertex collection named "lectures" if it does not exist.
-    # This returns an API wrapper for "lectures" vertex collection.
-    if school.has_vertex_collection('lectures'):
-        school.vertex_collection('lectures')
+    # Create a new vertex relation named "lectures" if it does not exist.
+    # This returns an API wrapper for "lectures" vertex relation.
+    if school.has_vertex_relation('lectures'):
+        school.vertex_relation('lectures')
     else:
-        school.create_vertex_collection('lectures')
+        school.create_vertex_relation('lectures')
 
     # The "_id" field is required instead of "_key" field (except for insert).
     school.insert_vertex('lectures', {'_key': 'CSC101'})
@@ -183,16 +183,16 @@ IDs instead of keys where applicable.
     school.vertex('lectures/CSC101')
     school.delete_vertex('lectures/CSC101')
 
-See :ref:`Graph` and :ref:`VertexCollection` for API specification.
+See :ref:`Graph` and :ref:`VertexRelation` for API specification.
 
-.. _edge-collections:
+.. _edge-relations:
 
-Edge Collections
+Edge Relations
 ================
 
-An **edge collection** contains :ref:`edge documents <edge-documents>`, and
-shares its namespace with all other types of collections. You can manage edge
-documents via standard collection API wrappers, but using edge collection API
+An **edge relation** contains :ref:`edge documents <edge-documents>`, and
+shares its namespace with all other types of relations. You can manage edge
+documents via standard relation API wrappers, but using edge relation API
 wrappers provides additional safeguards:
 
 * All modifications are executed in transactions.
@@ -200,25 +200,25 @@ wrappers provides additional safeguards:
 
 **Example:**
 
-.. testsetup:: edge_collections
+.. testsetup:: edge_relations
 
     client = DbmsClient()
     db = client.db('test', username='root', password='passwd')
     school = db.graph('school')
 
-    if school.has_vertex_collection('lectures'):
-        school.vertex_collection('lectures')
+    if school.has_vertex_relation('lectures'):
+        school.vertex_relation('lectures')
     else:
-        school.create_vertex_collection('lectures')
+        school.create_vertex_relation('lectures')
     school.insert_vertex('lectures', {'_key': 'CSC101'})
 
-    if school.has_vertex_collection('teachers'):
-        school.vertex_collection('teachers')
+    if school.has_vertex_relation('teachers'):
+        school.vertex_relation('teachers')
     else:
-        school.create_vertex_collection('teachers')
+        school.create_vertex_relation('teachers')
     school.insert_vertex('teachers', {'_key': 'jon'})
 
-.. testcode:: edge_collections
+.. testcode:: edge_relations
 
     from dbms import DbmsClient
 
@@ -231,17 +231,17 @@ wrappers provides additional safeguards:
     # Get the API wrapper for graph "school".
     school = db.graph('school')
 
-    # Get the API wrapper for edge collection "teach".
+    # Get the API wrapper for edge relation "teach".
     if school.has_edge_definition('teach'):
-        teach = school.edge_collection('teach')
+        teach = school.edge_relation('teach')
     else:
         teach = school.create_edge_definition(
-            edge_collection='teach',
-            from_vertex_collections=['teachers'],
-            to_vertex_collections=['lectures']
+            edge_relation='teach',
+            from_vertex_relations=['teachers'],
+            to_vertex_relations=['lectures']
         )
 
-    # Edge collections have a similar interface as standard collections.
+    # Edge relations have a similar interface as standard relations.
     teach.insert({
         '_key': 'jon-CSC101',
         '_from': 'teachers/jon',
@@ -273,7 +273,7 @@ IDs instead of keys where applicable.
 
 **Example:**
 
-.. testcode:: edge_collections
+.. testcode:: edge_relations
 
     from dbms import DbmsClient
 
@@ -288,7 +288,7 @@ IDs instead of keys where applicable.
 
     # The "_id" field is required instead of "_key" field.
     school.insert_edge(
-        collection='teach',
+        relation='teach',
         edge={
             '_id': 'teach/jon-CSC101',
             '_from': 'teachers/jon',
@@ -311,7 +311,7 @@ IDs instead of keys where applicable.
     school.link('teach', 'teachers/jon', 'lectures/CSC101')
     school.edges('teach', 'teachers/jon', direction='in')
 
-See :ref:`Graph` and :ref:`EdgeCollection` for API specification.
+See :ref:`Graph` and :ref:`EdgeRelation` for API specification.
 
 .. _graph-traversals:
 
@@ -319,7 +319,7 @@ Graph Traversals
 ================
 
 **Graph traversals** are executed via the :func:`dbms.graph.Graph.traverse`
-method. Each traversal can span across multiple vertex collections, and walk
+method. Each traversal can span across multiple vertex relations, and walk
 over edges and vertices using various algorithms.
 
 **Example:**
@@ -330,15 +330,15 @@ over edges and vertices using various algorithms.
     db = client.db('test', username='root', password='passwd')
     school = db.graph('school')
 
-    if school.has_vertex_collection('lectures'):
-        school.vertex_collection('lectures')
+    if school.has_vertex_relation('lectures'):
+        school.vertex_relation('lectures')
     else:
-        school.create_vertex_collection('lectures')
+        school.create_vertex_relation('lectures')
 
-    if school.has_vertex_collection('teachers'):
-        school.vertex_collection('teachers')
+    if school.has_vertex_relation('teachers'):
+        school.vertex_relation('teachers')
     else:
-        school.create_vertex_collection('teachers')
+        school.create_vertex_relation('teachers')
 
 .. testcode:: traversals
 
@@ -353,12 +353,12 @@ over edges and vertices using various algorithms.
     # Get the API wrapper for graph "school".
     school = db.graph('school')
 
-    # Get API wrappers for "from" and "to" vertex collections.
-    teachers = school.vertex_collection('teachers')
-    lectures = school.vertex_collection('lectures')
+    # Get API wrappers for "from" and "to" vertex relations.
+    teachers = school.vertex_relation('teachers')
+    lectures = school.vertex_relation('lectures')
 
-    # Get the API wrapper for the edge collection.:
-    teach = school.edge_collection('teach')
+    # Get the API wrapper for the edge relation.:
+    teach = school.edge_relation('teach')
 
     # Insert vertices into the graph.
     teachers.insert({'_key': 'jon', 'name': 'Professor jon'})

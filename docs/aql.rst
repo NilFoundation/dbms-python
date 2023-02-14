@@ -4,7 +4,7 @@ AQL
 **DbmsDB Query Language (AQL)** is used to read and write data. It is similar
 to SQL for relational databases, but without the support for data definition
 operations such as creating or deleting :doc:`databases <database>`,
-:doc:`collections <collection>` or :doc:`indexes <indexes>`. For more
+:doc:`relations <relation>` or :doc:`indexes <indexes>`. For more
 information, refer to `DbmsDB manual`_.
 
 .. _DbmsDB manual: https://docs.dbmsdb.com
@@ -27,8 +27,8 @@ AQL queries are invoked from AQL API wrapper. Executing queries returns
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # Insert some test documents into "students" collection.
-    db.collection('students').insert_many([
+    # Insert some test documents into "students" relation.
+    db.relation('students').insert_many([
         {'_key': 'Abby', 'age': 22},
         {'_key': 'John', 'age': 18},
         {'_key': 'Mary', 'age': 21}

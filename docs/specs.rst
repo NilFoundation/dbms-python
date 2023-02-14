@@ -79,12 +79,12 @@ Cluster
 .. autoclass:: dbms.cluster.Cluster
     :members:
 
-.. _Collection:
+.. _Relation:
 
-Collection
+Relation
 ==========
 
-.. autoclass:: dbms.collection.Collection
+.. autoclass:: dbms.relation.Relation
     :members:
 
 .. _Cursor:
@@ -103,12 +103,12 @@ DefaultHTTPClient
 .. autoclass:: dbms.http.DefaultHTTPClient
     :members:
 
-.. _EdgeCollection:
+.. _EdgeRelation:
 
-EdgeCollection
+EdgeRelation
 ==============
 
-.. autoclass:: dbms.collection.EdgeCollection
+.. autoclass:: dbms.relation.EdgeRelation
     :members:
 
 .. _Foxx:
@@ -167,12 +167,12 @@ Response
 .. autoclass:: dbms.response.Response
     :members:
 
-.. _StandardCollection:
+.. _StandardRelation:
 
-StandardCollection
+StandardRelation
 ==================
 
-.. autoclass:: dbms.collection.StandardCollection
+.. autoclass:: dbms.relation.StandardRelation
     :inherited-members:
     :members:
 
@@ -194,12 +194,12 @@ TransactionDatabase
     :inherited-members:
     :members:
 
-.. _VertexCollection:
+.. _VertexRelation:
 
-VertexCollection
+VertexRelation
 ================
 
-.. autoclass:: dbms.collection.VertexCollection
+.. autoclass:: dbms.relation.VertexRelation
     :members:
 
 .. _WriteAheadLog:

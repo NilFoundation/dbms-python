@@ -17,8 +17,8 @@ results can be retrieved later from :ref:`BatchJob` objects.
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # Get the API wrapper for "students" collection.
-    students = db.collection('students')
+    # Get the API wrapper for "students" relation.
+    students = db.relation('students')
 
     # Begin batch execution via context manager. This returns an instance of
     # BatchDatabase, a database-level API wrapper tailored specifically for
@@ -28,7 +28,7 @@ results can be retrieved later from :ref:`BatchJob` objects.
 
         # Child wrappers are also tailored for batch execution.
         batch_aql = batch_db.aql
-        batch_col = batch_db.collection('students')
+        batch_col = batch_db.relation('students')
 
         # API execution context is always set to "batch".
         assert batch_db.context == 'batch'
@@ -73,8 +73,8 @@ results can be retrieved later from :ref:`BatchJob` objects.
     # Batch execution can be initiated without using a context manager.
     # If return_result parameter is set to False, no jobs are returned.
     batch_db = db.begin_batch_execution(return_result=False)
-    batch_db.collection('students').insert({'_key': 'Jake'})
-    batch_db.collection('students').insert({'_key': 'Jill'})
+    batch_db.relation('students').insert({'_key': 'Jake'})
+    batch_db.relation('students').insert({'_key': 'Jill'})
 
     # The commit must be called explicitly.
     batch_db.commit()
