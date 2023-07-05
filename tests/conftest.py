@@ -193,7 +193,7 @@ def pytest_generate_tests(metafunc):
         tst_conn = tst_db._conn
         bad_conn = bad_db._conn
 
-        if test in {"aql", "relation", "document", "index"}:
+        if test in {"sql", "relation", "document", "index"}:
             # Add test transaction databases
             tst_txn_db = StandardDatabase(tst_conn)
             tst_txn_db._executor = TestTransactionApiExecutor(tst_conn)

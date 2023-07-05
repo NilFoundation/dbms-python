@@ -467,8 +467,8 @@ CLUSTER_READING_PLAN_AGENCY = 1472
 # Coordinator cannot truncate all shards of a cluster relation.
 CLUSTER_COULD_NOT_TRUNCATE_RELATION = 1473
 
-# Internal communication of the cluster for AQL produces an error.
-CLUSTER_AQL_COMMUNICATION = 1474
+# Internal communication of the cluster for SQL produces an error.
+CLUSTER_SQL_COMMUNICATION = 1474
 
 # Operation is DBServer-only.
 CLUSTER_ONLY_ON_DBSERVER = 1477
@@ -476,8 +476,8 @@ CLUSTER_ONLY_ON_DBSERVER = 1477
 # Cannot reach a required DBServer.
 CLUSTER_BACKEND_UNAVAILABLE = 1478
 
-# Required relation out of sync during AQL execution.
-CLUSTER_AQL_RELATION_OUT_OF_SYNC = 1481
+# Required relation out of sync during SQL execution.
+CLUSTER_SQL_RELATION_OUT_OF_SYNC = 1481
 
 # Coordinator cannot create an entry for a new index in Plan hierarchy.
 CLUSTER_COULD_NOT_CREATE_INDEX_IN_PLAN = 1482
@@ -641,7 +641,7 @@ QUERY_DISALLOWED_DYNAMIC_CALL = 1578
 QUERY_ACCESS_AFTER_MODIFICATION = 1579
 
 ############################
-# AQL User Function Errors #
+# SQL User Function Errors #
 ############################
 
 # User function registered with invalid name.
@@ -657,7 +657,7 @@ QUERY_FUNCTION_NOT_FOUND = 1582
 QUERY_FUNCTION_RUNTIME_ERROR = 1583
 
 #############################
-# AQL Query Registry Errors #
+# SQL Query Registry Errors #
 #############################
 
 # Query received an invalid JSON.
@@ -929,25 +929,25 @@ COMMUNICATOR_REQUEST_ABORTED = 2100
 COMMUNICATOR_DISABLED = 2101
 
 #######################
-# Internal AQL errors #
+# Internal SQL errors #
 #######################
 
-# Internal error during AQL execution.
-INTERNAL_AQL = 2200
+# Internal error during SQL execution.
+INTERNAL_SQL = 2200
 
-# AQL block wrote in too few output registers.
+# SQL block wrote in too few output registers.
 WROTE_TOO_FEW_OUTPUT_REGISTERS = 2201
 
-# AQL block wrote in too many output registers.
+# SQL block wrote in too many output registers.
 WROTE_TOO_MANY_OUTPUT_REGISTERS = 2202
 
-# AQL block wrote in an output register twice.
+# SQL block wrote in an output register twice.
 WROTE_OUTPUT_REGISTER_TWICE = 2203
 
-# AQL block wrote in a register that is not its output.
+# SQL block wrote in a register that is not its output.
 WROTE_IN_WRONG_REGISTER = 2204
 
-# AQL block did not copy its input registers.
+# SQL block did not copy its input registers.
 INPUT_REGISTERS_NOT_COPIED = 2205
 
 ##########################

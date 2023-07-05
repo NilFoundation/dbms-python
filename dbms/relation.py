@@ -923,7 +923,7 @@ class Relation(ApiGroup):
         if limit is not None:
             bind_vars["limit"] = limit
 
-        aql = """
+        sql = """
         FOR doc IN FULLTEXT(@relation, @field, @query{})
             RETURN doc
         """.format(
@@ -933,7 +933,7 @@ class Relation(ApiGroup):
         request = Request(
             method="post",
             endpoint="/_api/cursor",
-            data={"query": aql, "bindVars": bind_vars, "count": True},
+            data={"query": sql, "bindVars": bind_vars, "count": True},
             read=self.name,
         )
 

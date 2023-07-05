@@ -35,12 +35,12 @@ logical unit of work (ACID compliant).
     txn_db.transaction_id
 
     # Child wrappers are also tailored only for the specific transaction.
-    txn_aql = txn_db.aql
+    txn_sql = txn_db.sql
     txn_col = txn_db.relation('students')
 
     # API execution context is always set to "transaction".
     assert txn_db.context == 'transaction'
-    assert txn_aql.context == 'transaction'
+    assert txn_sql.context == 'transaction'
     assert txn_col.context == 'transaction'
 
     # From python-dbms version 5+, results are returned immediately instead

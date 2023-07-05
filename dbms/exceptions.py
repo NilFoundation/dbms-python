@@ -89,72 +89,72 @@ class DbmsServerError(DbmsError):
 
 
 ##################
-# AQL Exceptions #
+# SQL Exceptions #
 ##################
 
 
-class AQLQueryListError(DbmsServerError):
-    """Failed to retrieve running AQL queries."""
+class SQLQueryListError(DbmsServerError):
+    """Failed to retrieve running SQL queries."""
 
 
-class AQLQueryExplainError(DbmsServerError):
+class SQLQueryExplainError(DbmsServerError):
     """Failed to parse and explain query."""
 
 
-class AQLQueryValidateError(DbmsServerError):
+class SQLQueryValidateError(DbmsServerError):
     """Failed to parse and validate query."""
 
 
-class AQLQueryExecuteError(DbmsServerError):
+class SQLQueryExecuteError(DbmsServerError):
     """Failed to execute query."""
 
 
-class AQLQueryKillError(DbmsServerError):
+class SQLQueryKillError(DbmsServerError):
     """Failed to kill the query."""
 
 
-class AQLQueryClearError(DbmsServerError):
-    """Failed to clear slow AQL queries."""
+class SQLQueryClearError(DbmsServerError):
+    """Failed to clear slow SQL queries."""
 
 
-class AQLQueryTrackingGetError(DbmsServerError):
-    """Failed to retrieve AQL tracking properties."""
+class SQLQueryTrackingGetError(DbmsServerError):
+    """Failed to retrieve SQL tracking properties."""
 
 
-class AQLQueryTrackingSetError(DbmsServerError):
-    """Failed to configure AQL tracking properties."""
+class SQLQueryTrackingSetError(DbmsServerError):
+    """Failed to configure SQL tracking properties."""
 
 
-class AQLCachePropertiesError(DbmsServerError):
+class SQLCachePropertiesError(DbmsServerError):
     """Failed to retrieve query cache properties."""
 
 
-class AQLCacheConfigureError(DbmsServerError):
+class SQLCacheConfigureError(DbmsServerError):
     """Failed to configure query cache properties."""
 
 
-class AQLCacheEntriesError(DbmsServerError):
-    """Failed to retrieve AQL cache entries."""
+class SQLCacheEntriesError(DbmsServerError):
+    """Failed to retrieve SQL cache entries."""
 
 
-class AQLCacheClearError(DbmsServerError):
+class SQLCacheClearError(DbmsServerError):
     """Failed to clear the query cache."""
 
 
-class AQLFunctionListError(DbmsServerError):
-    """Failed to retrieve AQL user functions."""
+class SQLFunctionListError(DbmsServerError):
+    """Failed to retrieve SQL user functions."""
 
 
-class AQLFunctionCreateError(DbmsServerError):
-    """Failed to create AQL user function."""
+class SQLFunctionCreateError(DbmsServerError):
+    """Failed to create SQL user function."""
 
 
-class AQLFunctionDeleteError(DbmsServerError):
-    """Failed to delete AQL user function."""
+class SQLFunctionDeleteError(DbmsServerError):
+    """Failed to delete SQL user function."""
 
 
-class AQLQueryRulesGetError(DbmsServerError):
-    """Failed to retrieve AQL query rules."""
+class SQLQueryRulesGetError(DbmsServerError):
+    """Failed to retrieve SQL query rules."""
 
 
 ##############################

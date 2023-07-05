@@ -29,20 +29,20 @@ AsyncJob
 .. autoclass:: dbms.job.AsyncJob
     :members:
 
-.. _AQL:
+.. _SQL:
 
-AQL
+SQL
 ====
 
-.. autoclass:: dbms.aql.AQL
+.. autoclass:: dbms.sql.SQL
     :members:
 
-.. _AQLQueryCache:
+.. _SQLQueryCache:
 
-AQLQueryCache
+SQLQueryCache
 =============
 
-.. autoclass:: dbms.aql.AQLQueryCache
+.. autoclass:: dbms.sql.SQLQueryCache
     :members:
 
 .. _Backup:

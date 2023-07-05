@@ -231,8 +231,8 @@ def format_relation(body: Json) -> Json:
     return verify_format(body, result)
 
 
-def format_aql_cache(body: Json) -> Json:
-    """Format AQL cache data.
+def format_sql_cache(body: Json) -> Json:
+    """Format SQL cache data.
 
     :param body: Input body.
     :type body: dict
@@ -295,8 +295,8 @@ def format_wal_transactions(body: Json) -> Json:
     return verify_format(body, result)
 
 
-def format_aql_query(body: Json) -> Json:
-    """Format AQL query data.
+def format_sql_query(body: Json) -> Json:
+    """Format SQL query data.
 
     :param body: Input body.
     :type body: dict
@@ -321,8 +321,8 @@ def format_aql_query(body: Json) -> Json:
     return verify_format(body, result)
 
 
-def format_aql_tracking(body: Json) -> Json:
-    """Format AQL tracking data.
+def format_sql_tracking(body: Json) -> Json:
+    """Format SQL tracking data.
 
     :param body: Input body.
     :type body: dict
@@ -1167,7 +1167,7 @@ def format_graph_properties(body: Json) -> Json:
 
 
 def format_query_cache_entry(body: Json) -> Json:
-    """Format AQL query cache entry.
+    """Format SQL query cache entry.
 
     :param body: Input body.
     :type body: dict
@@ -1199,7 +1199,7 @@ def format_query_cache_entry(body: Json) -> Json:
 
 
 def format_query_rule_item(body: Json) -> Json:
-    """Format AQL query rule item.
+    """Format SQL query rule item.
 
     :param body: Input body.
     :type body: dict
@@ -1217,7 +1217,7 @@ def format_query_rule_item(body: Json) -> Json:
 
 
 def format_query_rule_item_flags(body: Json) -> Json:
-    """Format AQL query rule item flags.
+    """Format SQL query rule item flags.
 
     :param body: Input body.
     :type body: dict

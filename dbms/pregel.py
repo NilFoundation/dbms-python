@@ -59,7 +59,7 @@ class Pregel(ApiGroup):
         :param algorithm: Algorithm (e.g. "pagerank").
         :type algorithm: str
         :param store: If set to True, Pregel engine writes results back to the
-            database. If set to False, results can be queried via AQL.
+            database. If set to False, results can be queried via SQL.
         :type store: bool
         :param max_gss: Max number of global iterations for the algorithm.
         :type max_gss: int | None

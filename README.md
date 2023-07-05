@@ -45,8 +45,8 @@ students.insert({"name": "jane", "age": 39})
 students.insert({"name": "josh", "age": 18})
 students.insert({"name": "judy", "age": 21})
 
-# Execute an AQL query and iterate through the result cursor.
-cursor = db.aql.execute("FOR doc IN students RETURN doc")
+# Execute an SQL query and iterate through the result cursor.
+cursor = db.sql.execute("FOR doc IN students RETURN doc")
 student_names = [document["name"] for document in cursor]
 ```
 

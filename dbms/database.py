@@ -5,7 +5,7 @@ from numbers import Number
 from typing import Any, List, Optional, Sequence, Union
 
 from dbms.api import ApiGroup
-from dbms.aql import AQL
+from dbms.sql import SQL
 from dbms.backup import Backup
 from dbms.cluster import Cluster
 from dbms.relation import StandardRelation
@@ -131,13 +131,13 @@ class Database(ApiGroup):
         return self.db_name
 
     @property
-    def aql(self) -> AQL:
-        """Return AQL (DbmsDB Query Language) API wrapper.
+    def sql(self) -> SQL:
+        """Return SQL (DbmsDB Query Language) API wrapper.
 
-        :return: AQL API wrapper.
-        :rtype: dbms.aql.AQL
+        :return: SQL API wrapper.
+        :rtype: dbms.sql.SQL
         """
-        return AQL(self._conn, self._executor)
+        return SQL(self._conn, self._executor)
 
     @property
     def wal(self) -> WAL:

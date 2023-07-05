@@ -58,10 +58,10 @@ def test_transaction_init(db, bad_db, col, username):
     assert txn_col.context == "transaction"
     assert txn_col.db_name == db.name
 
-    txn_aql = txn_db.aql
-    assert txn_aql.username == username
-    assert txn_aql.context == "transaction"
-    assert txn_aql.db_name == db.name
+    txn_sql = txn_db.sql
+    assert txn_sql.username == username
+    assert txn_sql.context == "transaction"
+    assert txn_sql.db_name == db.name
 
     with pytest.raises(TransactionInitError) as err:
         bad_db.begin_transaction()

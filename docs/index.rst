@@ -33,7 +33,7 @@ Contents
     schema
     indexes
     graph
-    aql
+    sql
     simple
     cursor
     async

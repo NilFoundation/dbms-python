@@ -40,8 +40,8 @@ Here is an example showing how **python-dbms** client can be used:
     students.insert({'name': 'josh', 'age': 18})
     students.insert({'name': 'jake', 'age': 21})
 
-    # Execute an AQL query. This returns a result cursor.
-    cursor = db.aql.execute('FOR doc IN students RETURN doc')
+    # Execute an SQL query. This returns a result cursor.
+    cursor = db.sql.execute('FOR doc IN students RETURN doc')
 
     # Iterate through the cursor to retrieve the documents.
     student_names = [document['name'] for document in cursor]

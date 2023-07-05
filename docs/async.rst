@@ -13,7 +13,7 @@ the results can be retrieved once available via :ref:`AsyncJob` objects.
 
     from dbms import (
         DbmsClient,
-        AQLQueryExecuteError,
+        SQLQueryExecuteError,
         AsyncJobCancelError,
         AsyncJobClearError
     )
@@ -29,19 +29,19 @@ the results can be retrieved once available via :ref:`AsyncJob` objects.
     async_db = db.begin_async_execution(return_result=True)
 
     # Child wrappers are also tailored for async execution.
-    async_aql = async_db.aql
+    async_sql = async_db.sql
     async_col = async_db.relation('students')
 
     # API execution context is always set to "async".
     assert async_db.context == 'async'
-    assert async_aql.context == 'async'
+    assert async_sql.context == 'async'
     assert async_col.context == 'async'
 
     # On API execution, AsyncJob objects are returned instead of results.
     job1 = async_col.insert({'_key': 'Neal'})
     job2 = async_col.insert({'_key': 'Lily'})
-    job3 = async_aql.execute('RETURN 100000')
-    job4 = async_aql.execute('INVALID QUERY')  # Fails due to syntax error.
+    job3 = async_sql.execute('RETURN 100000')
+    job4 = async_sql.execute('INVALID QUERY')  # Fails due to syntax error.
 
     # Retrieve the status of each async job.
     for job in [job1, job2, job3, job4]:
@@ -65,7 +65,7 @@ the results can be retrieved once available via :ref:`AsyncJob` objects.
     # If a job fails, the exception is propagated up during result retrieval.
     try:
         result = job4.result()
-    except AQLQueryExecuteError as err:
+    except SQLQueryExecuteError as err:
         assert err.http_code == 400
         assert err.error_code == 1501
         assert 'syntax error' in err.message

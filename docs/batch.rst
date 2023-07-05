@@ -9,7 +9,7 @@ results can be retrieved later from :ref:`BatchJob` objects.
 
 .. code-block:: python
 
-    from dbms import DbmsClient, AQLQueryExecuteError
+    from dbms import DbmsClient, SQLQueryExecuteError
 
     # Initialize the DbmsDB client.
     client = DbmsClient()
@@ -27,19 +27,19 @@ results can be retrieved later from :ref:`BatchJob` objects.
     with db.begin_batch_execution(return_result=True) as batch_db:
 
         # Child wrappers are also tailored for batch execution.
-        batch_aql = batch_db.aql
+        batch_sql = batch_db.sql
         batch_col = batch_db.relation('students')
 
         # API execution context is always set to "batch".
         assert batch_db.context == 'batch'
-        assert batch_aql.context == 'batch'
+        assert batch_sql.context == 'batch'
         assert batch_col.context == 'batch'
 
         # BatchJob objects are returned instead of results.
         job1 = batch_col.insert({'_key': 'Kris'})
         job2 = batch_col.insert({'_key': 'Rita'})
-        job3 = batch_aql.execute('RETURN 100000')
-        job4 = batch_aql.execute('INVALID QUERY')  # Fails due to syntax error.
+        job3 = batch_sql.execute('RETURN 100000')
+        job4 = batch_sql.execute('INVALID QUERY')  # Fails due to syntax error.
 
     # Upon exiting context, batch is automatically committed.
     assert 'Kris' in students
@@ -65,7 +65,7 @@ results can be retrieved later from :ref:`BatchJob` objects.
     # If a job fails, the exception is propagated up during result retrieval.
     try:
         result = job4.result()
-    except AQLQueryExecuteError as err:
+    except SQLQueryExecuteError as err:
         assert err.http_code == 400
         assert err.error_code == 1501
         assert 'syntax error' in err.message

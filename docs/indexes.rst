@@ -46,7 +46,7 @@ on fields ``_from`` and ``_to``. For more information on indexes, refer to
     # Add a new TTL (time-to-live) index on field 'currency'.
     index = cities.add_ttl_index(fields=['ttl'], expiry_time=200)
 
-    # Indexes may be added with a name that can be referred to in AQL queries.
+    # Indexes may be added with a name that can be referred to in SQL queries.
     index = cities.add_hash_index(fields=['country'], name='my_hash_index')
 
     # Delete the last index from the relation.

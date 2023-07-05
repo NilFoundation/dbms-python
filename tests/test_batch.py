@@ -29,12 +29,12 @@ def test_batch_wrapper_attributes(db, col, username):
     assert batch_col.db_name == db.name
     assert batch_col.name == col.name
 
-    batch_aql = batch_db.aql
-    assert batch_aql.username == username
-    assert batch_aql.context == "batch"
-    assert batch_aql.db_name == db.name
+    batch_sql = batch_db.sql
+    assert batch_sql.username == username
+    assert batch_sql.context == "batch"
+    assert batch_sql.db_name == db.name
 
-    job = batch_aql.execute("INVALID QUERY")
+    job = batch_sql.execute("INVALID QUERY")
     assert isinstance(job, BatchJob)
     assert isinstance(job.id, str)
     assert repr(job) == f"<BatchJob {job.id}>"
