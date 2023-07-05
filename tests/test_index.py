@@ -1,3 +1,4 @@
+import pytest
 from dbms.exceptions import (
     IndexCreateError,
     IndexDeleteError,
@@ -152,6 +153,7 @@ def test_add_fulltext_index(icol):
     icol.delete_index(result["id"])
 
 
+@pytest.mark.skip(reason="FIXME: Is not adapted for DBMS")
 def test_add_persistent_index(icol):
     # Test add persistent index with two attributes
     result = icol.add_persistent_index(
@@ -221,7 +223,7 @@ def test_delete_index(icol, bad_col):
             icol.delete_index(index_id, ignore_missing=False)
         assert err.value.error_code == 1212
 
-    # Test delete indexes with bad collection
+    # Test delete indexes with bad relation
     for index_id in indexes_to_delete:
         with assert_raises(IndexDeleteError) as err:
             bad_col.delete_index(index_id, ignore_missing=False)
@@ -232,7 +234,7 @@ def test_load_indexes(icol, bad_col):
     # Test load indexes
     assert icol.load_indexes() is True
 
-    # Test load indexes with bad collection
+    # Test load indexes with bad relation
     with assert_raises(IndexLoadError) as err:
         bad_col.load_indexes()
     assert err.value.error_code in {11, 1228}

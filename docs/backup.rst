@@ -2,7 +2,7 @@ Backups
 -------
 
 Backups are near consistent snapshots of an entire DbmsDB service including
-databases, collections, indexes, views and users. For more information, refer
+databases, relations, indexes, views and users. For more information, refer
 to `DbmsDB manual`_.
 
 .. _DbmsDB manual: https://docs.dbmsdb.com

@@ -165,7 +165,7 @@ class Cursor:
         """Return the current batch of results.
 
         :return: Current batch.
-        :rtype: collections.deque
+        :rtype: relations.deque
         """
         return self._batch
 

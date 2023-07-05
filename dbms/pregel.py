@@ -49,8 +49,8 @@ class Pregel(ApiGroup):
         async_mode: Optional[bool] = None,
         result_field: Optional[str] = None,
         algorithm_params: Optional[Json] = None,
-        vertexCollections: Optional[Sequence[str]] = None,
-        edgeCollections: Optional[Sequence[str]] = None,
+        vertexRelations: Optional[Sequence[str]] = None,
+        edgeRelations: Optional[Sequence[str]] = None,
     ) -> Result[int]:
         """Start a new Pregel job.
 
@@ -59,7 +59,7 @@ class Pregel(ApiGroup):
         :param algorithm: Algorithm (e.g. "pagerank").
         :type algorithm: str
         :param store: If set to True, Pregel engine writes results back to the
-            database. If set to False, results can be queried via AQL.
+            database. If set to False, results can be queried via SQL.
         :type store: bool
         :param max_gss: Max number of global iterations for the algorithm.
         :type max_gss: int | None
@@ -76,20 +76,20 @@ class Pregel(ApiGroup):
         :type result_field: str | None
         :param algorithm_params: Additional algorithm parameters.
         :type algorithm_params: dict | None
-        :param vertexCollections: List of vertex collection names.
-        :type vertexCollections: Sequence[str] | None
-        :param edgeCollections: List of edge collection names.
-        :type edgeCollections: Sequence[str] | None
+        :param vertexRelations: List of vertex relation names.
+        :type vertexRelations: Sequence[str] | None
+        :param edgeRelations: List of edge relation names.
+        :type edgeRelations: Sequence[str] | None
         :return: Pregel job ID.
         :rtype: int
         :raise dbms.exceptions.PregelJobCreateError: If create fails.
         """
         data: Json = {"algorithm": algorithm, "graphName": graph}
 
-        if vertexCollections is not None:
-            data["vertexCollections"] = vertexCollections
-        if edgeCollections is not None:
-            data["edgeCollections"] = edgeCollections
+        if vertexRelations is not None:
+            data["vertexRelations"] = vertexRelations
+        if edgeRelations is not None:
+            data["edgeRelations"] = edgeRelations
 
         if algorithm_params is None:
             algorithm_params = {}

@@ -54,7 +54,7 @@ database.
     # Echo the last request.
     sys_db.echo()
 
-    # Reload the routing collection.
+    # Reload the routing relation.
     sys_db.reload_routing()
 
     # Retrieve server metrics.

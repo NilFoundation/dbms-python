@@ -29,11 +29,11 @@ def suppress_warning(logger_name: str) -> Iterator[None]:
 
 
 def get_col_name(doc: Union[str, Json]) -> str:
-    """Return the collection name from input.
+    """Return the relation name from input.
 
     :param doc: Document ID or body with "_id" field.
     :type doc: str | dict
-    :return: Collection name.
+    :return: Relation name.
     :rtype: str
     :raise dbms.exceptions.DocumentParseError: If document ID is missing.
     """

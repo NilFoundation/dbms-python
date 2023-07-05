@@ -1,4 +1,4 @@
-from dbms.collection import EdgeCollection
+from dbms.relation import EdgeRelation
 from dbms.exceptions import (
     DocumentDeleteError,
     DocumentGetError,
@@ -17,14 +17,14 @@ from dbms.exceptions import (
     GraphListError,
     GraphPropertiesError,
     GraphTraverseError,
-    VertexCollectionCreateError,
-    VertexCollectionDeleteError,
-    VertexCollectionListError,
+    VertexRelationCreateError,
+    VertexRelationDeleteError,
+    VertexRelationListError,
 )
 from tests.helpers import (
     assert_raises,
     clean_doc,
-    empty_collection,
+    empty_relation,
     extract,
     generate_col_name,
     generate_doc_key,
@@ -40,7 +40,7 @@ def test_graph_properties(graph, bad_graph, db):
     assert properties["id"] == f"_graphs/{graph.name}"
     assert properties["name"] == graph.name
     assert len(properties["edge_definitions"]) == 1
-    assert "orphan_collections" in properties
+    assert "orphan_relations" in properties
     assert isinstance(properties["revision"], str)
 
     # Test properties with bad database
@@ -53,7 +53,7 @@ def test_graph_properties(graph, bad_graph, db):
     assert properties["id"] == f"_graphs/{new_graph_name}"
     assert properties["name"] == new_graph_name
     assert properties["edge_definitions"] == []
-    assert properties["orphan_collections"] == []
+    assert properties["orphan_relations"] == []
     assert isinstance(properties["revision"], str)
 
 
@@ -82,7 +82,7 @@ def test_graph_management(db, bad_db):
     for entry in result:
         assert "revision" in entry
         assert "edge_definitions" in entry
-        assert "orphan_collections" in entry
+        assert "orphan_relations" in entry
     assert graph_name in extract("name", db.graphs())
 
     # Test list graphs with bad database
@@ -105,137 +105,137 @@ def test_graph_management(db, bad_db):
     assert err.value.error_code == 1924
     assert db.delete_graph(graph_name, ignore_missing=True) is False
 
-    # Create a graph with vertex and edge collections and delete the graph
+    # Create a graph with vertex and edge relations and delete the graph
     graph = db.create_graph(graph_name)
     ecol_name = generate_col_name()
     fvcol_name = generate_col_name()
     tvcol_name = generate_col_name()
 
-    graph.create_vertex_collection(fvcol_name)
-    graph.create_vertex_collection(tvcol_name)
+    graph.create_vertex_relation(fvcol_name)
+    graph.create_vertex_relation(tvcol_name)
     graph.create_edge_definition(
-        edge_collection=ecol_name,
-        from_vertex_collections=[fvcol_name],
-        to_vertex_collections=[tvcol_name],
+        edge_relation=ecol_name,
+        from_vertex_relations=[fvcol_name],
+        to_vertex_relations=[tvcol_name],
     )
-    collections = extract("name", db.collections())
-    assert fvcol_name in collections
-    assert tvcol_name in collections
-    assert ecol_name in collections
+    relations = extract("name", db.relations())
+    assert fvcol_name in relations
+    assert tvcol_name in relations
+    assert ecol_name in relations
 
     db.delete_graph(graph_name)
-    collections = extract("name", db.collections())
-    assert fvcol_name in collections
-    assert tvcol_name in collections
-    assert ecol_name in collections
+    relations = extract("name", db.relations())
+    assert fvcol_name in relations
+    assert tvcol_name in relations
+    assert ecol_name in relations
 
-    # Create a graph with vertex and edge collections and delete all
+    # Create a graph with vertex and edge relations and delete all
     graph = db.create_graph(graph_name)
     graph.create_edge_definition(
-        edge_collection=ecol_name,
-        from_vertex_collections=[fvcol_name],
-        to_vertex_collections=[tvcol_name],
+        edge_relation=ecol_name,
+        from_vertex_relations=[fvcol_name],
+        to_vertex_relations=[tvcol_name],
     )
-    db.delete_graph(graph_name, drop_collections=True)
-    collections = extract("name", db.collections())
-    assert fvcol_name not in collections
-    assert tvcol_name not in collections
-    assert ecol_name not in collections
+    db.delete_graph(graph_name, drop_relations=True)
+    relations = extract("name", db.relations())
+    assert fvcol_name not in relations
+    assert tvcol_name not in relations
+    assert ecol_name not in relations
 
 
-def test_vertex_collection_management(db, graph, bad_graph):
-    # Test create valid "from" vertex collection
+def test_vertex_relation_management(db, graph, bad_graph):
+    # Test create valid "from" vertex relation
     fvcol_name = generate_col_name()
-    assert not graph.has_vertex_collection(fvcol_name)
-    assert not db.has_collection(fvcol_name)
+    assert not graph.has_vertex_relation(fvcol_name)
+    assert not db.has_relation(fvcol_name)
 
-    fvcol = graph.create_vertex_collection(fvcol_name)
-    assert graph.has_vertex_collection(fvcol_name)
-    assert db.has_collection(fvcol_name)
+    fvcol = graph.create_vertex_relation(fvcol_name)
+    assert graph.has_vertex_relation(fvcol_name)
+    assert db.has_relation(fvcol_name)
     assert fvcol.name == fvcol_name
     assert fvcol.graph == graph.name
     assert fvcol_name in repr(fvcol)
-    assert fvcol_name in graph.vertex_collections()
-    assert fvcol_name in extract("name", db.collections())
+    assert fvcol_name in graph.vertex_relations()
+    assert fvcol_name in extract("name", db.relations())
 
-    # Test has vertex collection with bad graph
-    with assert_raises(VertexCollectionListError) as err:
-        bad_graph.has_vertex_collection(fvcol_name)
+    # Test has vertex relation with bad graph
+    with assert_raises(VertexRelationListError) as err:
+        bad_graph.has_vertex_relation(fvcol_name)
     assert err.value.error_code in {11, 1228}
 
-    # Test create duplicate vertex collection
-    with assert_raises(VertexCollectionCreateError) as err:
-        graph.create_vertex_collection(fvcol_name)
+    # Test create duplicate vertex relation
+    with assert_raises(VertexRelationCreateError) as err:
+        graph.create_vertex_relation(fvcol_name)
     assert err.value.error_code == 1938
-    assert fvcol_name in graph.vertex_collections()
-    assert fvcol_name in extract("name", db.collections())
+    assert fvcol_name in graph.vertex_relations()
+    assert fvcol_name in extract("name", db.relations())
 
-    # Test create valid "to" vertex collection
+    # Test create valid "to" vertex relation
     tvcol_name = generate_col_name()
-    assert not graph.has_vertex_collection(tvcol_name)
-    assert not db.has_collection(tvcol_name)
+    assert not graph.has_vertex_relation(tvcol_name)
+    assert not db.has_relation(tvcol_name)
 
-    tvcol = graph.create_vertex_collection(tvcol_name)
-    assert graph.has_vertex_collection(tvcol_name)
-    assert db.has_collection(tvcol_name)
+    tvcol = graph.create_vertex_relation(tvcol_name)
+    assert graph.has_vertex_relation(tvcol_name)
+    assert db.has_relation(tvcol_name)
     assert tvcol_name == tvcol_name
     assert tvcol.graph == graph.name
     assert tvcol_name in repr(tvcol)
-    assert tvcol_name in graph.vertex_collections()
-    assert tvcol_name in extract("name", db.collections())
+    assert tvcol_name in graph.vertex_relations()
+    assert tvcol_name in extract("name", db.relations())
 
-    # Test list vertex collection via bad database
-    with assert_raises(VertexCollectionListError) as err:
-        bad_graph.vertex_collections()
+    # Test list vertex relation via bad database
+    with assert_raises(VertexRelationListError) as err:
+        bad_graph.vertex_relations()
     assert err.value.error_code in {11, 1228}
 
-    # Test delete missing vertex collection
-    with assert_raises(VertexCollectionDeleteError) as err:
-        graph.delete_vertex_collection(generate_col_name())
+    # Test delete missing vertex relation
+    with assert_raises(VertexRelationDeleteError) as err:
+        graph.delete_vertex_relation(generate_col_name())
     assert err.value.error_code in {1926, 1928}
 
-    # Test delete "to" vertex collection with purge option
-    assert graph.delete_vertex_collection(tvcol_name, purge=True) is True
-    assert tvcol_name not in graph.vertex_collections()
-    assert fvcol_name in extract("name", db.collections())
-    assert tvcol_name not in extract("name", db.collections())
-    assert not graph.has_vertex_collection(tvcol_name)
+    # Test delete "to" vertex relation with purge option
+    assert graph.delete_vertex_relation(tvcol_name, purge=True) is True
+    assert tvcol_name not in graph.vertex_relations()
+    assert fvcol_name in extract("name", db.relations())
+    assert tvcol_name not in extract("name", db.relations())
+    assert not graph.has_vertex_relation(tvcol_name)
 
-    # Test delete "from" vertex collection without purge option
-    assert graph.delete_vertex_collection(fvcol_name, purge=False) is True
-    assert fvcol_name not in graph.vertex_collections()
-    assert fvcol_name in extract("name", db.collections())
-    assert not graph.has_vertex_collection(fvcol_name)
+    # Test delete "from" vertex relation without purge option
+    assert graph.delete_vertex_relation(fvcol_name, purge=False) is True
+    assert fvcol_name not in graph.vertex_relations()
+    assert fvcol_name in extract("name", db.relations())
+    assert not graph.has_vertex_relation(fvcol_name)
 
 
 def test_edge_definition_management(db, graph, bad_graph):
     ecol_name = generate_col_name()
     assert not graph.has_edge_definition(ecol_name)
-    assert not graph.has_edge_collection(ecol_name)
-    assert not db.has_collection(ecol_name)
+    assert not graph.has_edge_relation(ecol_name)
+    assert not db.has_relation(ecol_name)
 
-    # Test create edge definition with existing vertex collections
+    # Test create edge definition with existing vertex relations
     fvcol_name = generate_col_name()
     tvcol_name = generate_col_name()
     ecol_name = generate_col_name()
     ecol = graph.create_edge_definition(
-        edge_collection=ecol_name,
-        from_vertex_collections=[fvcol_name],
-        to_vertex_collections=[tvcol_name],
+        edge_relation=ecol_name,
+        from_vertex_relations=[fvcol_name],
+        to_vertex_relations=[tvcol_name],
     )
     assert ecol.name == ecol_name
     assert ecol.graph == graph.name
-    assert repr(ecol) == f"<EdgeCollection {ecol.name}>"
+    assert repr(ecol) == f"<EdgeRelation {ecol.name}>"
     assert {
-        "edge_collection": ecol_name,
-        "from_vertex_collections": [fvcol_name],
-        "to_vertex_collections": [tvcol_name],
+        "edge_relation": ecol_name,
+        "from_vertex_relations": [fvcol_name],
+        "to_vertex_relations": [tvcol_name],
     } in graph.edge_definitions()
-    assert ecol_name in extract("name", db.collections())
+    assert ecol_name in extract("name", db.relations())
 
-    vertex_collections = graph.vertex_collections()
-    assert fvcol_name in vertex_collections
-    assert tvcol_name in vertex_collections
+    vertex_relations = graph.vertex_relations()
+    assert fvcol_name in vertex_relations
+    assert tvcol_name in vertex_relations
 
     # Test has edge definition with bad graph
     with assert_raises(EdgeDefinitionListError) as err:
@@ -245,31 +245,31 @@ def test_edge_definition_management(db, graph, bad_graph):
     # Test create duplicate edge definition
     with assert_raises(EdgeDefinitionCreateError) as err:
         graph.create_edge_definition(
-            edge_collection=ecol_name,
-            from_vertex_collections=[fvcol_name],
-            to_vertex_collections=[tvcol_name],
+            edge_relation=ecol_name,
+            from_vertex_relations=[fvcol_name],
+            to_vertex_relations=[tvcol_name],
         )
     assert err.value.error_code == 1920
 
-    # Test create edge definition with missing vertex collection
+    # Test create edge definition with missing vertex relation
     bad_vcol_name = generate_col_name()
     ecol_name = generate_col_name()
     ecol = graph.create_edge_definition(
-        edge_collection=ecol_name,
-        from_vertex_collections=[bad_vcol_name],
-        to_vertex_collections=[bad_vcol_name],
+        edge_relation=ecol_name,
+        from_vertex_relations=[bad_vcol_name],
+        to_vertex_relations=[bad_vcol_name],
     )
     assert graph.has_edge_definition(ecol_name)
-    assert graph.has_edge_collection(ecol_name)
+    assert graph.has_edge_relation(ecol_name)
     assert ecol.name == ecol_name
     assert {
-        "edge_collection": ecol_name,
-        "from_vertex_collections": [bad_vcol_name],
-        "to_vertex_collections": [bad_vcol_name],
+        "edge_relation": ecol_name,
+        "from_vertex_relations": [bad_vcol_name],
+        "to_vertex_relations": [bad_vcol_name],
     } in graph.edge_definitions()
-    assert bad_vcol_name in graph.vertex_collections()
-    assert bad_vcol_name in extract("name", db.collections())
-    assert bad_vcol_name in extract("name", db.collections())
+    assert bad_vcol_name in graph.vertex_relations()
+    assert bad_vcol_name in extract("name", db.relations())
+    assert bad_vcol_name in extract("name", db.relations())
 
     # Test list edge definition with bad database
     with assert_raises(EdgeDefinitionListError) as err:
@@ -278,25 +278,25 @@ def test_edge_definition_management(db, graph, bad_graph):
 
     # Test replace edge definition (happy path)
     ecol = graph.replace_edge_definition(
-        edge_collection=ecol_name,
-        from_vertex_collections=[tvcol_name],
-        to_vertex_collections=[fvcol_name],
+        edge_relation=ecol_name,
+        from_vertex_relations=[tvcol_name],
+        to_vertex_relations=[fvcol_name],
     )
-    assert isinstance(ecol, EdgeCollection)
+    assert isinstance(ecol, EdgeRelation)
     assert ecol.name == ecol_name
     assert {
-        "edge_collection": ecol_name,
-        "from_vertex_collections": [tvcol_name],
-        "to_vertex_collections": [fvcol_name],
+        "edge_relation": ecol_name,
+        "from_vertex_relations": [tvcol_name],
+        "to_vertex_relations": [fvcol_name],
     } in graph.edge_definitions()
 
     # Test replace missing edge definition
     bad_ecol_name = generate_col_name()
     with assert_raises(EdgeDefinitionReplaceError):
         graph.replace_edge_definition(
-            edge_collection=bad_ecol_name,
-            from_vertex_collections=[],
-            to_vertex_collections=[fvcol_name],
+            edge_relation=bad_ecol_name,
+            from_vertex_relations=[],
+            to_vertex_relations=[fvcol_name],
         )
 
     # Test delete missing edge definition
@@ -306,10 +306,10 @@ def test_edge_definition_management(db, graph, bad_graph):
 
     # Test delete existing edge definition with purge
     assert graph.delete_edge_definition(ecol_name, purge=True) is True
-    assert ecol_name not in extract("edge_collection", graph.edge_definitions())
+    assert ecol_name not in extract("edge_relation", graph.edge_definitions())
     assert not graph.has_edge_definition(ecol_name)
-    assert not graph.has_edge_collection(ecol_name)
-    assert ecol_name not in extract("name", db.collections())
+    assert not graph.has_edge_relation(ecol_name)
+    assert ecol_name not in extract("name", db.relations())
 
 
 def test_create_graph_with_edge_definition(db):
@@ -320,14 +320,14 @@ def test_create_graph_with_edge_definition(db):
     ovcol_name = generate_col_name()
 
     edge_definition = {
-        "edge_collection": new_ecol_name,
-        "from_vertex_collections": [fvcol_name],
-        "to_vertex_collections": [tvcol_name],
+        "edge_relation": new_ecol_name,
+        "from_vertex_relations": [fvcol_name],
+        "to_vertex_relations": [tvcol_name],
     }
     new_graph = db.create_graph(
         new_graph_name,
         edge_definitions=[edge_definition],
-        orphan_collections=[ovcol_name],
+        orphan_relations=[ovcol_name],
     )
     assert edge_definition in new_graph.edge_definitions()
 
@@ -337,7 +337,7 @@ def test_vertex_management(fvcol, bad_fvcol, fvdocs):
     result = fvcol.insert({})
     assert result["_key"] in fvcol
     assert len(fvcol) == 1
-    empty_collection(fvcol)
+    empty_relation(fvcol)
 
     # Test insert vertex with ID
     vertex_id = fvcol.name + "/" + "foo"
@@ -345,18 +345,18 @@ def test_vertex_management(fvcol, bad_fvcol, fvdocs):
     assert "foo" in fvcol
     assert vertex_id in fvcol
     assert len(fvcol) == 1
-    empty_collection(fvcol)
+    empty_relation(fvcol)
 
     # Test insert vertex with return_new set to True
     result = fvcol.insert({"_id": vertex_id}, return_new=True)
     assert "new" in result
     assert "vertex" in result
     assert len(fvcol) == 1
-    empty_collection(fvcol)
+    empty_relation(fvcol)
 
     with assert_raises(DocumentParseError) as err:
         fvcol.insert({"_id": generate_col_name() + "/" + "foo"})
-    assert "bad collection name" in err.value.message
+    assert "bad relation name" in err.value.message
 
     vertex = fvdocs[0]
     key = vertex["_key"]
@@ -470,7 +470,7 @@ def test_vertex_management(fvcol, bad_fvcol, fvdocs):
         assert fvcol[key]["foo"] == 200
         assert fvcol[key]["bar"] == 400
 
-    # Test update vertex in missing vertex collection
+    # Test update vertex in missing vertex relation
     with assert_raises(DocumentUpdateError) as err:
         bad_fvcol.update({"_key": key, "bar": 500})
     assert err.value.error_code in {11, 1228}
@@ -594,11 +594,11 @@ def test_vertex_management(fvcol, bad_fvcol, fvdocs):
     result = fvcol.delete(vertex, return_old=True)
     assert "old" in result
     assert len(fvcol) == 1
-    empty_collection(fvcol)
+    empty_relation(fvcol)
 
     fvcol.import_bulk(fvdocs)
     assert len(fvcol) == len(fvdocs)
-    empty_collection(fvcol)
+    empty_relation(fvcol)
 
     fvcol.insert_many(fvdocs)
     assert len(fvcol) == len(fvdocs)
@@ -648,14 +648,14 @@ def test_edge_management(ecol, bad_ecol, edocs, fvcol, fvdocs, tvcol, tvdocs):
     result = ecol.insert(no_key_edge)
     assert result["_key"] in ecol
     assert len(ecol) == 1
-    empty_collection(ecol)
+    empty_relation(ecol)
 
     # Test insert edge with return_new set to True
     result = ecol.insert(no_key_edge, return_new=True)
     assert "new" in result
     assert result["edge"]["_key"] in ecol
     assert len(ecol) == 1
-    empty_collection(ecol)
+    empty_relation(ecol)
 
     # Test insert vertex with ID
     edge_id = ecol.name + "/" + "foo"
@@ -663,7 +663,7 @@ def test_edge_management(ecol, bad_ecol, edocs, fvcol, fvdocs, tvcol, tvdocs):
     assert "foo" in ecol
     assert edge_id in ecol
     assert len(ecol) == 1
-    empty_collection(ecol)
+    empty_relation(ecol)
 
     with assert_raises(DocumentParseError) as err:
         ecol.insert(
@@ -673,7 +673,7 @@ def test_edge_management(ecol, bad_ecol, edocs, fvcol, fvdocs, tvcol, tvdocs):
                 "_to": edge["_to"],
             }
         )
-    assert "bad collection name" in err.value.message
+    assert "bad relation name" in err.value.message
 
     # Test insert first valid edge
     result = ecol.insert(edge)
@@ -796,7 +796,7 @@ def test_edge_management(ecol, bad_ecol, edocs, fvcol, fvdocs, tvcol, tvdocs):
         assert ecol[key]["foo"] == 200
         assert ecol[key]["bar"] == 400
 
-    # Test update edge in missing edge collection
+    # Test update edge in missing edge relation
     with assert_raises(DocumentUpdateError) as err:
         bad_ecol.update({"_key": key, "bar": 500})
     assert err.value.error_code in {11, 1228}
@@ -927,11 +927,11 @@ def test_edge_management(ecol, bad_ecol, edocs, fvcol, fvdocs, tvcol, tvdocs):
     result = ecol.delete(edge, return_old=True, check_rev=False)
     assert "old" in result
     assert edge not in ecol
-    empty_collection(ecol)
+    empty_relation(ecol)
 
     ecol.import_bulk(edocs)
     assert len(ecol) == len(edocs)
-    empty_collection(ecol)
+    empty_relation(ecol)
 
     ecol.insert_many(edocs)
     assert len(ecol) == len(edocs)
@@ -952,14 +952,14 @@ def test_vertex_edges(db, bad_db):
     mary = {"_id": f"{vcol_name}/mary"}
     tony = {"_id": f"{vcol_name}/tony"}
 
-    # Create test graph, vertex and edge collections
+    # Create test graph, vertex and edge relations
     school = db.create_graph(graph_name)
 
-    vcol = school.create_vertex_collection(vcol_name)
+    vcol = school.create_vertex_relation(vcol_name)
     ecol = school.create_edge_definition(
-        edge_collection=ecol_name,
-        from_vertex_collections=[vcol_name],
-        to_vertex_collections=[vcol_name],
+        edge_relation=ecol_name,
+        from_vertex_relations=[vcol_name],
+        to_vertex_relations=[vcol_name],
     )
     # Insert test vertices into the graph
     vcol.insert(anna)
@@ -1001,7 +1001,7 @@ def test_vertex_edges(db, bad_db):
 
     bad_graph = bad_db.graph(graph_name)
     with assert_raises(EdgeListError) as err:
-        bad_graph.edge_collection(ecol_name).edges(dave)
+        bad_graph.edge_relation(ecol_name).edges(dave)
     assert err.value.error_code in {11, 1228}
 
 
@@ -1010,7 +1010,7 @@ def test_edge_management_via_graph(graph, ecol, fvcol, fvdocs, tvcol, tvdocs):
         fvcol.insert(vertex)
     for vertex in tvdocs:
         tvcol.insert(vertex)
-    empty_collection(ecol)
+    empty_relation(ecol)
 
     # Get a random "from" vertex
     from_vertex = fvcol.random()
@@ -1071,14 +1071,14 @@ def test_edge_management_via_graph(graph, ecol, fvcol, fvdocs, tvcol, tvdocs):
 
 
 def test_traverse(db):
-    # Create test graph, vertex and edge collections
+    # Create test graph, vertex and edge relations
     school = db.create_graph(generate_graph_name())
-    profs = school.create_vertex_collection(generate_col_name())
-    classes = school.create_vertex_collection(generate_col_name())
+    profs = school.create_vertex_relation(generate_col_name())
+    classes = school.create_vertex_relation(generate_col_name())
     teaches = school.create_edge_definition(
-        edge_collection=generate_col_name(),
-        from_vertex_collections=[profs.name],
-        to_vertex_collections=[classes.name],
+        edge_relation=generate_col_name(),
+        from_vertex_relations=[profs.name],
+        to_vertex_relations=[classes.name],
     )
     # Insert test vertices into the graph
     profs.insert({"_key": "anna", "name": "Professor Anna"})

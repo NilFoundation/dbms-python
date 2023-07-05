@@ -66,7 +66,7 @@ def test_client_error(col):
     assert exc.error_code is None
     assert exc.error_message is None
     assert exc.message == str(exc)
-    assert exc.message.startswith("bad collection name")
+    assert exc.message.startswith("bad relation name")
     assert exc.url is None
     assert exc.http_method is None
     assert exc.http_code is None

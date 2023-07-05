@@ -28,12 +28,12 @@ Contents
 
     overview
     database
-    collection
+    relation
     document
     schema
     indexes
     graph
-    aql
+    sql
     simple
     cursor
     async

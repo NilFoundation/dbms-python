@@ -24,9 +24,9 @@ logical unit of work (ACID compliant).
 
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
-    col = db.collection('students')
+    col = db.relation('students')
 
-    # Begin a transaction. Read and write collections must be declared ahead of
+    # Begin a transaction. Read and write relations must be declared ahead of
     # time. This returns an instance of TransactionDatabase, database-level
     # API wrapper tailored specifically for executing transactions.
     txn_db = db.begin_transaction(read=col.name, write=col.name)
@@ -35,12 +35,12 @@ logical unit of work (ACID compliant).
     txn_db.transaction_id
 
     # Child wrappers are also tailored only for the specific transaction.
-    txn_aql = txn_db.aql
-    txn_col = txn_db.collection('students')
+    txn_sql = txn_db.sql
+    txn_col = txn_db.relation('students')
 
     # API execution context is always set to "transaction".
     assert txn_db.context == 'transaction'
-    assert txn_aql.context == 'transaction'
+    assert txn_sql.context == 'transaction'
     assert txn_col.context == 'transaction'
 
     # From python-dbms version 5+, results are returned immediately instead
@@ -62,7 +62,7 @@ logical unit of work (ACID compliant).
     # Begin another transaction. Note that the wrappers above are specific to
     # the last transaction and cannot be reused. New ones must be created.
     txn_db = db.begin_transaction(read=col.name, write=col.name)
-    txn_col = txn_db.collection('students')
+    txn_col = txn_db.relation('students')
     assert '_rev' in txn_col.insert({'_key': 'Kate'})
     assert '_rev' in txn_col.insert({'_key': 'Mike'})
     assert '_rev' in txn_col.insert({'_key': 'Lily'})
@@ -93,8 +93,8 @@ Javascript code in a transaction.
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # Get the API wrapper for "students" collection.
-    students = db.collection('students')
+    # Get the API wrapper for "students" relation.
+    students = db.relation('students')
 
     # Execute transaction in raw Javascript.
     result = db.execute_transaction(
@@ -115,8 +115,8 @@ Javascript code in a transaction.
             'student2': {'_key': 'Greg'},
             'student3': {'_key': 'Dona'}
         },
-        read='students',  # Specify the collections read.
-        write='students'  # Specify the collections written.
+        read='students',  # Specify the relations read.
+        write='students'  # Specify the relations written.
     )
     assert result is True
     assert 'Lucy' in students

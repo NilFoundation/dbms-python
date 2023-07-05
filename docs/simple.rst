@@ -1,7 +1,7 @@
 Simple Queries
 --------------
 
-.. caution:: There is no option to add a TTL (Time to live) or batch size optimizations to the Simple Queries due to how Dbms is handling simple collection HTTP requests. Your request may time out and you'll see a CursorNextError exception. The AQL queries provide full functionality.
+.. caution:: There is no option to add a TTL (Time to live) or batch size optimizations to the Simple Queries due to how Dbms is handling simple relation HTTP requests. Your request may time out and you'll see a CursorNextError exception. The SQL queries provide full functionality.
 
 Here is an example of using DbmsDB's **simply queries**:
 
@@ -15,25 +15,25 @@ Here is an example of using DbmsDB's **simply queries**:
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # Get the API wrapper for "students" collection.
-    students = db.collection('students')
+    # Get the API wrapper for "students" relation.
+    students = db.relation('students')
 
-    # Get the IDs of all documents in the collection.
+    # Get the IDs of all documents in the relation.
     students.ids()
 
-    # Get the keys of all documents in the collection.
+    # Get the keys of all documents in the relation.
     students.keys()
 
-    # Get all documents in the collection with skip and limit.
+    # Get all documents in the relation with skip and limit.
     students.all(skip=0, limit=100)
 
     # Find documents that match the given filters.
     students.find({'name': 'Mary'}, skip=0, limit=100)
 
-    # Get documents from the collection by IDs or keys.
+    # Get documents from the relation by IDs or keys.
     students.get_many(['id1', 'id2', 'key1'])
 
-    # Get a random document from the collection.
+    # Get a random document from the relation.
     students.random()
 
     # Update all documents that match the given filters.
@@ -47,18 +47,18 @@ Here is an example of using DbmsDB's **simply queries**:
 
 Here are all simple query (and other utility) methods available:
 
-* :func:`dbms.collection.Collection.all`
-* :func:`dbms.collection.Collection.find`
-* :func:`dbms.collection.Collection.find_near`
-* :func:`dbms.collection.Collection.find_in_range`
-* :func:`dbms.collection.Collection.find_in_radius`
-* :func:`dbms.collection.Collection.find_in_box`
-* :func:`dbms.collection.Collection.find_by_text`
-* :func:`dbms.collection.Collection.get_many`
-* :func:`dbms.collection.Collection.ids`
-* :func:`dbms.collection.Collection.keys`
-* :func:`dbms.collection.Collection.random`
-* :func:`dbms.collection.StandardCollection.update_match`
-* :func:`dbms.collection.StandardCollection.replace_match`
-* :func:`dbms.collection.StandardCollection.delete_match`
-* :func:`dbms.collection.StandardCollection.import_bulk`
+* :func:`dbms.relation.Relation.all`
+* :func:`dbms.relation.Relation.find`
+* :func:`dbms.relation.Relation.find_near`
+* :func:`dbms.relation.Relation.find_in_range`
+* :func:`dbms.relation.Relation.find_in_radius`
+* :func:`dbms.relation.Relation.find_in_box`
+* :func:`dbms.relation.Relation.find_by_text`
+* :func:`dbms.relation.Relation.get_many`
+* :func:`dbms.relation.Relation.ids`
+* :func:`dbms.relation.Relation.keys`
+* :func:`dbms.relation.Relation.random`
+* :func:`dbms.relation.StandardRelation.update_match`
+* :func:`dbms.relation.StandardRelation.replace_match`
+* :func:`dbms.relation.StandardRelation.delete_match`
+* :func:`dbms.relation.StandardRelation.import_bulk`

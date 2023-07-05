@@ -70,7 +70,7 @@ def format_index(body: Json) -> Json:
 
 
 def format_key_options(body: Json) -> Json:
-    """Format collection key options data.
+    """Format relation key options data.
 
     :param body: Input body.
     :type body: dict
@@ -125,8 +125,8 @@ def format_database(body: Json) -> Json:
     return verify_format(body, result)
 
 
-def format_collection(body: Json) -> Json:
-    """Format collection data.
+def format_relation(body: Json) -> Json:
+    """Format relation data.
 
     :param body: Input body.
     :type body: dict
@@ -231,8 +231,8 @@ def format_collection(body: Json) -> Json:
     return verify_format(body, result)
 
 
-def format_aql_cache(body: Json) -> Json:
-    """Format AQL cache data.
+def format_sql_cache(body: Json) -> Json:
+    """Format SQL cache data.
 
     :param body: Input body.
     :type body: dict
@@ -295,8 +295,8 @@ def format_wal_transactions(body: Json) -> Json:
     return verify_format(body, result)
 
 
-def format_aql_query(body: Json) -> Json:
-    """Format AQL query data.
+def format_sql_query(body: Json) -> Json:
+    """Format SQL query data.
 
     :param body: Input body.
     :type body: dict
@@ -321,8 +321,8 @@ def format_aql_query(body: Json) -> Json:
     return verify_format(body, result)
 
 
-def format_aql_tracking(body: Json) -> Json:
-    """Format AQL tracking data.
+def format_sql_tracking(body: Json) -> Json:
+    """Format SQL tracking data.
 
     :param body: Input body.
     :type body: dict
@@ -634,7 +634,7 @@ def format_replication_state(body: Json) -> Json:
 
 
 def format_replication_logger_state(body: Json) -> Json:
-    """Format replication collection data.
+    """Format replication relation data.
 
     :param body: Input body.
     :type body: dict
@@ -652,8 +652,8 @@ def format_replication_logger_state(body: Json) -> Json:
     return verify_format(body, result)
 
 
-def format_replication_collection(body: Json) -> Json:
-    """Format replication collection data.
+def format_replication_relation(body: Json) -> Json:
+    """Format replication relation data.
 
     :param body: Input body.
     :type body: dict
@@ -670,7 +670,7 @@ def format_replication_collection(body: Json) -> Json:
     if "indexes" in body:
         result["indexes"] = [format_index(index) for index in body["indexes"]]
     if "parameters" in body:
-        result["parameters"] = format_collection(body["parameters"])
+        result["parameters"] = format_relation(body["parameters"])
 
     return verify_format(body, result)
 
@@ -686,8 +686,8 @@ def format_replication_database(body: Json) -> Json:
     result = {
         "id": body["id"],
         "name": body["name"],
-        "collections": [
-            format_replication_collection(col) for col in body["collections"]
+        "relations": [
+            format_replication_relation(col) for col in body["collections"]
         ],
         "views": [format_view(view) for view in body["views"]],
     }
@@ -715,9 +715,9 @@ def format_replication_inventory(body: Json) -> Json:
         result["databases"] = {
             k: format_replication_database(v) for k, v in body["databases"].items()
         }
-    if "collections" in body:
-        result["collections"] = [
-            format_replication_collection(col) for col in body["collections"]
+    if "relations" in body:
+        result["relations"] = [
+            format_replication_relation(col) for col in body["collections"]
         ]
     if "views" in body:
         result["views"] = [format_view(view) for view in body["views"]]
@@ -736,8 +736,8 @@ def format_replication_sync(body: Json) -> Json:
     :rtype: dict
     """
     result: Json = {}
-    if "collections" in body:
-        result["collections"] = body["collections"]
+    if "relations" in body:
+        result["relations"] = body["relations"]
     if "lastLogTick" in body:
         result["last_log_tick"] = body["lastLogTick"]
     return verify_format(body, result)
@@ -1144,12 +1144,12 @@ def format_graph_properties(body: Json) -> Json:
         "key": body["_key"],
         "name": body["name"],
         "revision": body["_rev"],
-        "orphan_collections": body["orphanCollections"],
+        "orphan_relations": body["orphanCollections"],
         "edge_definitions": [
             {
-                "edge_collection": edge_definition["collection"],
-                "from_vertex_collections": edge_definition["from"],
-                "to_vertex_collections": edge_definition["to"],
+                "edge_relation": edge_definition["relation"],
+                "from_vertex_relations": edge_definition["from"],
+                "to_vertex_relations": edge_definition["to"],
             }
             for edge_definition in body["edgeDefinitions"]
         ],
@@ -1167,7 +1167,7 @@ def format_graph_properties(body: Json) -> Json:
 
 
 def format_query_cache_entry(body: Json) -> Json:
-    """Format AQL query cache entry.
+    """Format SQL query cache entry.
 
     :param body: Input body.
     :type body: dict
@@ -1199,7 +1199,7 @@ def format_query_cache_entry(body: Json) -> Json:
 
 
 def format_query_rule_item(body: Json) -> Json:
-    """Format AQL query rule item.
+    """Format SQL query rule item.
 
     :param body: Input body.
     :type body: dict
@@ -1217,7 +1217,7 @@ def format_query_rule_item(body: Json) -> Json:
 
 
 def format_query_rule_item_flags(body: Json) -> Json:
-    """Format AQL query rule item flags.
+    """Format SQL query rule item flags.
 
     :param body: Input body.
     :type body: dict

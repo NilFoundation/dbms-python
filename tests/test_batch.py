@@ -1,6 +1,6 @@
 import json
 
-import mock
+from unittest import mock
 import pytest
 
 from dbms.database import BatchDatabase
@@ -23,18 +23,18 @@ def test_batch_wrapper_attributes(db, col, username):
     assert batch_db.name == db.name
     assert repr(batch_db) == f"<BatchDatabase {db.name}>"
 
-    batch_col = batch_db.collection(col.name)
+    batch_col = batch_db.relation(col.name)
     assert batch_col.username == username
     assert batch_col.context == "batch"
     assert batch_col.db_name == db.name
     assert batch_col.name == col.name
 
-    batch_aql = batch_db.aql
-    assert batch_aql.username == username
-    assert batch_aql.context == "batch"
-    assert batch_aql.db_name == db.name
+    batch_sql = batch_db.sql
+    assert batch_sql.username == username
+    assert batch_sql.context == "batch"
+    assert batch_sql.db_name == db.name
 
-    job = batch_aql.execute("INVALID QUERY")
+    job = batch_sql.execute("INVALID QUERY")
     assert isinstance(job, BatchJob)
     assert isinstance(job.id, str)
     assert repr(job) == f"<BatchJob {job.id}>"
@@ -42,7 +42,7 @@ def test_batch_wrapper_attributes(db, col, username):
 
 def test_batch_execute_without_result(db, col, docs):
     with db.begin_batch_execution(return_result=False) as batch_db:
-        batch_col = batch_db.collection(col.name)
+        batch_col = batch_db.relation(col.name)
 
         # Ensure that no jobs are returned
         assert batch_col.insert(docs[0]) is None
@@ -60,7 +60,7 @@ def test_batch_execute_without_result(db, col, docs):
 
 def test_batch_execute_with_result(db, col, docs):
     with db.begin_batch_execution(return_result=True) as batch_db:
-        batch_col = batch_db.collection(col.name)
+        batch_col = batch_db.relation(col.name)
         job1 = batch_col.insert(docs[0])
         job2 = batch_col.insert(docs[1])
         job3 = batch_col.insert(docs[1])  # duplicate
@@ -92,7 +92,7 @@ def test_batch_empty_commit(db):
 
 def test_batch_double_commit(db, col, docs):
     batch_db = db.begin_batch_execution()
-    job = batch_db.collection(col.name).insert(docs[0])
+    job = batch_db.relation(col.name).insert(docs[0])
 
     # Test first commit
     assert batch_db.commit() == [job]
@@ -110,18 +110,18 @@ def test_batch_double_commit(db, col, docs):
 
 def test_batch_action_after_commit(db, col):
     with db.begin_batch_execution() as batch_db:
-        batch_db.collection(col.name).insert({})
+        batch_db.relation(col.name).insert({})
 
     # Test insert after the batch has been committed
     with pytest.raises(BatchStateError) as err:
-        batch_db.collection(col.name).insert({})
+        batch_db.relation(col.name).insert({})
     assert "already committed" in str(err.value)
     assert len(col) == 1
 
 
 def test_batch_execute_error(bad_db, col, docs):
     batch_db = bad_db.begin_batch_execution(return_result=True)
-    job = batch_db.collection(col.name).insert_many(docs)
+    job = batch_db.relation(col.name).insert_many(docs)
 
     # Test batch execute with bad database
     with pytest.raises(BatchExecuteError) as err:
@@ -133,7 +133,7 @@ def test_batch_execute_error(bad_db, col, docs):
 
 def test_batch_job_result_not_ready(db, col, docs):
     batch_db = db.begin_batch_execution(return_result=True)
-    job = batch_db.collection(col.name).insert_many(docs)
+    job = batch_db.relation(col.name).insert_many(docs)
 
     # Test get job result before commit
     with pytest.raises(BatchJobResultError) as err:
@@ -148,7 +148,7 @@ def test_batch_job_result_not_ready(db, col, docs):
 
 def test_batch_bad_state(db, col, docs):
     batch_db = db.begin_batch_execution()
-    batch_col = batch_db.collection(col.name)
+    batch_col = batch_db.relation(col.name)
     batch_col.insert(docs[0])
     batch_col.insert(docs[1])
     batch_col.insert(docs[2])

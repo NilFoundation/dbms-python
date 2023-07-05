@@ -42,17 +42,17 @@ class Replication(ApiGroup):
         include_system: Optional[bool] = None,
         all_databases: Optional[bool] = None,
     ) -> Result[Json]:
-        """Return an overview of collections and indexes.
+        """Return an overview of relations and indexes.
 
         :param batch_id: Batch ID.
         :type batch_id: str
-        :param include_system: Include system collections in the result.
+        :param include_system: Include system relations in the result.
             Default value is True.
         :type include_system: bool | None
         :param all_databases: Include all databases. Only works on "_system"
             database. Default value is False.
         :type all_databases: bool | None
-        :return: Overview of collections and indexes.
+        :return: Overview of relations and indexes.
         :rtype: dict
         :raise dbms.exceptions.ReplicationInventoryError: If retrieval fails.
         """
@@ -142,15 +142,15 @@ class Replication(ApiGroup):
 
     def dump(
         self,
-        collection: str,
+        relation: str,
         batch_id: Optional[str] = None,
         chunk_size: Optional[int] = None,
         deserialize: bool = False,
     ) -> Result[Json]:
-        """Return the events data of one collection.
+        """Return the events data of one relation.
 
-        :param collection: Name or ID of the collection to dump.
-        :type collection: str
+        :param relation: Name or ID of the relation to dump.
+        :type relation: str
         :param batch_id: Batch ID.
         :type batch_id: str | None
         :param chunk_size: Size of the result in bytes. This value is honored
@@ -158,11 +158,11 @@ class Replication(ApiGroup):
         :type chunk_size: int | None
         :param deserialize: Deserialize the response content. Default is False.
         :type deserialize: bool
-        :return: Collection events data.
+        :return: Relation events data.
         :rtype: str | [dict]
         :raise dbms.exceptions.ReplicationDumpError: If retrieval fails.
         """
-        params: Params = {"collection": collection}
+        params: Params = {"relation": relation}
 
         if chunk_size is not None:
             params["chunkSize"] = chunk_size
@@ -216,31 +216,31 @@ class Replication(ApiGroup):
         :type username: str | None
         :param password: Password.
         :type password: str | None
-        :param include_system: Whether to include system collection operations.
+        :param include_system: Whether to include system relation operations.
         :type include_system: bool | None
         :param incremental: If set to True, then an incremental synchronization
-            method is used for synchronizing data in collections. This
-            method is useful when collections already exist locally, and only
+            method is used for synchronizing data in relations. This
+            method is useful when relations already exist locally, and only
             the remaining differences need to be transferred from the remote
             endpoint. In this case, the incremental synchronization can be
             faster than a full synchronization. Default value is False, meaning
             complete data is transferred.
         :type incremental: bool | None
-        :param restrict_type: Optional string value for collection filtering.
+        :param restrict_type: Optional string value for relation filtering.
             Allowed values are "include" or "exclude".
         :type restrict_type: str | None
-        :param restrict_collections: Optional list of collections for use with
+        :param restrict_collections: Optional list of relations for use with
             argument **restrict_type**. If **restrict_type** set to "include",
-            only the specified collections are synchronised. Otherwise, all but
+            only the specified relations are synchronised. Otherwise, all but
             the specified ones are synchronized.
         :type restrict_collections: [str] | None
         :param initial_sync_wait_time: Maximum wait time in seconds that the
             initial synchronization will wait for a response from master when
-            fetching collection data. This can be used to control after what
+            fetching relation data. This can be used to control after what
             time the initial synchronization will give up waiting for response
             and fail. Value is ignored if set to 0.
         :type initial_sync_wait_time: int | None
-        :return: Collections transferred and last log tick.
+        :return: Relations transferred and last log tick.
         :rtype: dict
         :raise dbms.exceptions.ReplicationSyncError: If sync fails.
         """
@@ -273,12 +273,12 @@ class Replication(ApiGroup):
         return self._execute(request, response_handler)
 
     def cluster_inventory(self, include_system: Optional[bool] = None) -> Result[Json]:
-        """Return an overview of collections and indexes in a cluster.
+        """Return an overview of relations and indexes in a cluster.
 
-        :param include_system: Include system collections in the result.
+        :param include_system: Include system relations in the result.
             Default value is True.
         :type include_system: bool
-        :return: Overview of collections and indexes on the cluster.
+        :return: Overview of relations and indexes on the cluster.
         :rtype: dict
         :raise dbms.exceptions.ReplicationClusterInventoryError: If retrieval fails.
         """
@@ -410,7 +410,7 @@ class Replication(ApiGroup):
             server when there are infrequent changes. The downside is that it
             might take longer for the replication applier to detect new events.
         :type adaptive_polling: bool | None
-        :param include_system: Whether system collection operations are
+        :param include_system: Whether system relation operations are
             applied.
         :type include_system: bool | None
         :param auto_resync: Whether the slave should perform a full automatic
@@ -422,7 +422,7 @@ class Replication(ApiGroup):
             Setting this to 0 disables it.
         :type auto_resync_retries: int | None
         :param initial_sync_max_wait_time: Max wait time in seconds the initial
-            synchronization waits for master on collection data. This value
+            synchronization waits for master on relation data. This value
             is relevant even for continuous replication when **auto_resync** is
             set to True because this may re-start the initial synchronization
             when master cannot provide log data slave requires. This value is
@@ -459,13 +459,13 @@ class Replication(ApiGroup):
             operations performed by the replication applier. This should be
             used for debugging replication problems only.
         :type verbose: bool | None
-        :param restrict_type: Optional string value for collection filtering.
+        :param restrict_type: Optional string value for relation filtering.
             Allowed values are "include" or "exclude".
         :type restrict_type: str | None
-        :param restrict_collections: Optional list of collections for use with
+        :param restrict_collections: Optional list of relations for use with
             argument **restrict_type**. If **restrict_type** set to "include",
-            only the specified collections are included. Otherwise, only the
-            specified collections are excluded.
+            only the specified relations are included. Otherwise, only the
+            specified relations are excluded.
         :type restrict_collections: [str] | None
         :return: Updated configuration.
         :rtype: dict
@@ -622,15 +622,15 @@ class Replication(ApiGroup):
         :type username: str | None
         :param password: Password.
         :type password: str | None
-        :param restrict_type: Optional string value for collection filtering.
+        :param restrict_type: Optional string value for relation filtering.
             Allowed values are "include" or "exclude".
         :type restrict_type: str | None
-        :param restrict_collections: Optional list of collections for use with
+        :param restrict_collections: Optional list of relations for use with
             argument **restrict_type**. If **restrict_type** set to "include",
-            only the specified collections are included. Otherwise, only the
-            specified collections are excluded.
+            only the specified relations are included. Otherwise, only the
+            specified relations are excluded.
         :type restrict_collections: [str] | None
-        :param include_system: Whether system collection operations are
+        :param include_system: Whether system relation operations are
             applied.
         :type include_system: bool | None
         :param max_connect_retries: Maximum number of connection attempts the
@@ -661,7 +661,7 @@ class Replication(ApiGroup):
             Setting this to 0 disables it.
         :type auto_resync_retries: int | None
         :param initial_sync_max_wait_time: Max wait time in seconds the initial
-            synchronization waits for master on collection data. This value
+            synchronization waits for master on relation data. This value
             is relevant even for continuous replication when **auto_resync** is
             set to True because this may restart the initial synchronization
             when master cannot provide log data slave requires. This value is

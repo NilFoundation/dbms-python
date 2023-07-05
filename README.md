@@ -34,19 +34,19 @@ sys_db.create_database("test")
 # Connect to "test" database as root user.
 db = client.db("test", username="root", password="")
 
-# Create a new collection named "students".
-students = db.create_collection("students")
+# Create a new relation named "students".
+students = db.create_relation("students")
 
-# Add a hash index to the collection.
+# Add a hash index to the relation.
 students.add_hash_index(fields=["name"], unique=True)
 
-# Insert new documents into the collection.
+# Insert new documents into the relation.
 students.insert({"name": "jane", "age": 39})
 students.insert({"name": "josh", "age": 18})
 students.insert({"name": "judy", "age": 21})
 
-# Execute an AQL query and iterate through the result cursor.
-cursor = db.aql.execute("FOR doc IN students RETURN doc")
+# Execute an SQL query and iterate through the result cursor.
+cursor = db.sql.execute("FOR doc IN students RETURN doc")
 student_names = [document["name"] for document in cursor]
 ```
 
@@ -64,28 +64,28 @@ db = client.db("test", username="root", password="")
 # Create a new graph named "school".
 graph = db.create_graph("school")
 
-# Create vertex collections for the graph.
-students = graph.create_vertex_collection("students")
-lectures = graph.create_vertex_collection("lectures")
+# Create vertex relations for the graph.
+students = graph.create_vertex_relation("students")
+lectures = graph.create_vertex_relation("lectures")
 
 # Create an edge definition (relation) for the graph.
 edges = graph.create_edge_definition(
-    edge_collection="register",
-    from_vertex_collections=["students"],
-    to_vertex_collections=["lectures"]
+    edge_relation="register",
+    from_vertex_relations=["students"],
+    to_vertex_relations=["lectures"]
 )
 
-# Insert vertex documents into "students" (from) vertex collection.
+# Insert vertex documents into "students" (from) vertex relation.
 students.insert({"_key": "01", "full_name": "Anna Smith"})
 students.insert({"_key": "02", "full_name": "Jake Clark"})
 students.insert({"_key": "03", "full_name": "Lisa Jones"})
 
-# Insert vertex documents into "lectures" (to) vertex collection.
+# Insert vertex documents into "lectures" (to) vertex relation.
 lectures.insert({"_key": "MAT101", "title": "Calculus"})
 lectures.insert({"_key": "STA101", "title": "Statistics"})
 lectures.insert({"_key": "CSC101", "title": "Algorithms"})
 
-# Insert edge documents into "register" edge collection.
+# Insert edge documents into "register" edge relation.
 edges.insert({"_from": "students/01", "_to": "lectures/MAT101"})
 edges.insert({"_from": "students/01", "_to": "lectures/STA101"})
 edges.insert({"_from": "students/01", "_to": "lectures/CSC101"})

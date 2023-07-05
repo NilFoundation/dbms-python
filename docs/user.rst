@@ -49,7 +49,7 @@ these operations can only be performed by admin users via ``_system`` database.
         extra={'team': 'frontend', 'title': 'architect'}
     )
 
-    # Retrieve user permissions for all databases and collections.
+    # Retrieve user permissions for all databases and relations.
     sys_db.permissions('johndoe@gmail.com')
 
     # Retrieve user permission for "test" database.
@@ -58,11 +58,11 @@ these operations can only be performed by admin users via ``_system`` database.
         database='test'
     )
 
-    # Retrieve user permission for "students" collection in "test" database.
+    # Retrieve user permission for "students" relation in "test" database.
     sys_db.permission(
         username='johndoe@gmail.com',
         database='test',
-        collection='students'
+        relation='students'
     )
 
     # Update user permission for "test" database.
@@ -72,12 +72,12 @@ these operations can only be performed by admin users via ``_system`` database.
         database='test'
     )
 
-    # Update user permission for "students" collection in "test" database.
+    # Update user permission for "students" relation in "test" database.
     sys_db.update_permission(
         username='johndoe@gmail.com',
         permission='ro',
         database='test',
-        collection='students'
+        relation='students'
     )
 
     # Reset user permission for "test" database.
@@ -86,11 +86,11 @@ these operations can only be performed by admin users via ``_system`` database.
         database='test'
     )
 
-    # Reset user permission for "students" collection in "test" database.
+    # Reset user permission for "students" relation in "test" database.
     sys_db.reset_permission(
         username='johndoe@gmail.com',
         database='test',
-        collection='students'
+        relation='students'
     )
 
 See :ref:`StandardDatabase` for API specification.

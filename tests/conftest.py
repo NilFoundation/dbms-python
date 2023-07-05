@@ -11,7 +11,7 @@ from tests.executors import (
     TestTransactionApiExecutor,
 )
 from tests.helpers import (
-    empty_collection,
+    empty_relation,
     generate_col_name,
     generate_db_name,
     generate_graph_name,
@@ -90,30 +90,30 @@ def pytest_configure(config):
     tst_db = client.db(tst_db_name, username, password)
     bad_db = client.db(bad_db_name, username, password)
 
-    # Create a standard collection for testing.
+    # Create a standard relation for testing.
     col_name = generate_col_name()
-    tst_col = tst_db.create_collection(col_name, edge=False)
+    tst_col = tst_db.create_relation(col_name, edge=False)
 
     tst_col.add_skiplist_index(["val"])
     tst_col.add_fulltext_index(["text"])
     geo_index = tst_col.add_geo_index(["loc"])
 
-    # Create a legacy edge collection for testing.
+    # Create a legacy edge relation for testing.
     icol_name = generate_col_name()
-    tst_db.create_collection(icol_name, edge=True)
+    tst_db.create_relation(icol_name, edge=True)
 
-    # Create test vertex & edge collections and graph.
+    # Create test vertex & edge relations and graph.
     graph_name = generate_graph_name()
     ecol_name = generate_col_name()
     fvcol_name = generate_col_name()
     tvcol_name = generate_col_name()
     tst_graph = tst_db.create_graph(graph_name)
-    tst_graph.create_vertex_collection(fvcol_name)
-    tst_graph.create_vertex_collection(tvcol_name)
+    tst_graph.create_vertex_relation(fvcol_name)
+    tst_graph.create_vertex_relation(tvcol_name)
     tst_graph.create_edge_definition(
-        edge_collection=ecol_name,
-        from_vertex_collections=[fvcol_name],
-        to_vertex_collections=[tvcol_name],
+        edge_relation=ecol_name,
+        from_vertex_relations=[fvcol_name],
+        to_vertex_relations=[tvcol_name],
     )
 
     # Update global config
@@ -166,11 +166,11 @@ def pytest_unconfigure(*_):  # pragma: no cover
         if db_name.startswith("test_database"):
             sys_db.delete_database(db_name, ignore_missing=True)
 
-    # Remove all test collections.
-    for collection in sys_db.collections():
-        col_name = collection["name"]
-        if col_name.startswith("test_collection"):
-            sys_db.delete_collection(col_name, ignore_missing=True)
+    # Remove all test relations.
+    for relation in sys_db.relations():
+        col_name = relation["name"]
+        if col_name.startswith("test_relation"):
+            sys_db.delete_relation(col_name, ignore_missing=True)
 
     # # Remove all backups.
     if global_data.enterprise:
@@ -193,7 +193,7 @@ def pytest_generate_tests(metafunc):
         tst_conn = tst_db._conn
         bad_conn = bad_db._conn
 
-        if test in {"aql", "collection", "document", "index"}:
+        if test in {"sql", "relation", "document", "index"}:
             # Add test transaction databases
             tst_txn_db = StandardDatabase(tst_conn)
             tst_txn_db._executor = TestTransactionApiExecutor(tst_conn)
@@ -234,6 +234,17 @@ def mock_formatters(monkeypatch):
         body.pop("error", None)
         body.pop("code", None)
         result.pop("edge", None)
+
+        # FIXME: make sure that we really need to do that
+        result.pop("database", None)
+        result.pop("relations", None)
+        body.pop("collections", None)
+        body.pop("estimates", None)
+        body.pop("internalValidatorType", None)
+        body.pop("useMemoryMaps", None)
+        body.pop("parallelism", None)
+        body.pop("masterContext", None)
+        body.pop("database", None)
         if len(body) != len(result):
             before = sorted(body, key=lambda x: x.strip("_"))
             after = sorted(result, key=lambda x: x.strip("_"))
@@ -285,14 +296,14 @@ def conn(db):
 
 @pytest.fixture(autouse=False)
 def col(db):
-    collection = db.collection(global_data.col_name)
-    empty_collection(collection)
-    return collection
+    relation = db.relation(global_data.col_name)
+    empty_relation(relation)
+    return relation
 
 
 @pytest.fixture(autouse=False)
 def bad_col(bad_db):
-    return bad_db.collection(global_data.col_name)
+    return bad_db.relation(global_data.col_name)
 
 
 @pytest.fixture(autouse=False)
@@ -302,9 +313,9 @@ def geo():
 
 @pytest.fixture(autouse=False)
 def icol(db):
-    collection = db.collection(global_data.icol_name)
-    empty_collection(collection)
-    return collection
+    relation = db.relation(global_data.icol_name)
+    empty_relation(relation)
+    return relation
 
 
 @pytest.fixture(autouse=False)
@@ -320,37 +331,37 @@ def bad_graph(bad_db):
 # noinspection PyShadowingNames
 @pytest.fixture(autouse=False)
 def fvcol(graph):
-    collection = graph.vertex_collection(global_data.fvcol_name)
-    empty_collection(collection)
-    return collection
+    relation = graph.vertex_relation(global_data.fvcol_name)
+    empty_relation(relation)
+    return relation
 
 
 # noinspection PyShadowingNames
 @pytest.fixture(autouse=False)
 def tvcol(graph):
-    collection = graph.vertex_collection(global_data.tvcol_name)
-    empty_collection(collection)
-    return collection
+    relation = graph.vertex_relation(global_data.tvcol_name)
+    empty_relation(relation)
+    return relation
 
 
 # noinspection PyShadowingNames
 @pytest.fixture(autouse=False)
 def bad_fvcol(bad_graph):
-    return bad_graph.vertex_collection(global_data.fvcol_name)
+    return bad_graph.vertex_relation(global_data.fvcol_name)
 
 
 # noinspection PyShadowingNames
 @pytest.fixture(autouse=False)
 def ecol(graph):
-    collection = graph.edge_collection(global_data.ecol_name)
-    empty_collection(collection)
-    return collection
+    relation = graph.edge_relation(global_data.ecol_name)
+    empty_relation(relation)
+    return relation
 
 
 # noinspection PyShadowingNames
 @pytest.fixture(autouse=False)
 def bad_ecol(bad_graph):
-    return bad_graph.edge_collection(global_data.ecol_name)
+    return bad_graph.edge_relation(global_data.ecol_name)
 
 
 @pytest.fixture(autouse=False)

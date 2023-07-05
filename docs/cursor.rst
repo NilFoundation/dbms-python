@@ -1,7 +1,7 @@
 Cursors
 -------
 
-Many operations provided by python-dbms (e.g. executing :doc:`aql` queries)
+Many operations provided by python-dbms (e.g. executing :doc:`sql` queries)
 return result **cursors** to batch the network communication between DbmsDB
 server and python-dbms client. Each HTTP request from a cursor fetches the
 next batch of results (usually documents). Depending on the query, the total
@@ -20,7 +20,7 @@ number of items in the result set may or may not be known in advance.
     db = client.db('test', username='root', password='passwd')
 
     # Set up some test data to query against.
-    db.collection('students').insert_many([
+    db.relation('students').insert_many([
         {'_key': 'Abby', 'age': 22},
         {'_key': 'John', 'age': 18},
         {'_key': 'Mary', 'age': 21},
@@ -28,8 +28,8 @@ number of items in the result set may or may not be known in advance.
         {'_key': 'Dave', 'age': 20}
     ])
 
-    # Execute an AQL query which returns a cursor object.
-    cursor = db.aql.execute(
+    # Execute an SQL query which returns a cursor object.
+    cursor = db.sql.execute(
         'FOR doc IN students FILTER doc.age > @val RETURN doc',
         bind_vars={'val': 17},
         batch_size=2,
@@ -99,7 +99,7 @@ instead.
     db = client.db('test', username='root', password='passwd')
 
     # Set up some test data to query against.
-    db.collection('students').insert_many([
+    db.relation('students').insert_many([
         {'_key': 'Abby', 'age': 22},
         {'_key': 'John', 'age': 18},
         {'_key': 'Mary', 'age': 21}
@@ -107,11 +107,11 @@ instead.
 
     # If you iterate over the cursor or call cursor.next(), batches are
     # fetched automatically from the server just-in-time style.
-    cursor = db.aql.execute('FOR doc IN students RETURN doc', batch_size=1)
+    cursor = db.sql.execute('FOR doc IN students RETURN doc', batch_size=1)
     result = [doc for doc in cursor]
 
     # Alternatively, you can manually fetch and pop for finer control.
-    cursor = db.aql.execute('FOR doc IN students RETURN doc', batch_size=1)
+    cursor = db.sql.execute('FOR doc IN students RETURN doc', batch_size=1)
     while cursor.has_more(): # Fetch until nothing is left on the server.
         cursor.fetch()
     while not cursor.empty(): # Pop until nothing is left on the cursor.

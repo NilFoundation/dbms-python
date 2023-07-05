@@ -8,11 +8,11 @@ properties:
 * May be nested to an arbitrary depth.
 * May contain lists.
 * Contains the ``_key`` field, which identifies the document uniquely within a
-  specific collection.
+  specific relation.
 * Contains the ``_id`` field (also called the *handle*), which identifies the
-  document uniquely across all collections within a database. This ID is a
-  combination of the collection name and the document key using the format
-  ``{collection}/{key}`` (see example below).
+  document uniquely across all relations within a database. This ID is a
+  combination of the relation name and the document key using the format
+  ``{relation}/{key}`` (see example below).
 * Contains the ``_rev`` field. DbmsDB supports MVCC (Multiple Version
   Concurrency Control) and is capable of storing each document in multiple
   revisions. Latest revision of a document is indicated by this field. The
@@ -21,7 +21,7 @@ properties:
 
 For more information on documents and associated terminologies, refer to
 `DbmsDB manual`_. Here is an example of a valid document in "students"
-collection:
+relation:
 
 .. _DbmsDB manual: https://docs.dbmsdb.com
 
@@ -48,8 +48,8 @@ collection:
 additional required fields ``_from`` and ``_to``. Values of these fields must
 be the handles of "from" and "to" vertex documents linked by the edge document
 in question (see :doc:`graph` for details). Edge documents are contained in
-:ref:`edge collections <edge-collections>`. Here is an example of a valid edge
-document in "friends" edge collection:
+:ref:`edge relations <edge-relations>`. Here is an example of a valid edge
+document in "friends" edge relation:
 
 .. testcode::
 
@@ -62,7 +62,7 @@ document in "friends" edge collection:
         'closeness': 9.5
     }
 
-Standard documents are managed via collection API wrapper:
+Standard documents are managed via relation API wrapper:
 
 .. testcode::
 
@@ -74,8 +74,8 @@ Standard documents are managed via collection API wrapper:
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # Get the API wrapper for "students" collection.
-    students = db.collection('students')
+    # Get the API wrapper for "students" relation.
+    students = db.relation('students')
 
     # Create some test documents to play around with.
     lola = {'_key': 'lola', 'GPA': 3.5, 'first': 'Lola', 'last': 'Martin'}
@@ -88,7 +88,7 @@ Standard documents are managed via collection API wrapper:
     assert metadata['_id'] == 'students/lola'
     assert metadata['_key'] == 'lola'
 
-    # Check if documents exist in the collection in multiple ways.
+    # Check if documents exist in the relation in multiple ways.
     assert students.has('lola') and 'john' not in students
 
     # Retrieve the total document count in multiple ways.
@@ -195,8 +195,8 @@ must provide document IDs instead of keys:
     # Delete a document (by ID or body with "_id" field).
     db.delete_document('students/lola')
 
-See :ref:`StandardDatabase` and :ref:`StandardCollection` for API specification.
+See :ref:`StandardDatabase` and :ref:`StandardRelation` for API specification.
 
-When managing documents, using collection API wrappers over database API
+When managing documents, using relation API wrappers over database API
 wrappers is recommended as more operations are available and less sanity
 checking is performed under the hood.

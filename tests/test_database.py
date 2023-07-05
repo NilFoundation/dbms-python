@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dbms.aql import AQL
+from dbms.sql import SQL
 from dbms.backup import Backup
 from dbms.cluster import Cluster
 from dbms.errno import (
@@ -44,7 +44,7 @@ def test_database_attributes(db, username):
     assert db.conn is not None
     assert repr(db) == f"<StandardDatabase {db.name}>"
 
-    assert isinstance(db.aql, AQL)
+    assert isinstance(db.sql, SQL)
     assert isinstance(db.backup, Backup)
     assert isinstance(db.cluster, Cluster)
     assert isinstance(db.foxx, Foxx)

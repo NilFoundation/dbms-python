@@ -1,4 +1,4 @@
-__all__ = ["AQL", "AQLQueryCache"]
+__all__ = ["SQL", "SQLQueryCache"]
 
 from numbers import Number
 from typing import MutableMapping, Optional, Sequence, Union
@@ -7,28 +7,28 @@ from dbms.api import ApiGroup
 from dbms.connection import Connection
 from dbms.cursor import Cursor
 from dbms.exceptions import (
-    AQLCacheClearError,
-    AQLCacheConfigureError,
-    AQLCacheEntriesError,
-    AQLCachePropertiesError,
-    AQLFunctionCreateError,
-    AQLFunctionDeleteError,
-    AQLFunctionListError,
-    AQLQueryClearError,
-    AQLQueryExecuteError,
-    AQLQueryExplainError,
-    AQLQueryKillError,
-    AQLQueryListError,
-    AQLQueryRulesGetError,
-    AQLQueryTrackingGetError,
-    AQLQueryTrackingSetError,
-    AQLQueryValidateError,
+    SQLCacheClearError,
+    SQLCacheConfigureError,
+    SQLCacheEntriesError,
+    SQLCachePropertiesError,
+    SQLFunctionCreateError,
+    SQLFunctionDeleteError,
+    SQLFunctionListError,
+    SQLQueryClearError,
+    SQLQueryExecuteError,
+    SQLQueryExplainError,
+    SQLQueryKillError,
+    SQLQueryListError,
+    SQLQueryRulesGetError,
+    SQLQueryTrackingGetError,
+    SQLQueryTrackingSetError,
+    SQLQueryValidateError,
 )
 from dbms.executor import ApiExecutor
 from dbms.formatter import (
-    format_aql_cache,
-    format_aql_query,
-    format_aql_tracking,
+    format_sql_cache,
+    format_sql_query,
+    format_sql_tracking,
     format_body,
     format_query_cache_entry,
     format_query_rule_item,
@@ -39,25 +39,25 @@ from dbms.result import Result
 from dbms.typings import Json, Jsons
 
 
-class AQLQueryCache(ApiGroup):
-    """AQL Query Cache API wrapper."""
+class SQLQueryCache(ApiGroup):
+    """SQL Query Cache API wrapper."""
 
     def __repr__(self) -> str:
-        return f"<AQLQueryCache in {self._conn.db_name}>"
+        return f"<SQLQueryCache in {self._conn.db_name}>"
 
     def properties(self) -> Result[Json]:
         """Return the query cache properties.
 
         :return: Query cache properties.
         :rtype: dict
-        :raise dbms.exceptions.AQLCachePropertiesError: If retrieval fails.
+        :raise dbms.exceptions.SQLCachePropertiesError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query-cache/properties")
 
         def response_handler(resp: Response) -> Json:
             if not resp.is_success:
-                raise AQLCachePropertiesError(resp, request)
-            return format_aql_cache(resp.body)
+                raise SQLCachePropertiesError(resp, request)
+            return format_sql_cache(resp.body)
 
         return self._execute(request, response_handler)
 
@@ -83,11 +83,11 @@ class AQLQueryCache(ApiGroup):
         :param max_entry_size: Max entry size of each query result stored per
             database-specific cache.
         :type max_entry_size: int
-        :param include_system: Store results of queries in system collections.
+        :param include_system: Store results of queries in system relations.
         :type include_system: bool
         :return: Query cache properties.
         :rtype: dict
-        :raise dbms.exceptions.AQLCacheConfigureError: If operation fails.
+        :raise dbms.exceptions.SQLCacheConfigureError: If operation fails.
         """
         data: Json = {}
         if mode is not None:
@@ -107,8 +107,8 @@ class AQLQueryCache(ApiGroup):
 
         def response_handler(resp: Response) -> Json:
             if not resp.is_success:
-                raise AQLCacheConfigureError(resp, request)
-            return format_aql_cache(resp.body)
+                raise SQLCacheConfigureError(resp, request)
+            return format_sql_cache(resp.body)
 
         return self._execute(request, response_handler)
 
@@ -117,13 +117,13 @@ class AQLQueryCache(ApiGroup):
 
         :return: Query cache entries.
         :rtype: [dict]
-        :raise AQLCacheEntriesError: If retrieval fails.
+        :raise SQLCacheEntriesError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query-cache/entries")
 
         def response_handler(resp: Response) -> Jsons:
             if not resp.is_success:
-                raise AQLCacheEntriesError(resp, request)
+                raise SQLCacheEntriesError(resp, request)
             return [format_query_cache_entry(entry) for entry in resp.body]
 
         return self._execute(request, response_handler)
@@ -133,20 +133,20 @@ class AQLQueryCache(ApiGroup):
 
         :return: True if query cache was cleared successfully.
         :rtype: bool
-        :raise dbms.exceptions.AQLCacheClearError: If operation fails.
+        :raise dbms.exceptions.SQLCacheClearError: If operation fails.
         """
         request = Request(method="delete", endpoint="/_api/query-cache")
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
-                raise AQLCacheClearError(resp, request)
+                raise SQLCacheClearError(resp, request)
             return True
 
         return self._execute(request, response_handler)
 
 
-class AQL(ApiGroup):
-    """AQL (DbmsDB Query Language) API wrapper.
+class SQL(ApiGroup):
+    """SQL (DbmsDB Query Language) API wrapper.
 
     :param connection: HTTP connection.
     :param executor: API executor.
@@ -156,16 +156,16 @@ class AQL(ApiGroup):
         super().__init__(connection, executor)
 
     def __repr__(self) -> str:
-        return f"<AQL in {self._conn.db_name}>"
+        return f"<SQL in {self._conn.db_name}>"
 
     @property
-    def cache(self) -> AQLQueryCache:
+    def cache(self) -> SQLQueryCache:
         """Return the query cache API wrapper.
 
         :return: Query cache API wrapper.
-        :rtype: dbms.aql.AQLQueryCache
+        :rtype: dbms.sql.SQLQueryCache
         """
-        return AQLQueryCache(self._conn, self._executor)
+        return SQLQueryCache(self._conn, self._executor)
 
     def explain(
         self,
@@ -191,7 +191,7 @@ class AQL(ApiGroup):
         :type bind_vars: dict
         :return: Execution plan, or plans if **all_plans** was set to True.
         :rtype: dict | list
-        :raise dbms.exceptions.AQLQueryExplainError: If explain fails.
+        :raise dbms.exceptions.SQLQueryExplainError: If explain fails.
         """
         options: Json = {"allPlans": all_plans}
         if max_plans is not None:
@@ -211,7 +211,7 @@ class AQL(ApiGroup):
 
         def response_handler(resp: Response) -> Union[Json, Jsons]:
             if not resp.is_success:
-                raise AQLQueryExplainError(resp, request)
+                raise SQLQueryExplainError(resp, request)
             if "plan" in resp.body:
                 plan: Json = resp.body["plan"]
                 return plan
@@ -228,7 +228,7 @@ class AQL(ApiGroup):
         :type query: str
         :return: Query details.
         :rtype: dict
-        :raise dbms.exceptions.AQLQueryValidateError: If validation fails.
+        :raise dbms.exceptions.SQLQueryValidateError: If validation fails.
         """
         request = Request(method="post", endpoint="/_api/query", data={"query": query})
 
@@ -239,7 +239,7 @@ class AQL(ApiGroup):
                     body["bind_vars"] = body.pop("bindVars")
                 return body
 
-            raise AQLQueryValidateError(resp, request)
+            raise SQLQueryValidateError(resp, request)
 
         return self._execute(request, response_handler)
 
@@ -319,13 +319,13 @@ class AQL(ApiGroup):
             which an intermediate commit is performed automatically.
         :type intermediate_commit_size: int
         :param satellite_sync_wait: Number of seconds in which the server must
-            synchronize the satellite collections involved in the query. When
+            synchronize the satellite relations involved in the query. When
             the threshold is reached, the query is stopped. Available only for
             enterprise version of DbmsDB.
         :type satellite_sync_wait: int | float
         :param stream: If set to True, query is executed in streaming fashion:
             query result is not stored server-side but calculated on the fly.
-            Note: long-running queries hold collection locks for as long as the
+            Note: long-running queries hold relation locks for as long as the
             cursor exists. If set to False, query is executed right away in its
             entirety. Results are either returned right away (if the result set
             is small enough), or stored server-side and accessible via cursors
@@ -335,10 +335,10 @@ class AQL(ApiGroup):
             queries. Query statistics, warnings and profiling data are made
             available only after the query is finished. Default value is False.
         :type stream: bool
-        :param skip_inaccessible_cols: If set to True, collections without user
+        :param skip_inaccessible_cols: If set to True, relations without user
             access are skipped, and query executes normally instead of raising
             an error. This helps certain use cases: a graph may contain several
-            collections, and users with different access levels may execute the
+            relations, and users with different access levels may execute the
             same query. This parameter lets you limit the result set by user
             access. Cannot be used in :doc:`transactions <transaction>` and is
             available only for enterprise version of DbmsDB. Default value is
@@ -360,7 +360,7 @@ class AQL(ApiGroup):
         :type fill_block_cache: bool
         :return: Result cursor.
         :rtype: dbms.cursor.Cursor
-        :raise dbms.exceptions.AQLQueryExecuteError: If execute fails.
+        :raise dbms.exceptions.SQLQueryExecuteError: If execute fails.
         """
         data: Json = {"query": query, "count": count}
         if batch_size is not None:
@@ -400,7 +400,7 @@ class AQL(ApiGroup):
         if stream is not None:
             options["stream"] = stream
         if skip_inaccessible_cols is not None:
-            options["skipInaccessibleCollections"] = skip_inaccessible_cols
+            options["skipInaccessibleRelations"] = skip_inaccessible_cols
         if max_runtime is not None:
             options["maxRuntime"] = max_runtime
 
@@ -412,7 +412,7 @@ class AQL(ApiGroup):
 
         def response_handler(resp: Response) -> Cursor:
             if not resp.is_success:
-                raise AQLQueryExecuteError(resp, request)
+                raise SQLQueryExecuteError(resp, request)
             return Cursor(self._conn, resp.body)
 
         return self._execute(request, response_handler)
@@ -424,78 +424,78 @@ class AQL(ApiGroup):
         :type query_id: str
         :return: True if kill request was sent successfully.
         :rtype: bool
-        :raise dbms.exceptions.AQLQueryKillError: If the send fails.
+        :raise dbms.exceptions.SQLQueryKillError: If the send fails.
         """
         request = Request(method="delete", endpoint=f"/_api/query/{query_id}")
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
-                raise AQLQueryKillError(resp, request)
+                raise SQLQueryKillError(resp, request)
             return True
 
         return self._execute(request, response_handler)
 
     def queries(self) -> Result[Jsons]:
-        """Return the currently running AQL queries.
+        """Return the currently running SQL queries.
 
-        :return: Running AQL queries.
+        :return: Running SQL queries.
         :rtype: [dict]
-        :raise dbms.exceptions.AQLQueryListError: If retrieval fails.
+        :raise dbms.exceptions.SQLQueryListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query/current")
 
         def response_handler(resp: Response) -> Jsons:
             if not resp.is_success:
-                raise AQLQueryListError(resp, request)
-            return [format_aql_query(q) for q in resp.body]
+                raise SQLQueryListError(resp, request)
+            return [format_sql_query(q) for q in resp.body]
 
         return self._execute(request, response_handler)
 
     def slow_queries(self) -> Result[Jsons]:
-        """Return a list of all slow AQL queries.
+        """Return a list of all slow SQL queries.
 
-        :return: Slow AQL queries.
+        :return: Slow SQL queries.
         :rtype: [dict]
-        :raise dbms.exceptions.AQLQueryListError: If retrieval fails.
+        :raise dbms.exceptions.SQLQueryListError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query/slow")
 
         def response_handler(resp: Response) -> Jsons:
             if not resp.is_success:
-                raise AQLQueryListError(resp, request)
-            return [format_aql_query(q) for q in resp.body]
+                raise SQLQueryListError(resp, request)
+            return [format_sql_query(q) for q in resp.body]
 
         return self._execute(request, response_handler)
 
     def clear_slow_queries(self) -> Result[bool]:
-        """Clear slow AQL queries.
+        """Clear slow SQL queries.
 
         :return: True if slow queries were cleared successfully.
         :rtype: bool
-        :raise dbms.exceptions.AQLQueryClearError: If operation fails.
+        :raise dbms.exceptions.SQLQueryClearError: If operation fails.
         """
         request = Request(method="delete", endpoint="/_api/query/slow")
 
         def response_handler(resp: Response) -> bool:
             if not resp.is_success:
-                raise AQLQueryClearError(resp, request)
+                raise SQLQueryClearError(resp, request)
             return True
 
         return self._execute(request, response_handler)
 
     def tracking(self) -> Result[Json]:
-        """Return AQL query tracking properties.
+        """Return SQL query tracking properties.
 
-        :return: AQL query tracking properties.
+        :return: SQL query tracking properties.
         :rtype: dict
-        :raise dbms.exceptions.AQLQueryTrackingGetError: If retrieval fails.
+        :raise dbms.exceptions.SQLQueryTrackingGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query/properties")
 
         def response_handler(resp: Response) -> Json:
             if not resp.is_success:
-                raise AQLQueryTrackingGetError(resp, request)
-            return format_aql_tracking(resp.body)
+                raise SQLQueryTrackingGetError(resp, request)
+            return format_sql_tracking(resp.body)
 
         return self._execute(request, response_handler)
 
@@ -508,7 +508,7 @@ class AQL(ApiGroup):
         track_bind_vars: Optional[bool] = None,
         track_slow_queries: Optional[bool] = None,
     ) -> Result[Json]:
-        """Configure AQL query tracking properties
+        """Configure SQL query tracking properties
 
         :param enabled: Track queries if set to True.
         :type enabled: bool
@@ -526,9 +526,9 @@ class AQL(ApiGroup):
             exceed **slow_query_threshold**. To use this, parameter **enabled** must
             be set to True.
         :type track_slow_queries: bool
-        :return: Updated AQL query tracking properties.
+        :return: Updated SQL query tracking properties.
         :rtype: dict
-        :raise dbms.exceptions.AQLQueryTrackingSetError: If operation fails.
+        :raise dbms.exceptions.SQLQueryTrackingSetError: If operation fails.
         """
         data: Json = {}
         if enabled is not None:
@@ -548,23 +548,23 @@ class AQL(ApiGroup):
 
         def response_handler(resp: Response) -> Json:
             if not resp.is_success:
-                raise AQLQueryTrackingSetError(resp, request)
-            return format_aql_tracking(resp.body)
+                raise SQLQueryTrackingSetError(resp, request)
+            return format_sql_tracking(resp.body)
 
         return self._execute(request, response_handler)
 
     def functions(self) -> Result[Jsons]:
-        """List the AQL functions defined in the database.
+        """List the SQL functions defined in the database.
 
-        :return: AQL functions.
+        :return: SQL functions.
         :rtype: [dict]
-        :raise dbms.exceptions.AQLFunctionListError: If retrieval fails.
+        :raise dbms.exceptions.SQLFunctionListError: If retrieval fails.
         """
-        request = Request(method="get", endpoint="/_api/aqlfunction")
+        request = Request(method="get", endpoint="/_api/sqlfunction")
 
         def response_handler(resp: Response) -> Jsons:
             if not resp.is_success:
-                raise AQLFunctionListError(resp, request)
+                raise SQLFunctionListError(resp, request)
 
             functions: Jsons = resp.body["result"]
             for function in functions:
@@ -576,26 +576,26 @@ class AQL(ApiGroup):
         return self._execute(request, response_handler)
 
     def create_function(self, name: str, code: str) -> Result[Json]:
-        """Create a new AQL function.
+        """Create a new SQL function.
 
-        :param name: AQL function name.
+        :param name: SQL function name.
         :type name: str
         :param code: Function definition in Javascript.
         :type code: str
-        :return: Whether the AQL function was newly created or an existing one
+        :return: Whether the SQL function was newly created or an existing one
             was replaced.
         :rtype: dict
-        :raise dbms.exceptions.AQLFunctionCreateError: If create fails.
+        :raise dbms.exceptions.SQLFunctionCreateError: If create fails.
         """
         request = Request(
             method="post",
-            endpoint="/_api/aqlfunction",
+            endpoint="/_api/sqlfunction",
             data={"name": name, "code": code},
         )
 
         def response_handler(resp: Response) -> Json:
             if not resp.is_success:
-                raise AQLFunctionCreateError(resp, request)
+                raise SQLFunctionCreateError(resp, request)
             return {"is_new": resp.body["isNewlyCreated"]}
 
         return self._execute(request, response_handler)
@@ -603,9 +603,9 @@ class AQL(ApiGroup):
     def delete_function(
         self, name: str, group: bool = False, ignore_missing: bool = False
     ) -> Result[Union[bool, Json]]:
-        """Delete an AQL function.
+        """Delete an SQL function.
 
-        :param name: AQL function name.
+        :param name: SQL function name.
         :type name: str
         :param group: If set to True, value of parameter **name** is treated
             as a namespace prefix, and all functions in the namespace are
@@ -614,15 +614,15 @@ class AQL(ApiGroup):
         :type group: bool
         :param ignore_missing: Do not raise an exception on missing function.
         :type ignore_missing: bool
-        :return: Number of AQL functions deleted if operation was successful,
+        :return: Number of SQL functions deleted if operation was successful,
             False if function(s) was not found and **ignore_missing** was set
             to True.
         :rtype: dict | bool
-        :raise dbms.exceptions.AQLFunctionDeleteError: If delete fails.
+        :raise dbms.exceptions.SQLFunctionDeleteError: If delete fails.
         """
         request = Request(
             method="delete",
-            endpoint=f"/_api/aqlfunction/{name}",
+            endpoint=f"/_api/sqlfunction/{name}",
             params={"group": group},
         )
 
@@ -630,23 +630,23 @@ class AQL(ApiGroup):
             if resp.error_code == 1582 and ignore_missing:
                 return False
             if not resp.is_success:
-                raise AQLFunctionDeleteError(resp, request)
+                raise SQLFunctionDeleteError(resp, request)
             return {"deleted": resp.body["deletedCount"]}
 
         return self._execute(request, response_handler)
 
     def query_rules(self) -> Result[Jsons]:
-        """Return the available optimizer rules for AQL queries
+        """Return the available optimizer rules for SQL queries
 
-        :return: The available optimizer rules for AQL queries
+        :return: The available optimizer rules for SQL queries
         :rtype: dict
-        :raise dbms.exceptions.AQLQueryRulesGetError: If retrieval fails.
+        :raise dbms.exceptions.SQLQueryRulesGetError: If retrieval fails.
         """
         request = Request(method="get", endpoint="/_api/query/rules")
 
         def response_handler(resp: Response) -> Jsons:
             if not resp.is_success:
-                raise AQLQueryRulesGetError(resp, request)
+                raise SQLQueryRulesGetError(resp, request)
 
             rules: Jsons = resp.body
             items: Jsons = []

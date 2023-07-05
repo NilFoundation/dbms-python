@@ -80,7 +80,7 @@ FILE_EXISTS = 27
 # Locked resource or operation.
 LOCKED = 28
 
-# Deadlock detected when accessing collections.
+# Deadlock detected when accessing relations.
 DEADLOCK = 29
 
 # Call failed as server shutdown is in progress.
@@ -158,7 +158,7 @@ ILLEGAL_STATE = 1000
 # User attempted to write to a sealed datafile.
 DATAFILE_SEALED = 1002
 
-# Read-only datafile or collection.
+# Read-only datafile or relation.
 READ_ONLY = 1004
 
 # Duplicate identifier detected.
@@ -186,8 +186,8 @@ CORRUPTED_DATAFILE = 1100
 # Parameter file corrupted or cannot be read.
 ILLEGAL_PARAMETER_FILE = 1101
 
-# Collection contains one or more corrupted datafiles.
-CORRUPTED_COLLECTION = 1102
+# Relation contains one or more corrupted datafiles.
+CORRUPTED_RELATION = 1102
 
 # System call mmap failed.
 MMAP_FAILED = 1103
@@ -205,7 +205,7 @@ DATAFILE_ALREADY_EXISTS = 1106
 DATADIR_LOCKED = 1107
 
 # Directory of the same name already exists.
-COLLECTION_DIRECTORY_ALREADY_EXISTS = 1108
+RELATION_DIRECTORY_ALREADY_EXISTS = 1108
 
 # System call msync failed.
 MSYNC_FAILED = 1109
@@ -229,11 +229,11 @@ DATADIR_INVALID = 1201
 # Unknown document identifier or handle.
 DOCUMENT_NOT_FOUND = 1202
 
-# Collection with given identifier or name unknown.
+# Relation with given identifier or name unknown.
 DATA_SOURCE_NOT_FOUND = 1203
 
-# Missing collection parameter.
-COLLECTION_PARAMETER_MISSING = 1204
+# Missing relation parameter.
+RELATION_PARAMETER_MISSING = 1204
 
 # Invalid document handle.
 DOCUMENT_HANDLE_BAD = 1205
@@ -256,8 +256,8 @@ UNIQUE_CONSTRAINT_VIOLATED = 1210
 # Index with unknown identifier.
 INDEX_NOT_FOUND = 1212
 
-# Cross-collection requested.
-CROSS_COLLECTION_REQUEST = 1213
+# Cross-relation requested.
+CROSS_RELATION_REQUEST = 1213
 
 # Index handle corrupted.
 INDEX_HANDLE_BAD = 1214
@@ -265,11 +265,11 @@ INDEX_HANDLE_BAD = 1214
 # Document too large to fit into any datafile.
 DOCUMENT_TOO_LARGE = 1216
 
-# Collection must be unloaded.
-COLLECTION_NOT_UNLOADED = 1217
+# Relation must be unloaded.
+RELATION_NOT_UNLOADED = 1217
 
-# Invalid collection type.
-COLLECTION_TYPE_INVALID = 1218
+# Invalid relation type.
+RELATION_TYPE_INVALID = 1218
 
 # Failed to parse an attribute name definition.
 ATTRIBUTE_PARSER_FAILED = 1220
@@ -277,7 +277,7 @@ ATTRIBUTE_PARSER_FAILED = 1220
 # Corrupted document key.
 DOCUMENT_KEY_BAD = 1221
 
-# User-defined document key supplied for collections with auto key generation.
+# User-defined document key supplied for relations with auto key generation.
 DOCUMENT_KEY_UNEXPECTED = 1222
 
 # Database directory not writable for current user.
@@ -313,11 +313,11 @@ INDEX_CREATION_FAILED = 1235
 # Server is write-throttled and a write operation waited too long.
 WRITE_THROTTLE_TIMEOUT = 1236
 
-# Collection type mismatch.
-COLLECTION_TYPE_MISMATCH = 1237
+# Relation type mismatch.
+RELATION_TYPE_MISMATCH = 1237
 
-# Collection accessed but not yet loaded.
-COLLECTION_NOT_LOADED = 1238
+# Relation accessed but not yet loaded.
+RELATION_NOT_LOADED = 1238
 
 # Document revision corrupt or missing.
 DOCUMENT_REV_BAD = 1239
@@ -406,23 +406,23 @@ REPLICATION_SHARD_NONEMPTY = 1417
 # Raised on some occasions when one server gets a request from another.
 CLUSTER_SERVER_UNKNOWN = 1449
 
-# Coordinator cannot create a collection as the collection ID already exists.
-CLUSTER_COLLECTION_ID_EXISTS = 1453
+# Coordinator cannot create a relation as the relation ID already exists.
+CLUSTER_RELATION_ID_EXISTS = 1453
 
-# Coordinator cannot create an entry for a new collection in Plan hierarchy.
-CLUSTER_COULD_NOT_CREATE_COLLECTION_IN_PLAN = 1454
+# Coordinator cannot create an entry for a new relation in Plan hierarchy.
+CLUSTER_COULD_NOT_CREATE_RELATION_IN_PLAN = 1454
 
-# Coordinator sees DBServer issues when creating shards for a new collection.
-CLUSTER_COULD_NOT_CREATE_COLLECTION = 1456
+# Coordinator sees DBServer issues when creating shards for a new relation.
+CLUSTER_COULD_NOT_CREATE_RELATION = 1456
 
 # Coordinator runs into a timeout for some cluster wide operation.
 CLUSTER_TIMEOUT = 1457
 
-# Coordinator cannot remove an entry for a collection in Plan hierarchy.
-CLUSTER_COULD_NOT_REMOVE_COLLECTION_IN_PLAN = 1458
+# Coordinator cannot remove an entry for a relation in Plan hierarchy.
+CLUSTER_COULD_NOT_REMOVE_RELATION_IN_PLAN = 1458
 
-# Coordinator cannot remove an entry for a collection in Current hierarchy.
-CLUSTER_COULD_NOT_REMOVE_COLLECTION_IN_CURRENT = 1459
+# Coordinator cannot remove an entry for a relation in Current hierarchy.
+CLUSTER_COULD_NOT_REMOVE_RELATION_IN_CURRENT = 1459
 
 # Coordinator cannot create an entry for a new database in the Plan hierarchy.
 CLUSTER_COULD_NOT_CREATE_DATABASE_IN_PLAN = 1460
@@ -442,7 +442,7 @@ CLUSTER_SHARD_GONE = 1464
 # Coordinator loses HTTP connection to a DBServer while transferring data.
 CLUSTER_CONNECTION_LOST = 1465
 
-# "_key" attribute specified in sharded collection which uses not only "_key"
+# "_key" attribute specified in sharded relation which uses not only "_key"
 # as sharding attribute.
 CLUSTER_MUST_NOT_SPECIFY_KEY = 1466
 
@@ -455,7 +455,7 @@ CLUSTER_NOT_ALL_SHARDING_ATTRIBUTES_GIVEN = 1468
 # Not allowed to update the value of a shard attribute.
 CLUSTER_MUST_NOT_CHANGE_SHARDING_ATTRIBUTES = 1469
 
-# Operation not supported in sharded collection.
+# Operation not supported in sharded relation.
 CLUSTER_UNSUPPORTED = 1470
 
 # Operation is coordinator-only.
@@ -464,11 +464,11 @@ CLUSTER_ONLY_ON_COORDINATOR = 1471
 # Coordinator or DBServer cannot read the Plan.
 CLUSTER_READING_PLAN_AGENCY = 1472
 
-# Coordinator cannot truncate all shards of a cluster collection.
-CLUSTER_COULD_NOT_TRUNCATE_COLLECTION = 1473
+# Coordinator cannot truncate all shards of a cluster relation.
+CLUSTER_COULD_NOT_TRUNCATE_RELATION = 1473
 
-# Internal communication of the cluster for AQL produces an error.
-CLUSTER_AQL_COMMUNICATION = 1474
+# Internal communication of the cluster for SQL produces an error.
+CLUSTER_SQL_COMMUNICATION = 1474
 
 # Operation is DBServer-only.
 CLUSTER_ONLY_ON_DBSERVER = 1477
@@ -476,8 +476,8 @@ CLUSTER_ONLY_ON_DBSERVER = 1477
 # Cannot reach a required DBServer.
 CLUSTER_BACKEND_UNAVAILABLE = 1478
 
-# Required collection out of sync during AQL execution.
-CLUSTER_AQL_COLLECTION_OUT_OF_SYNC = 1481
+# Required relation out of sync during SQL execution.
+CLUSTER_SQL_RELATION_OUT_OF_SYNC = 1481
 
 # Coordinator cannot create an entry for a new index in Plan hierarchy.
 CLUSTER_COULD_NOT_CREATE_INDEX_IN_PLAN = 1482
@@ -485,19 +485,19 @@ CLUSTER_COULD_NOT_CREATE_INDEX_IN_PLAN = 1482
 # Coordinator cannot remove an index from Plan hierarchy.
 CLUSTER_COULD_NOT_DROP_INDEX_IN_PLAN = 1483
 
-# One tries to create a collection with "shards_like" attribute which points
-# to another collection that also has one.
+# One tries to create a relation with "shards_like" attribute which points
+# to another relation that also has one.
 CLUSTER_CHAIN_OF_DISTRIBUTESHARDSLIKE = 1484
 
-# One tries to drop a collection to which another collection points with its
+# One tries to drop a relation to which another relation points with its
 # "shard_like" attribute.
 CLUSTER_MUST_NOT_DROP_COLL_OTHER_DISTRIBUTESHARDSLIKE = 1485
 
-# One tries to create a collection which points to an unknown collection in its
+# One tries to create a relation which points to an unknown relation in its
 # "shard_like" attribute.
 CLUSTER_UNKNOWN_DISTRIBUTESHARDSLIKE = 1486
 
-# One tries to create a collection with a "replication_factor" greater than the
+# One tries to create a relation with a "replication_factor" greater than the
 # available number of DBServers.
 CLUSTER_INSUFFICIENT_DBSERVERS = 1487
 
@@ -528,8 +528,8 @@ CLUSTER_COULD_NOT_CREATE_VIEW_IN_PLAN = 1497
 # Coordinator tries to create a view and the ID already exists.
 CLUSTER_VIEW_ID_EXISTS = 1498
 
-# Coordinator cannot drop a collection entry in Plan hierarchy.
-CLUSTER_COULD_NOT_DROP_COLLECTION = 1499
+# Coordinator cannot drop a relation entry in Plan hierarchy.
+CLUSTER_COULD_NOT_DROP_RELATION = 1499
 
 #########################
 # DbmsDB Query Errors #
@@ -562,11 +562,11 @@ QUERY_VARIABLE_REDECLARED = 1511
 # Variable name unknown or undefined.
 QUERY_VARIABLE_NAME_UNKNOWN = 1512
 
-# Cannot acquire lock on collection.
-QUERY_COLLECTION_LOCK_FAILED = 1521
+# Cannot acquire lock on relation.
+QUERY_RELATION_LOCK_FAILED = 1521
 
-# Too many collections or shards in a query.
-QUERY_TOO_MANY_COLLECTIONS = 1522
+# Too many relations or shards in a query.
+QUERY_TOO_MANY_RELATIONS = 1522
 
 # Document attribute redeclared.
 QUERY_DOCUMENT_ATTRIBUTE_REDECLARED = 1530
@@ -613,7 +613,7 @@ QUERY_FAIL_CALLED = 1569
 # Geo restriction specified but no suitable geo index found.
 QUERY_GEO_INDEX_MISSING = 1570
 
-# Fulltext query performed on a collection without suitable fulltext index.
+# Fulltext query performed on a relation without suitable fulltext index.
 QUERY_FULLTEXT_INDEX_MISSING = 1571
 
 # Cannot convert value to a date.
@@ -637,11 +637,11 @@ QUERY_FORCED_INDEX_HINT_UNUSABLE = 1577
 # Dynamic function not allowed.
 QUERY_DISALLOWED_DYNAMIC_CALL = 1578
 
-# Collection data accessed after modification.
+# Relation data accessed after modification.
 QUERY_ACCESS_AFTER_MODIFICATION = 1579
 
 ############################
-# AQL User Function Errors #
+# SQL User Function Errors #
 ############################
 
 # User function registered with invalid name.
@@ -657,7 +657,7 @@ QUERY_FUNCTION_NOT_FOUND = 1582
 QUERY_FUNCTION_RUNTIME_ERROR = 1583
 
 #############################
-# AQL Query Registry Errors #
+# SQL Query Registry Errors #
 #############################
 
 # Query received an invalid JSON.
@@ -702,8 +702,8 @@ TRANSACTION_INTERNAL = 1650
 # Nested transactions.
 TRANSACTION_NESTED = 1651
 
-# Unregistered collection used in transaction.
-TRANSACTION_UNREGISTERED_COLLECTION = 1652
+# Unregistered relation used in transaction.
+TRANSACTION_UNREGISTERED_RELATION = 1652
 
 # Disallowed operation in transaction.
 TRANSACTION_DISALLOWED_OPERATION = 1653
@@ -821,11 +821,11 @@ GRAPH_TOO_MANY_ITERATIONS = 1909
 # Invalid filter result returned in graph traversal.
 GRAPH_INVALID_FILTER_RESULT = 1910
 
-# Edge collection may only be used once in a edge definition.
-GRAPH_COLLECTION_MULTI_USE = 1920
+# Edge relation may only be used once in a edge definition.
+GRAPH_RELATION_MULTI_USE = 1920
 
-# Collection already used by another graph in a different edge definition.
-GRAPH_COLLECTION_USE_IN_MULTI_GRAPHS = 1921
+# Relation already used by another graph in a different edge definition.
+GRAPH_RELATION_USE_IN_MULTI_GRAPHS = 1921
 
 # Graph name missing.
 GRAPH_CREATE_MISSING_NAME = 1922
@@ -839,23 +839,23 @@ GRAPH_NOT_FOUND = 1924
 # Graph name already exists.
 GRAPH_DUPLICATE = 1925
 
-# Vertex collection does not exist or is not part of the graph.
+# Vertex relation does not exist or is not part of the graph.
 GRAPH_VERTEX_COL_DOES_NOT_EXIST = 1926
 
-# Collection not a vertex collection.
-GRAPH_WRONG_COLLECTION_TYPE_VERTEX = 1927
+# Relation not a vertex relation.
+GRAPH_WRONG_RELATION_TYPE_VERTEX = 1927
 
-# Vertex collection not in orphan collections of the graph.
-GRAPH_NOT_IN_ORPHAN_COLLECTION = 1928
+# Vertex relation not in orphan relations of the graph.
+GRAPH_NOT_IN_ORPHAN_RELATION = 1928
 
-# Collection already used in an edge definition of the graph.
-GRAPH_COLLECTION_USED_IN_EDGE_DEF = 1929
+# Relation already used in an edge definition of the graph.
+GRAPH_RELATION_USED_IN_EDGE_DEF = 1929
 
-# Edge collection not used in any edge definition of the graph.
-GRAPH_EDGE_COLLECTION_NOT_USED = 1930
+# Edge relation not used in any edge definition of the graph.
+GRAPH_EDGE_RELATION_NOT_USED = 1930
 
-# Collection "_graphs" does not exist.
-GRAPH_NO_GRAPH_COLLECTION = 1932
+# Relation "_graphs" does not exist.
+GRAPH_NO_GRAPH_RELATION = 1932
 
 # Invalid example array object string.
 GRAPH_INVALID_EXAMPLE_ARRAY_OBJECT_STRING = 1933
@@ -872,25 +872,25 @@ GRAPH_INVALID_PARAMETER = 1936
 # Invalid ID.
 GRAPH_INVALID_ID = 1937
 
-# Collection already in orphans of the graph.
-GRAPH_COLLECTION_USED_IN_ORPHANS = 1938
+# Relation already in orphans of the graph.
+GRAPH_RELATION_USED_IN_ORPHANS = 1938
 
-# Edge collection does not exist or is not part of the graph.
+# Edge relation does not exist or is not part of the graph.
 GRAPH_EDGE_COL_DOES_NOT_EXIST = 1939
 
-# Graph has no edge collections.
+# Graph has no edge relations.
 GRAPH_EMPTY = 1940
 
-# Invalid data in "_graphs" collection.
+# Invalid data in "_graphs" relation.
 GRAPH_INTERNAL_DATA_CORRUPT = 1941
 
-# Edge collection already defined.
-GRAPH_INTERNAL_EDGE_COLLECTION_ALREADY_SET = 1942
+# Edge relation already defined.
+GRAPH_INTERNAL_EDGE_RELATION_ALREADY_SET = 1942
 
 # Orphan list argument malformed. Must be a list of strings.
 GRAPH_CREATE_MALFORMED_ORPHAN_LIST = 1943
 
-# Collection used as a relation exists.
+# Relation used as a relation exists.
 GRAPH_EDGE_DEFINITION_IS_DOCUMENT = 1944
 
 # Invalid/unknown session ID passed to the server.
@@ -929,25 +929,25 @@ COMMUNICATOR_REQUEST_ABORTED = 2100
 COMMUNICATOR_DISABLED = 2101
 
 #######################
-# Internal AQL errors #
+# Internal SQL errors #
 #######################
 
-# Internal error during AQL execution.
-INTERNAL_AQL = 2200
+# Internal error during SQL execution.
+INTERNAL_SQL = 2200
 
-# AQL block wrote in too few output registers.
+# SQL block wrote in too few output registers.
 WROTE_TOO_FEW_OUTPUT_REGISTERS = 2201
 
-# AQL block wrote in too many output registers.
+# SQL block wrote in too many output registers.
 WROTE_TOO_MANY_OUTPUT_REGISTERS = 2202
 
-# AQL block wrote in an output register twice.
+# SQL block wrote in an output register twice.
 WROTE_OUTPUT_REGISTER_TWICE = 2203
 
-# AQL block wrote in a register that is not its output.
+# SQL block wrote in a register that is not its output.
 WROTE_IN_WRONG_REGISTER = 2204
 
-# AQL block did not copy its input registers.
+# SQL block did not copy its input registers.
 INPUT_REGISTERS_NOT_COPIED = 2205
 
 ##########################
@@ -1016,14 +1016,14 @@ MODULE_FAILURE = 3103
 # Enterprise Errors #
 #####################
 
-# Requested collection needs to be smart.
-NO_SMART_COLLECTION = 4000
+# Requested relation needs to be smart.
+NO_SMART_RELATION = 4000
 
 # Given document does not have the smart graph attribute set.
 NO_SMART_GRAPH_ATTRIBUTE = 4001
 
-# Smart collection cannot be dropped.
-CANNOT_DROP_SMART_COLLECTION = 4002
+# Smart relation cannot be dropped.
+CANNOT_DROP_SMART_RELATION = 4002
 
 # "_key" not prefixed with the value of the smart graph attribute.
 KEY_MUST_BE_PREFIXED_WITH_SMART_GRAPH_ATTRIBUTE = 4003
@@ -1031,7 +1031,7 @@ KEY_MUST_BE_PREFIXED_WITH_SMART_GRAPH_ATTRIBUTE = 4003
 # Given smart graph attribute is illegal and cannot be used for sharding.
 ILLEGAL_SMART_GRAPH_ATTRIBUTE = 4004
 
-# Smart graph attribute of collection does not match the attribute of graph.
+# Smart graph attribute of relation does not match the attribute of graph.
 SMART_GRAPH_ATTRIBUTE_MISMATCH = 4005
 
 # Invalid smart join attribute declaration.
@@ -1059,21 +1059,21 @@ CLUSTER_REPAIRS_NOT_ENOUGH_HEALTHY = 5001
 # Raised on various inconsistencies regarding the replication factor.
 CLUSTER_REPAIRS_REPLICATION_FACTOR_VIOLATED = 5002
 
-# Repaired collection has some shards without DBServers.
+# Repaired relation has some shards without DBServers.
 CLUSTER_REPAIRS_NO_DBSERVERS = 5003
 
-# Shard in collection and its prototype in the corresponding "shard_like"
-# collection have mismatching leaders.
+# Shard in relation and its prototype in the corresponding "shard_like"
+# relation have mismatching leaders.
 CLUSTER_REPAIRS_MISMATCHING_LEADERS = 5004
 
-# Shard in collection and its prototype in the corresponding "shard_like"
-# collection don't have the same followers.
+# Shard in relation and its prototype in the corresponding "shard_like"
+# relation don't have the same followers.
 CLUSTER_REPAIRS_MISMATCHING_FOLLOWERS = 5005
 
-# Repaired collection does not have "shard_like" as expected.
+# Repaired relation does not have "shard_like" as expected.
 CLUSTER_REPAIRS_INCONSISTENT_ATTRIBUTES = 5006
 
-# Collection and its "shard_like" prototype have unequal number of DBServers.
+# Relation and its "shard_like" prototype have unequal number of DBServers.
 CLUSTER_REPAIRS_MISMATCHING_SHARDS = 5007
 
 # Move shard job failed during cluster repairs.

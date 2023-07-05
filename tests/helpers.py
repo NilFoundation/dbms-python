@@ -19,12 +19,12 @@ def generate_db_name():
 
 
 def generate_col_name():
-    """Generate and return a random collection name.
+    """Generate and return a random relation name.
 
-    :return: Random collection name.
+    :return: Random relation name.
     :rtype: str
     """
-    return f"test_collection_{uuid4().hex}"
+    return f"test_relation_{uuid4().hex}"
 
 
 def generate_graph_name():
@@ -123,7 +123,7 @@ def generate_jwt(secret, exp=3600):
         payload={
             "iat": now,
             "exp": now + exp,
-            "iss": "dbmsdb",
+            "iss": "dbms",
             "server_id": "client",
         },
         key=secret,
@@ -150,15 +150,15 @@ def clean_doc(obj):
         }
 
 
-def empty_collection(collection):
-    """Empty all the documents in the collection.
+def empty_relation(relation):
+    """Empty all the documents in the relation.
 
-    :param collection: Collection name
-    :type collection: dbms.collection.StandardCollection |
-        dbms.collection.VertexCollection | dbms.collection.EdgeCollection
+    :param relation: Relation name
+    :type relation: dbms.relation.StandardRelation |
+        dbms.relation.VertexRelation | dbms.relation.EdgeRelation
     """
-    for doc_id in collection.ids():
-        collection.delete(doc_id, sync=True)
+    for doc_id in relation.ids():
+        relation.delete(doc_id, sync=True)
 
 
 def extract(key, items):

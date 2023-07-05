@@ -11,12 +11,12 @@ from tests.helpers import clean_doc
 
 
 @pytest.fixture(autouse=True)
-def setup_collection(col, docs):
+def setup_relation(col, docs):
     col.import_bulk(docs)
 
 
 def test_cursor_from_execute_query(db, col, docs):
-    cursor = db.aql.execute(
+    cursor = db.sql.execute(
         f"FOR d IN {col.name} SORT d._key RETURN d",
         count=True,
         batch_size=2,
@@ -93,7 +93,7 @@ def test_cursor_from_execute_query(db, col, docs):
 
 
 def test_cursor_write_query(db, col, docs):
-    cursor = db.aql.execute(
+    cursor = db.sql.execute(
         """
         FOR d IN {col} FILTER d._key == @first OR d._key == @second
         UPDATE {{_key: d._key, _val: @val }} IN {col}
@@ -158,7 +158,7 @@ def test_cursor_write_query(db, col, docs):
 
 
 def test_cursor_invalid_id(db, col):
-    cursor = db.aql.execute(
+    cursor = db.sql.execute(
         f"FOR d IN {col.name} SORT d._key RETURN d",
         count=True,
         batch_size=2,
@@ -193,7 +193,7 @@ def test_cursor_invalid_id(db, col):
 
 
 def test_cursor_premature_close(db, col, docs):
-    cursor = db.aql.execute(
+    cursor = db.sql.execute(
         f"FOR d IN {col.name} SORT d._key RETURN d",
         count=True,
         batch_size=2,
@@ -210,7 +210,7 @@ def test_cursor_premature_close(db, col, docs):
 
 
 def test_cursor_context_manager(db, col, docs):
-    with db.aql.execute(
+    with db.sql.execute(
         f"FOR d IN {col.name} SORT d._key RETURN d",
         count=True,
         batch_size=2,
@@ -227,7 +227,7 @@ def test_cursor_context_manager(db, col, docs):
 
 
 def test_cursor_manual_fetch_and_pop(db, col, docs):
-    cursor = db.aql.execute(
+    cursor = db.sql.execute(
         f"FOR d IN {col.name} SORT d._key RETURN d",
         count=True,
         batch_size=1,
@@ -263,7 +263,7 @@ def test_cursor_manual_fetch_and_pop(db, col, docs):
 
 
 def test_cursor_no_count(db, col):
-    cursor = db.aql.execute(
+    cursor = db.sql.execute(
         f"FOR d IN {col.name} SORT d._key RETURN d",
         count=False,
         batch_size=2,

@@ -2,7 +2,7 @@ Schema Validation
 -----------------
 
 DbmsDB supports document validation using JSON schemas. You can use this
-feature by providing a schema during collection creation using the ``schema``
+feature by providing a schema during relation creation using the ``schema``
 parameter.
 
 **Example:**
@@ -17,10 +17,10 @@ parameter.
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    if db.has_collection('employees'):
-        db.delete_collection('employees')
+    if db.has_relation('employees'):
+        db.delete_relation('employees')
 
-    # Create a new collection named "employees" with custom schema.
+    # Create a new relation named "employees" with custom schema.
     my_schema = {
         'rule': {
             'type': 'object',
@@ -33,7 +33,7 @@ parameter.
         'level': 'moderate',
         'message': 'Schema Validation Failed.'
     }
-    employees = db.create_collection(name='employees', schema=my_schema)
+    employees = db.create_relation(name='employees', schema=my_schema)
 
     # Modify the schema.
     employees.configure(schema=my_schema)

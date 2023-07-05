@@ -1,17 +1,17 @@
-Collections
+Relations
 -----------
 
-A **collection** contains :doc:`documents <document>`. It is uniquely identified
+A **relation** contains :doc:`documents <document>`. It is uniquely identified
 by its name which must consist only of hyphen, underscore and alphanumeric
-characters. There are three types of collections in python-dbms:
+characters. There are three types of relations in python-dbms:
 
-* **Standard Collection:** contains regular documents.
-* **Vertex Collection:** contains vertex documents for graphs. See
-  :ref:`here <vertex-collections>` for more details.
-* **Edge Collection:** contains edge documents for graphs. See
-  :ref:`here <edge-collections>` for more details.
+* **Standard Relation:** contains regular documents.
+* **Vertex Relation:** contains vertex documents for graphs. See
+  :ref:`here <vertex-relations>` for more details.
+* **Edge Relation:** contains edge documents for graphs. See
+  :ref:`here <edge-relations>` for more details.
 
-Here is an example showing how you can manage standard collections:
+Here is an example showing how you can manage standard relations:
 
 .. testcode::
 
@@ -23,17 +23,17 @@ Here is an example showing how you can manage standard collections:
     # Connect to "test" database as root user.
     db = client.db('test', username='root', password='passwd')
 
-    # List all collections in the database.
-    db.collections()
+    # List all relations in the database.
+    db.relations()
 
-    # Create a new collection named "students" if it does not exist.
-    # This returns an API wrapper for "students" collection.
-    if db.has_collection('students'):
-        students = db.collection('students')
+    # Create a new relation named "students" if it does not exist.
+    # This returns an API wrapper for "students" relation.
+    if db.has_relation('students'):
+        students = db.relation('students')
     else:
-        students = db.create_collection('students')
+        students = db.create_relation('students')
 
-    # Retrieve collection properties.
+    # Retrieve relation properties.
     students.name
     students.db_name
     students.properties()
@@ -48,7 +48,7 @@ Here is an example showing how you can manage standard collections:
     students.truncate()
     students.configure()
 
-    # Delete the collection.
-    db.delete_collection('students')
+    # Delete the relation.
+    db.delete_relation('students')
 
-See :ref:`StandardDatabase` and :ref:`StandardCollection` for API specification.
+See :ref:`StandardDatabase` and :ref:`StandardRelation` for API specification.

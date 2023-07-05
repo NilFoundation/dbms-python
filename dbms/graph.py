@@ -3,7 +3,7 @@ __all__ = ["Graph"]
 from typing import List, Optional, Sequence, Union
 
 from dbms.api import ApiGroup
-from dbms.collection import EdgeCollection, VertexCollection
+from dbms.relation import EdgeRelation, VertexRelation
 from dbms.connection import Connection
 from dbms.exceptions import (
     EdgeDefinitionCreateError,
@@ -12,9 +12,9 @@ from dbms.exceptions import (
     EdgeDefinitionReplaceError,
     GraphPropertiesError,
     GraphTraverseError,
-    VertexCollectionCreateError,
-    VertexCollectionDeleteError,
-    VertexCollectionListError,
+    VertexRelationCreateError,
+    VertexRelationDeleteError,
+    VertexRelationListError,
 )
 from dbms.executor import ApiExecutor
 from dbms.formatter import format_graph_properties
@@ -37,25 +37,25 @@ class Graph(ApiGroup):
     def __repr__(self) -> str:
         return f"<Graph {self._name}>"
 
-    def _get_col_by_vertex(self, vertex: Union[str, Json]) -> VertexCollection:
-        """Return the vertex collection for the given vertex document.
+    def _get_col_by_vertex(self, vertex: Union[str, Json]) -> VertexRelation:
+        """Return the vertex relation for the given vertex document.
 
         :param vertex: Vertex document ID or body with "_id" field.
         :type vertex: str | dict
-        :return: Vertex collection API wrapper.
-        :rtype: dbms.collection.VertexCollection
+        :return: Vertex relation API wrapper.
+        :rtype: dbms.relation.VertexRelation
         """
-        return self.vertex_collection(get_col_name(vertex))
+        return self.vertex_relation(get_col_name(vertex))
 
-    def _get_col_by_edge(self, edge: Union[str, Json]) -> EdgeCollection:
-        """Return the edge collection for the given edge document.
+    def _get_col_by_edge(self, edge: Union[str, Json]) -> EdgeRelation:
+        """Return the edge relation for the given edge document.
 
         :param edge: Edge document ID or body with "_id" field.
         :type edge: str | dict
-        :return: Edge collection API wrapper.
-        :rtype: dbms.collection.EdgeCollection
+        :return: Edge relation API wrapper.
+        :rtype: dbms.relation.EdgeRelation
         """
-        return self.edge_collection(get_col_name(edge))
+        return self.edge_relation(get_col_name(edge))
 
     @property
     def name(self) -> str:
@@ -83,15 +83,15 @@ class Graph(ApiGroup):
         return self._execute(request, response_handler)
 
     ################################
-    # Vertex Collection Management #
+    # Vertex Relation Management #
     ################################
 
-    def has_vertex_collection(self, name: str) -> Result[bool]:
-        """Check if the graph has the given vertex collection.
+    def has_vertex_relation(self, name: str) -> Result[bool]:
+        """Check if the graph has the given vertex relation.
 
-        :param name: Vertex collection name.
+        :param name: Vertex relation name.
         :type name: str
-        :return: True if vertex collection exists, False otherwise.
+        :return: True if vertex relation exists, False otherwise.
         :rtype: bool
         """
         request = Request(
@@ -102,16 +102,16 @@ class Graph(ApiGroup):
         def response_handler(resp: Response) -> bool:
             if resp.is_success:
                 return name in resp.body["collections"]
-            raise VertexCollectionListError(resp, request)
+            raise VertexRelationListError(resp, request)
 
         return self._execute(request, response_handler)
 
-    def vertex_collections(self) -> Result[List[str]]:
-        """Return vertex collections in the graph that are not orphaned.
+    def vertex_relations(self) -> Result[List[str]]:
+        """Return vertex relations in the graph that are not orphaned.
 
-        :return: Names of vertex collections that are not orphaned.
+        :return: Names of vertex relations that are not orphaned.
         :rtype: [str]
-        :raise dbms.exceptions.VertexCollectionListError: If retrieval fails.
+        :raise dbms.exceptions.VertexRelationListError: If retrieval fails.
         """
         request = Request(
             method="get",
@@ -120,54 +120,54 @@ class Graph(ApiGroup):
 
         def response_handler(resp: Response) -> List[str]:
             if not resp.is_success:
-                raise VertexCollectionListError(resp, request)
+                raise VertexRelationListError(resp, request)
             return sorted(set(resp.body["collections"]))
 
         return self._execute(request, response_handler)
 
-    def vertex_collection(self, name: str) -> VertexCollection:
-        """Return the vertex collection API wrapper.
+    def vertex_relation(self, name: str) -> VertexRelation:
+        """Return the vertex relation API wrapper.
 
-        :param name: Vertex collection name.
+        :param name: Vertex relation name.
         :type name: str
-        :return: Vertex collection API wrapper.
-        :rtype: dbms.collection.VertexCollection
+        :return: Vertex relation API wrapper.
+        :rtype: dbms.relation.VertexRelation
         """
-        return VertexCollection(self._conn, self._executor, self._name, name)
+        return VertexRelation(self._conn, self._executor, self._name, name)
 
-    def create_vertex_collection(self, name: str) -> Result[VertexCollection]:
-        """Create a vertex collection in the graph.
+    def create_vertex_relation(self, name: str) -> Result[VertexRelation]:
+        """Create a vertex relation in the graph.
 
-        :param name: Vertex collection name.
+        :param name: Vertex relation name.
         :type name: str
-        :return: Vertex collection API wrapper.
-        :rtype: dbms.collection.VertexCollection
-        :raise dbms.exceptions.VertexCollectionCreateError: If create fails.
+        :return: Vertex relation API wrapper.
+        :rtype: dbms.relation.VertexRelation
+        :raise dbms.exceptions.VertexRelationCreateError: If create fails.
         """
         request = Request(
             method="post",
             endpoint=f"/_api/gharial/{self._name}/vertex",
-            data={"collection": name},
+            data={"relation": name},
         )
 
-        def response_handler(resp: Response) -> VertexCollection:
+        def response_handler(resp: Response) -> VertexRelation:
             if resp.is_success:
-                return self.vertex_collection(name)
-            raise VertexCollectionCreateError(resp, request)
+                return self.vertex_relation(name)
+            raise VertexRelationCreateError(resp, request)
 
         return self._execute(request, response_handler)
 
-    def delete_vertex_collection(self, name: str, purge: bool = False) -> Result[bool]:
-        """Remove a vertex collection from the graph.
+    def delete_vertex_relation(self, name: str, purge: bool = False) -> Result[bool]:
+        """Remove a vertex relation from the graph.
 
-        :param name: Vertex collection name.
+        :param name: Vertex relation name.
         :type name: str
-        :param purge: If set to True, the vertex collection is not just deleted
+        :param purge: If set to True, the vertex relation is not just deleted
             from the graph but also from the database completely.
         :type purge: bool
-        :return: True if vertex collection was deleted successfully.
+        :return: True if vertex relation was deleted successfully.
         :rtype: bool
-        :raise dbms.exceptions.VertexCollectionDeleteError: If delete fails.
+        :raise dbms.exceptions.VertexRelationDeleteError: If delete fails.
         """
         request = Request(
             method="delete",
@@ -178,18 +178,18 @@ class Graph(ApiGroup):
         def response_handler(resp: Response) -> bool:
             if resp.is_success:
                 return True
-            raise VertexCollectionDeleteError(resp, request)
+            raise VertexRelationDeleteError(resp, request)
 
         return self._execute(request, response_handler)
 
     ##############################
-    # Edge Collection Management #
+    # Edge Relation Management #
     ##############################
 
     def has_edge_definition(self, name: str) -> Result[bool]:
         """Check if the graph has the given edge definition.
 
-        :param name: Edge collection name.
+        :param name: Edge relation name.
         :type name: str
         :return: True if edge definition exists, False otherwise.
         :rtype: bool
@@ -202,31 +202,31 @@ class Graph(ApiGroup):
 
             body = resp.body["graph"]
             return any(
-                edge_definition["collection"] == name
+                edge_definition["relation"] == name
                 for edge_definition in body["edgeDefinitions"]
             )
 
         return self._execute(request, response_handler)
 
-    def has_edge_collection(self, name: str) -> Result[bool]:
-        """Check if the graph has the given edge collection.
+    def has_edge_relation(self, name: str) -> Result[bool]:
+        """Check if the graph has the given edge relation.
 
-        :param name: Edge collection name.
+        :param name: Edge relation name.
         :type name: str
-        :return: True if edge collection exists, False otherwise.
+        :return: True if edge relation exists, False otherwise.
         :rtype: bool
         """
         return self.has_edge_definition(name)
 
-    def edge_collection(self, name: str) -> EdgeCollection:
-        """Return the edge collection API wrapper.
+    def edge_relation(self, name: str) -> EdgeRelation:
+        """Return the edge relation API wrapper.
 
-        :param name: Edge collection name.
+        :param name: Edge relation name.
         :type name: str
-        :return: Edge collection API wrapper.
-        :rtype: dbms.collection.EdgeCollection
+        :return: Edge relation API wrapper.
+        :rtype: dbms.relation.EdgeRelation
         """
-        return EdgeCollection(self._conn, self._executor, self._name, name)
+        return EdgeRelation(self._conn, self._executor, self._name, name)
 
     def edge_definitions(self) -> Result[Jsons]:
         """Return the edge definitions of the graph.
@@ -244,9 +244,9 @@ class Graph(ApiGroup):
             body = resp.body["graph"]
             return [
                 {
-                    "edge_collection": edge_definition["collection"],
-                    "from_vertex_collections": edge_definition["from"],
-                    "to_vertex_collections": edge_definition["to"],
+                    "edge_relation": edge_definition["relation"],
+                    "from_vertex_relations": edge_definition["from"],
+                    "to_vertex_relations": edge_definition["to"],
                 }
                 for edge_definition in body["edgeDefinitions"]
             ]
@@ -255,81 +255,81 @@ class Graph(ApiGroup):
 
     def create_edge_definition(
         self,
-        edge_collection: str,
-        from_vertex_collections: Sequence[str],
-        to_vertex_collections: Sequence[str],
-    ) -> Result[EdgeCollection]:
+        edge_relation: str,
+        from_vertex_relations: Sequence[str],
+        to_vertex_relations: Sequence[str],
+    ) -> Result[EdgeRelation]:
         """Create a new edge definition.
 
-        An edge definition consists of an edge collection, "from" vertex
-        collection(s) and "to" vertex collection(s). Here is an example entry:
+        An edge definition consists of an edge relation, "from" vertex
+        relation(s) and "to" vertex relation(s). Here is an example entry:
 
         .. code-block:: python
 
             {
-                'edge_collection': 'edge_collection_name',
-                'from_vertex_collections': ['from_vertex_collection_name'],
-                'to_vertex_collections': ['to_vertex_collection_name']
+                'edge_relation': 'edge_relation_name',
+                'from_vertex_relations': ['from_vertex_relation_name'],
+                'to_vertex_relations': ['to_vertex_relation_name']
             }
 
-        :param edge_collection: Edge collection name.
-        :type edge_collection: str
-        :param from_vertex_collections: Names of "from" vertex collections.
-        :type from_vertex_collections: [str]
-        :param to_vertex_collections: Names of "to" vertex collections.
-        :type to_vertex_collections: [str]
-        :return: Edge collection API wrapper.
-        :rtype: dbms.collection.EdgeCollection
+        :param edge_relation: Edge relation name.
+        :type edge_relation: str
+        :param from_vertex_relations: Names of "from" vertex relations.
+        :type from_vertex_relations: [str]
+        :param to_vertex_relations: Names of "to" vertex relations.
+        :type to_vertex_relations: [str]
+        :return: Edge relation API wrapper.
+        :rtype: dbms.relation.EdgeRelation
         :raise dbms.exceptions.EdgeDefinitionCreateError: If create fails.
         """
         request = Request(
             method="post",
             endpoint=f"/_api/gharial/{self._name}/edge",
             data={
-                "collection": edge_collection,
-                "from": from_vertex_collections,
-                "to": to_vertex_collections,
+                "relation": edge_relation,
+                "from": from_vertex_relations,
+                "to": to_vertex_relations,
             },
         )
 
-        def response_handler(resp: Response) -> EdgeCollection:
+        def response_handler(resp: Response) -> EdgeRelation:
             if resp.is_success:
-                return self.edge_collection(edge_collection)
+                return self.edge_relation(edge_relation)
             raise EdgeDefinitionCreateError(resp, request)
 
         return self._execute(request, response_handler)
 
     def replace_edge_definition(
         self,
-        edge_collection: str,
-        from_vertex_collections: Sequence[str],
-        to_vertex_collections: Sequence[str],
-    ) -> Result[EdgeCollection]:
+        edge_relation: str,
+        from_vertex_relations: Sequence[str],
+        to_vertex_relations: Sequence[str],
+    ) -> Result[EdgeRelation]:
         """Replace an edge definition.
 
-        :param edge_collection: Edge collection name.
-        :type edge_collection: str
-        :param from_vertex_collections: Names of "from" vertex collections.
-        :type from_vertex_collections: [str]
-        :param to_vertex_collections: Names of "to" vertex collections.
-        :type to_vertex_collections: [str]
-        :return: Edge collection API wrapper.
-        :rtype: dbms.collection.EdgeCollection
+        :param edge_relation: Edge relation name.
+        :type edge_relation: str
+        :param from_vertex_relations: Names of "from" vertex relations.
+        :type from_vertex_relations: [str]
+        :param to_vertex_relations: Names of "to" vertex relations.
+        :type to_vertex_relations: [str]
+        :return: Edge relation API wrapper.
+        :rtype: dbms.relation.EdgeRelation
         :raise dbms.exceptions.EdgeDefinitionReplaceError: If replace fails.
         """
         request = Request(
             method="put",
-            endpoint=f"/_api/gharial/{self._name}/edge/{edge_collection}",
+            endpoint=f"/_api/gharial/{self._name}/edge/{edge_relation}",
             data={
-                "collection": edge_collection,
-                "from": from_vertex_collections,
-                "to": to_vertex_collections,
+                "relation": edge_relation,
+                "from": from_vertex_relations,
+                "to": to_vertex_relations,
             },
         )
 
-        def response_handler(resp: Response) -> EdgeCollection:
+        def response_handler(resp: Response) -> EdgeRelation:
             if resp.is_success:
-                return self.edge_collection(edge_collection)
+                return self.edge_relation(edge_relation)
             raise EdgeDefinitionReplaceError(resp, request)
 
         return self._execute(request, response_handler)
@@ -337,10 +337,10 @@ class Graph(ApiGroup):
     def delete_edge_definition(self, name: str, purge: bool = False) -> Result[bool]:
         """Delete an edge definition from the graph.
 
-        :param name: Edge collection name.
+        :param name: Edge relation name.
         :type name: str
         :param purge: If set to True, the edge definition is not just removed
-            from the graph but the edge collection is also deleted completely
+            from the graph but the edge relation is also deleted completely
             from the database.
         :type purge: bool
         :return: True if edge definition was deleted successfully.
@@ -537,15 +537,15 @@ class Graph(ApiGroup):
 
     def insert_vertex(
         self,
-        collection: str,
+        relation: str,
         vertex: Json,
         sync: Optional[bool] = None,
         silent: bool = False,
     ) -> Result[Union[bool, Json]]:
         """Insert a new vertex document.
 
-        :param collection: Vertex collection name.
-        :type collection: str
+        :param relation: Vertex relation name.
+        :type relation: str
         :param vertex: New vertex document to insert. If it has "_key" or "_id"
             field, its value is used as key of the new vertex (otherwise it is
             auto-generated). Any "_rev" field is ignored.
@@ -560,7 +560,7 @@ class Graph(ApiGroup):
         :rtype: bool | dict
         :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
-        return self.vertex_collection(collection).insert(vertex, sync, silent)
+        return self.vertex_relation(relation).insert(vertex, sync, silent)
 
     def update_vertex(
         self,
@@ -715,15 +715,15 @@ class Graph(ApiGroup):
 
     def insert_edge(
         self,
-        collection: str,
+        relation: str,
         edge: Json,
         sync: Optional[bool] = None,
         silent: bool = False,
     ) -> Result[Union[bool, Json]]:
         """Insert a new edge document.
 
-        :param collection: Edge collection name.
-        :type collection: str
+        :param relation: Edge relation name.
+        :type relation: str
         :param edge: New edge document to insert. It must contain "_from" and
             "_to" fields. If it has "_key" or "_id" field, its value is used
             as key of the new edge document (otherwise it is auto-generated).
@@ -739,7 +739,7 @@ class Graph(ApiGroup):
         :rtype: bool | dict
         :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
-        return self.edge_collection(collection).insert(edge, sync, silent)
+        return self.edge_relation(relation).insert(edge, sync, silent)
 
     def update_edge(
         self,
@@ -851,7 +851,7 @@ class Graph(ApiGroup):
 
     def link(
         self,
-        collection: str,
+        relation: str,
         from_vertex: Union[str, Json],
         to_vertex: Union[str, Json],
         data: Optional[Json] = None,
@@ -860,8 +860,8 @@ class Graph(ApiGroup):
     ) -> Result[Union[bool, Json]]:
         """Insert a new edge document linking the given vertices.
 
-        :param collection: Edge collection name.
-        :type collection: str
+        :param relation: Edge relation name.
+        :type relation: str
         :param from_vertex: "From" vertex document ID or body with "_id" field.
         :type from_vertex: str | dict
         :param to_vertex: "To" vertex document ID or body with "_id" field.
@@ -880,7 +880,7 @@ class Graph(ApiGroup):
         :rtype: bool | dict
         :raise dbms.exceptions.DocumentInsertError: If insert fails.
         """
-        return self.edge_collection(collection).link(
+        return self.edge_relation(relation).link(
             from_vertex=from_vertex,
             to_vertex=to_vertex,
             data=data,
@@ -889,12 +889,12 @@ class Graph(ApiGroup):
         )
 
     def edges(
-        self, collection: str, vertex: Union[str, Json], direction: Optional[str] = None
+        self, relation: str, vertex: Union[str, Json], direction: Optional[str] = None
     ) -> Result[Json]:
         """Return the edge documents coming in and/or out of given vertex.
 
-        :param collection: Edge collection name.
-        :type collection: str
+        :param relation: Edge relation name.
+        :type relation: str
         :param vertex: Vertex document ID or body with "_id" field.
         :type vertex: str | dict
         :param direction: The direction of the edges. Allowed values are "in"
@@ -904,4 +904,4 @@ class Graph(ApiGroup):
         :rtype: dict
         :raise dbms.exceptions.EdgeListError: If retrieval fails.
         """
-        return self.edge_collection(collection).edges(vertex, direction)
+        return self.edge_relation(relation).edges(vertex, direction)

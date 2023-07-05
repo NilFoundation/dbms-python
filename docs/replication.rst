@@ -29,19 +29,19 @@ information, refer to `DbmsDB manual`_.
     # Extend an existing dump batch.
     replication.extend_dump_batch(batch['id'], ttl=1000)
 
-    # Get an overview of collections and indexes.
+    # Get an overview of relations and indexes.
     replication.inventory(
         batch_id=batch['id'],
         include_system=True,
         all_databases=True
     )
 
-    # Get an overview of collections and indexes in a cluster.
+    # Get an overview of relations and indexes in a cluster.
     replication.cluster_inventory(include_system=True)
 
-    # Get the events data for given collection.
+    # Get the events data for given relation.
     replication.dump(
-        collection='students',
+        relation='students',
         batch_id=batch['id'],
         lower=0,
         upper=1000000,

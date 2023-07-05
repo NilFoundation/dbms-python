@@ -43,12 +43,12 @@ class Request:
     :type params: dict | None
     :param data: Request payload.
     :type data: str | bool | int | float | list | dict | None | MultipartEncoder
-    :param read: Names of collections read during transaction.
+    :param read: Names of relations read during transaction.
     :type read: str | [str] | None
-    :param write: Name(s) of collections written to during transaction with
+    :param write: Name(s) of relations written to during transaction with
         shared access.
     :type write: str | [str] | None
-    :param exclusive: Name(s) of collections written to during transaction
+    :param exclusive: Name(s) of relations written to during transaction
         with exclusive access.
     :type exclusive: str | [str] | None
     :param deserialize: Whether the response body can be deserialized.
@@ -64,12 +64,12 @@ class Request:
     :vartype params: dict | None
     :ivar data: Request payload.
     :vartype data: str | bool | int | float | list | dict | None
-    :ivar read: Names of collections read during transaction.
+    :ivar read: Names of relations read during transaction.
     :vartype read: str | [str] | None
-    :ivar write: Name(s) of collections written to during transaction with
+    :ivar write: Name(s) of relations written to during transaction with
         shared access.
     :vartype write: str | [str] | None
-    :ivar exclusive: Name(s) of collections written to during transaction
+    :ivar exclusive: Name(s) of relations written to during transaction
         with exclusive access.
     :vartype exclusive: str | [str] | None
     :ivar deserialize: Whether the response body can be deserialized.

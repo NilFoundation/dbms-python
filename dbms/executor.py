@@ -274,21 +274,21 @@ class TransactionApiExecutor:
     """Executes transaction API requests.
 
     :param connection: HTTP connection.
-    :param read: Name(s) of collections read during transaction. Read-only
-        collections are added lazily but should be declared if possible to
+    :param read: Name(s) of relations read during transaction. Read-only
+        relations are added lazily but should be declared if possible to
         avoid deadlocks.
     :type read: str | [str]
-    :param write: Name(s) of collections written to during transaction with
+    :param write: Name(s) of relations written to during transaction with
         shared access.
     :type write: str | [str]
-    :param exclusive: Name(s) of collections written to during transaction
+    :param exclusive: Name(s) of relations written to during transaction
         with exclusive access.
     :type exclusive: str | [str]
     :param sync: Block until operation is synchronized to disk.
     :type sync: bool | None
-    :param allow_implicit: Allow reading from undeclared collections.
+    :param allow_implicit: Allow reading from undeclared relations.
     :type allow_implicit: bool
-    :param lock_timeout: Timeout for waiting on collection locks. If not given,
+    :param lock_timeout: Timeout for waiting on relation locks. If not given,
         a default value is used. Setting it to 0 disables the timeout.
     :type lock_timeout: int
     :param max_size: Max transaction size in bytes.
@@ -308,15 +308,15 @@ class TransactionApiExecutor:
     ) -> None:
         self._conn = connection
 
-        collections: Json = {}
+        relations: Json = {}
         if read is not None:
-            collections["read"] = read
+            relations["read"] = read
         if write is not None:
-            collections["write"] = write
+            relations["write"] = write
         if exclusive is not None:
-            collections["exclusive"] = exclusive
+            relations["exclusive"] = exclusive
 
-        data: Json = {"collections": collections}
+        data: Json = {"collections": relations}
         if sync is not None:
             data["waitForSync"] = sync
         if allow_implicit is not None:
