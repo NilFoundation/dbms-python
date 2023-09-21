@@ -689,7 +689,6 @@ def format_replication_database(body: Json) -> Json:
         "relations": [
             format_replication_relation(col) for col in body["collections"]
         ],
-        "views": [format_view(view) for view in body["views"]],
     }
     if "properties" in body:
         result["properties"] = format_database(body["properties"])
@@ -719,8 +718,6 @@ def format_replication_inventory(body: Json) -> Json:
         result["relations"] = [
             format_replication_relation(col) for col in body["collections"]
         ]
-    if "views" in body:
-        result["views"] = [format_view(view) for view in body["views"]]
     if "properties" in body:
         result["properties"] = format_database(body["properties"])
 
@@ -773,103 +770,6 @@ def format_replication_header(headers: Headers) -> Json:
         result["check_more"] = headers["x-dbms-replication-checkmore"] == "true"
 
     return result
-
-
-def format_view_link(body: Json) -> Json:
-    """Format view link data.
-
-    :param body: Input body.
-    :type body: dict
-    :return: Formatted body.
-    :rtype: dict
-    """
-    result: Json = {}
-    if "analyzers" in body:
-        result["analyzers"] = body["analyzers"]
-    if "fields" in body:
-        result["fields"] = body["fields"]
-    if "includeAllFields" in body:
-        result["include_all_fields"] = body["includeAllFields"]
-    if "trackListPositions" in body:
-        result["track_list_positions"] = body["trackListPositions"]
-    if "storeValues" in body:
-        result["store_values"] = body["storeValues"]
-
-    return verify_format(body, result)
-
-
-def format_view_consolidation_policy(body: Json) -> Json:
-    """Format view consolidation policy data.
-
-    :param body: Input body.
-    :type body: dict
-    :return: Formatted body.
-    :rtype: dict
-    """
-    result: Json = {}
-    if "type" in body:
-        result["type"] = body["type"]
-    if "threshold" in body:
-        result["threshold"] = body["threshold"]
-    if "segmentsMin" in body:
-        result["segments_min"] = body["segmentsMin"]
-    if "segmentsMax" in body:
-        result["segments_max"] = body["segmentsMax"]
-    if "segmentsBytesMax" in body:
-        result["segments_bytes_max"] = body["segmentsBytesMax"]
-    if "segmentsBytesFloor" in body:
-        result["segments_bytes_floor"] = body["segmentsBytesFloor"]
-    if "minScore" in body:
-        result["min_score"] = body["minScore"]
-
-    return verify_format(body, result)
-
-
-def format_view(body: Json) -> Json:
-    """Format view data.
-
-    :param body: Input body.
-    :type body: dict
-    :return: Formatted body.
-    :rtype: dict
-    """
-    result: Json = {}
-    if "globallyUniqueId" in body:
-        result["global_id"] = body["globallyUniqueId"]
-    if "id" in body:
-        result["id"] = body["id"]
-    if "name" in body:
-        result["name"] = body["name"]
-    if "type" in body:
-        result["type"] = body["type"]
-    if "cleanupIntervalStep" in body:
-        result["cleanup_interval_step"] = body["cleanupIntervalStep"]
-    if "commitIntervalMsec" in body:
-        result["commit_interval_msec"] = body["commitIntervalMsec"]
-    if "consolidationIntervalMsec" in body:
-        result["consolidation_interval_msec"] = body["consolidationIntervalMsec"]
-    if "consolidationPolicy" in body:
-        result["consolidation_policy"] = format_view_consolidation_policy(
-            body["consolidationPolicy"]
-        )
-    if "primarySort" in body:
-        result["primary_sort"] = body["primarySort"]
-    if "primarySortCompression" in body:
-        result["primary_sort_compression"] = body["primarySortCompression"]
-    if "storedValues" in body:
-        result["stored_values"] = body["storedValues"]
-    if "writebufferIdle" in body:
-        result["writebuffer_idle"] = body["writebufferIdle"]
-    if "writebufferActive" in body:
-        result["writebuffer_active"] = body["writebufferActive"]
-    if "writebufferSizeMax" in body:
-        result["writebuffer_max_size"] = body["writebufferSizeMax"]
-    if "links" in body:
-        result["links"] = {
-            name: format_view_link(link) for name, link in body["links"].items()
-        }
-
-    return verify_format(body, result)
 
 
 def format_vertex(body: Json) -> Json:

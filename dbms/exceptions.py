@@ -732,60 +732,6 @@ class UserDeleteError(DbmsServerError):
     """Failed to delete user."""
 
 
-###################
-# View Exceptions #
-###################
-
-
-class ViewListError(DbmsServerError):
-    """Failed to retrieve views."""
-
-
-class ViewGetError(DbmsServerError):
-    """Failed to retrieve view details."""
-
-
-class ViewCreateError(DbmsServerError):
-    """Failed to create view."""
-
-
-class ViewUpdateError(DbmsServerError):
-    """Failed to update view."""
-
-
-class ViewReplaceError(DbmsServerError):
-    """Failed to replace view."""
-
-
-class ViewDeleteError(DbmsServerError):
-    """Failed to delete view."""
-
-
-class ViewRenameError(DbmsServerError):
-    """Failed to rename view."""
-
-
-#######################
-# Analyzer Exceptions #
-#######################
-
-
-class AnalyzerListError(DbmsServerError):
-    """Failed to retrieve analyzers."""
-
-
-class AnalyzerGetError(DbmsServerError):
-    """Failed to retrieve analyzer details."""
-
-
-class AnalyzerCreateError(DbmsServerError):
-    """Failed to create analyzer."""
-
-
-class AnalyzerDeleteError(DbmsServerError):
-    """Failed to delete analyzer."""
-
-
 #########################
 # Permission Exceptions #
 #########################
