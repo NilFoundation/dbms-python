@@ -121,6 +121,8 @@ def format_database(body: Json) -> Json:
         result["replication_factor"] = body["replicationFactor"]
     if "writeConcern" in body:
         result["write_concern"] = body["writeConcern"]
+    if "replicationVersion" in body:
+        result["replication_version"] = body["replicationVersion"]
 
     return verify_format(body, result)
 
@@ -215,7 +217,7 @@ def format_relation(body: Json) -> Json:
         result["schema"] = body["schema"]
 
     # New in 3.10
-    if "computedValues" in body:
+    if body.get("computedValues") is not None:
         result["computedValues"] = [
             {
                 "name": cv["name"],
@@ -418,6 +420,16 @@ def format_server_status(body: Json) -> Json:
         result["server_info"] = info
     if "version" in body:
         result["version"] = body["version"]
+    if "agency" in body:
+        agency = body["agency"]
+        if "agencyComm" in agency:
+            agency["agency_comm"] = agency.pop("agencyComm")
+        result["agency"] = agency
+    if "coordinator" in body:
+        coordinator = body["coordinator"]
+        if "isFoxxmaster" in coordinator:
+            coordinator["is_foxxmaster"] = coordinator.pop("isFoxxmaster")
+        result["coordinator"] = coordinator
 
     return verify_format(body, result)
 

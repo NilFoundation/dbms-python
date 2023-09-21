@@ -1010,6 +1010,8 @@ class Database(ApiGroup):
         :raise dbms.exceptions.RelationCreateError: If create fails.
         """
         key_options: Json = {"type": key_generator, "allowUserKeys": user_keys}
+        if key_generator != "autoincrement" and (key_increment is not None or key_offset is not None):
+            raise RuntimeError("key_increment & key_offset are allowed only with key_generator == autoincrement")
         if key_increment is not None:
             key_options["increment"] = key_increment
         if key_offset is not None:
