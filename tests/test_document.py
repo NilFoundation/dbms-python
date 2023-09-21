@@ -1289,9 +1289,6 @@ def test_document_find_in_radius(col, bad_col):
 
 
 def test_document_find_in_box(col, bad_col, geo, cluster):
-    if cluster:
-        pytest.skip("Not tested in a cluster setup")
-
     doc1 = {"_key": "1", "loc": [1, 1]}
     doc2 = {"_key": "2", "loc": [1, 5]}
     doc3 = {"_key": "3", "loc": [5, 1]}

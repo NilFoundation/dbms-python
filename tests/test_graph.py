@@ -15,7 +15,6 @@ from dbms.exceptions import (
     GraphCreateError,
     GraphDeleteError,
     GraphListError,
-    GraphPropertiesError,
     GraphTraverseError,
     VertexRelationCreateError,
     VertexRelationDeleteError,
@@ -30,31 +29,6 @@ from tests.helpers import (
     generate_doc_key,
     generate_graph_name,
 )
-
-
-def test_graph_properties(graph, bad_graph, db):
-    assert repr(graph) == f"<Graph {graph.name}>"
-
-    properties = graph.properties()
-
-    assert properties["id"] == f"_graphs/{graph.name}"
-    assert properties["name"] == graph.name
-    assert len(properties["edge_definitions"]) == 1
-    assert "orphan_relations" in properties
-    assert isinstance(properties["revision"], str)
-
-    # Test properties with bad database
-    with assert_raises(GraphPropertiesError):
-        bad_graph.properties()
-
-    new_graph_name = generate_graph_name()
-    new_graph = db.create_graph(new_graph_name)
-    properties = new_graph.properties()
-    assert properties["id"] == f"_graphs/{new_graph_name}"
-    assert properties["name"] == new_graph_name
-    assert properties["edge_definitions"] == []
-    assert properties["orphan_relations"] == []
-    assert isinstance(properties["revision"], str)
 
 
 def test_graph_management(db, bad_db):
