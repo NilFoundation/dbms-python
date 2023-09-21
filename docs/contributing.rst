@@ -59,7 +59,7 @@ To run the test suite (use your own host, port and root password):
     ~$ pip install pytest
     ~$ git clone https://github.com/joowani/python-dbms.git
     ~$ cd python-dbms
-    ~$ py.test --complete --host=127.0.0.1 --port=8529 --passwd=passwd
+    ~$ py.test --complete --dbhost=127.0.0.1 --dbport=8529 --passwd=passwd
 
 To run the test suite with coverage report:
 
@@ -68,7 +68,7 @@ To run the test suite with coverage report:
     ~$ pip install coverage pytest pytest-cov
     ~$ git clone https://github.com/joowani/python-dbms.git
     ~$ cd python-dbms
-    ~$ py.test --complete --host=127.0.0.1 --port=8529 --passwd=passwd --cov=kq
+    ~$ py.test --complete --dbhost=127.0.0.1 --dbport=8529 --passwd=passwd --cov=kq
 
 As the test suite creates real databases and jobs, it should only be run in
 development environments.
