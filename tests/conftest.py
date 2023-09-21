@@ -245,6 +245,8 @@ def mock_formatters(monkeypatch):
         body.pop("parallelism", None)
         body.pop("masterContext", None)
         body.pop("database", None)
+        if "computedValues" in body and body["computedValues"] is None:
+            body.pop("computedValues")
         if len(body) != len(result):
             before = sorted(body, key=lambda x: x.strip("_"))
             after = sorted(result, key=lambda x: x.strip("_"))

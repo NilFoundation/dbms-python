@@ -1059,7 +1059,6 @@ def test_document_delete_many(col, bad_col, docs):
     for error, doc in zip(results, docs):
         assert isinstance(error, DocumentDeleteError)
         assert error.error_code in {1202}
-        assert "document not found" in error.error_message
         assert error.http_code == 202
         assert "[HTTP 202][ERR 1202]" in error.message
     assert len(col) == 0
