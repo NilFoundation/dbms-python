@@ -58,8 +58,10 @@ def test_client_attributes():
     assert client.request_timeout == client._http.REQUEST_TIMEOUT == 120
 
 
-def test_client_good_connection(db, username, password):
-    client = DbmsClient(hosts="http://127.0.0.1:8529")
+def test_client_good_connection(pytestconfig, db, username, password):
+    host = pytestconfig.getoption("dbhost")
+    port = pytestconfig.getoption("dbport")
+    client = DbmsClient(hosts=f"http://{host}:{port}")
 
     # Test connection with verify flag on and off
     for verify in (True, False):
@@ -70,8 +72,10 @@ def test_client_good_connection(db, username, password):
         assert db.context == "default"
 
 
-def test_client_bad_connection(db, username, password, cluster):
-    client = DbmsClient(hosts="http://127.0.0.1:8529")
+def test_client_bad_connection(pytestconfig, db, username, password, cluster):
+    host = pytestconfig.getoption("dbhost")
+    port = pytestconfig.getoption("dbport")
+    client = DbmsClient(hosts=f"http://{host}:{port}")
 
     bad_db_name = generate_db_name()
     bad_username = generate_username()
@@ -87,13 +91,13 @@ def test_client_bad_connection(db, username, password, cluster):
         client.db(bad_db_name, bad_username, bad_password, verify=True)
 
     # Test connection with invalid host URL
-    client = DbmsClient(hosts="http://127.0.0.1:8500")
+    client = DbmsClient(hosts=f"http://{host}:8500")
     with pytest.raises(ServerConnectionError) as err:
         client.db(db.name, username, password, verify=True)
     assert "bad connection" in str(err.value)
 
 
-def test_client_custom_http_client(db, username, password):
+def test_client_custom_http_client(pytestconfig, db, username, password):
 
     # Define custom HTTP client which increments the counter on any API call.
     class MyHTTPClient(DefaultHTTPClient):
@@ -110,7 +114,9 @@ def test_client_custom_http_client(db, username, password):
             )
 
     http_client = MyHTTPClient()
-    client = DbmsClient(hosts="http://127.0.0.1:8529", http_client=http_client)
+    host = pytestconfig.getoption("dbhost")
+    port = pytestconfig.getoption("dbport")
+    client = DbmsClient(hosts=f"http://{host}:{port}", http_client=http_client)
     # Set verify to True to send a test API call on initialization.
     client.db(db.name, username, password, verify=True)
     assert http_client.counter == 1

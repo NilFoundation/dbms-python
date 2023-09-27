@@ -72,24 +72,6 @@ def generate_username():
     return f"test_user_{uuid4().hex}"
 
 
-def generate_view_name():
-    """Generate and return a random view name.
-
-    :return: Random view name.
-    :rtype: str
-    """
-    return f"test_view_{uuid4().hex}"
-
-
-def generate_analyzer_name():
-    """Generate and return a random analyzer name.
-
-    :return: Random analyzer name.
-    :rtype: str
-    """
-    return f"test_analyzer_{uuid4().hex}"
-
-
 def generate_string():
     """Generate and return a random unique string.
 

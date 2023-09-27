@@ -46,7 +46,6 @@ Contents
     pregel
     foxx
     view
-    analyzer
     threading
     errors
     logging

@@ -50,8 +50,8 @@ global_data = GlobalData()
 
 
 def pytest_addoption(parser):
-    parser.addoption("--host", action="store", default="127.0.0.1")
-    parser.addoption("--port", action="store", default="8529")
+    parser.addoption("--dbhost", action="store", default="127.0.0.1")
+    parser.addoption("--dbport", action="store", default="8529")
     parser.addoption("--passwd", action="store", default="")
     parser.addoption("--complete", action="store_true")
     parser.addoption("--cluster", action="store_true")
@@ -61,7 +61,7 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    url = f"http://{config.getoption('host')}:{config.getoption('port')}"
+    url = f"http://{config.getoption('dbhost')}:{config.getoption('dbport')}"
     secret = config.getoption("secret")
     client = DbmsClient(hosts=[url, url, url])
     sys_db = client.db(
@@ -245,6 +245,8 @@ def mock_formatters(monkeypatch):
         body.pop("parallelism", None)
         body.pop("masterContext", None)
         body.pop("database", None)
+        if "computedValues" in body and body["computedValues"] is None:
+            body.pop("computedValues")
         if len(body) != len(result):
             before = sorted(body, key=lambda x: x.strip("_"))
             after = sorted(result, key=lambda x: x.strip("_"))
