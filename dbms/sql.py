@@ -337,9 +337,7 @@ class SQL(ApiGroup):
         :type stream: bool
         :param skip_inaccessible_cols: If set to True, relations without user
             access are skipped, and query executes normally instead of raising
-            an error. This helps certain use cases: a graph may contain several
-            relations, and users with different access levels may execute the
-            same query. This parameter lets you limit the result set by user
+            an error.  This parameter lets you limit the result set by user
             access. Cannot be used in :doc:`transactions <transaction>` and is
             available only for enterprise version of DbmsDB. Default value is
             False.

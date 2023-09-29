@@ -14,7 +14,6 @@ from tests.helpers import (
     empty_relation,
     generate_col_name,
     generate_db_name,
-    generate_graph_name,
     generate_jwt,
     generate_string,
     generate_username,
@@ -34,7 +33,6 @@ class GlobalData:
     geo_index: Json = None
     col_name: str = None
     icol_name: str = None
-    graph_name: str = None
     ecol_name: str = None
     fvcol_name: str = None
     tvcol_name: str = None
@@ -102,20 +100,6 @@ def pytest_configure(config):
     icol_name = generate_col_name()
     tst_db.create_relation(icol_name, edge=True)
 
-    # Create test vertex & edge relations and graph.
-    graph_name = generate_graph_name()
-    ecol_name = generate_col_name()
-    fvcol_name = generate_col_name()
-    tvcol_name = generate_col_name()
-    tst_graph = tst_db.create_graph(graph_name)
-    tst_graph.create_vertex_relation(fvcol_name)
-    tst_graph.create_vertex_relation(tvcol_name)
-    tst_graph.create_edge_definition(
-        edge_relation=ecol_name,
-        from_vertex_relations=[fvcol_name],
-        to_vertex_relations=[tvcol_name],
-    )
-
     # Update global config
     global_data.url = url
     global_data.client = client
@@ -128,10 +112,6 @@ def pytest_configure(config):
     global_data.geo_index = geo_index
     global_data.col_name = col_name
     global_data.icol_name = icol_name
-    global_data.graph_name = graph_name
-    global_data.ecol_name = ecol_name
-    global_data.fvcol_name = fvcol_name
-    global_data.tvcol_name = tvcol_name
     global_data.cluster = config.getoption("cluster")
     global_data.complete = config.getoption("complete")
     global_data.replication = config.getoption("replication")
@@ -318,52 +298,6 @@ def icol(db):
     relation = db.relation(global_data.icol_name)
     empty_relation(relation)
     return relation
-
-
-@pytest.fixture(autouse=False)
-def graph(db):
-    return db.graph(global_data.graph_name)
-
-
-@pytest.fixture(autouse=False)
-def bad_graph(bad_db):
-    return bad_db.graph(global_data.graph_name)
-
-
-# noinspection PyShadowingNames
-@pytest.fixture(autouse=False)
-def fvcol(graph):
-    relation = graph.vertex_relation(global_data.fvcol_name)
-    empty_relation(relation)
-    return relation
-
-
-# noinspection PyShadowingNames
-@pytest.fixture(autouse=False)
-def tvcol(graph):
-    relation = graph.vertex_relation(global_data.tvcol_name)
-    empty_relation(relation)
-    return relation
-
-
-# noinspection PyShadowingNames
-@pytest.fixture(autouse=False)
-def bad_fvcol(bad_graph):
-    return bad_graph.vertex_relation(global_data.fvcol_name)
-
-
-# noinspection PyShadowingNames
-@pytest.fixture(autouse=False)
-def ecol(graph):
-    relation = graph.edge_relation(global_data.ecol_name)
-    empty_relation(relation)
-    return relation
-
-
-# noinspection PyShadowingNames
-@pytest.fixture(autouse=False)
-def bad_ecol(bad_graph):
-    return bad_graph.edge_relation(global_data.ecol_name)
 
 
 @pytest.fixture(autouse=False)

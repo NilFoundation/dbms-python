@@ -2,7 +2,7 @@ Databases
 ---------
 
 DbmsDB server can have an arbitrary number of **databases**. Each database
-has its own set of :doc:`relations <relation>` and :doc:`graphs <graph>`.
+has its own set of :doc:`relations <relation>`.
 There is a special database named ``_system``, which cannot be dropped and
 provides operations for managing users, permissions and other databases. Most
 of the operations can only be executed by admin users. See :doc:`user` for more
@@ -57,7 +57,6 @@ information.
     db.status()
     db.details()
     db.relations()
-    db.graphs()
     db.engine()
 
     # Delete the database. Note that the new users will remain.

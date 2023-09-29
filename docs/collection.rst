@@ -6,10 +6,6 @@ by its name which must consist only of hyphen, underscore and alphanumeric
 characters. There are three types of relations in python-dbms:
 
 * **Standard Relation:** contains regular documents.
-* **Vertex Relation:** contains vertex documents for graphs. See
-  :ref:`here <vertex-relations>` for more details.
-* **Edge Relation:** contains edge documents for graphs. See
-  :ref:`here <edge-relations>` for more details.
 
 Here is an example showing how you can manage standard relations:
 

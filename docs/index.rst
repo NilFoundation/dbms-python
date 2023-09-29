@@ -32,7 +32,6 @@ Contents
     document
     schema
     indexes
-    graph
     sql
     simple
     cursor
@@ -43,7 +42,6 @@ Contents
     user
     task
     wal
-    pregel
     foxx
     view
     threading

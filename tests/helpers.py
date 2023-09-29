@@ -27,15 +27,6 @@ def generate_col_name():
     return f"test_relation_{uuid4().hex}"
 
 
-def generate_graph_name():
-    """Generate and return a random graph name.
-
-    :return: Random graph name.
-    :rtype: str
-    """
-    return f"test_graph_{uuid4().hex}"
-
-
 def generate_doc_key():
     """Generate and return a random document key.
 

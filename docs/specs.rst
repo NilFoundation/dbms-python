@@ -119,28 +119,12 @@ Foxx
 .. autoclass:: dbms.foxx.Foxx
     :members:
 
-.. _Graph:
-
-Graph
-=====
-
-.. autoclass:: dbms.graph.Graph
-    :members:
-
 .. _HTTPClient:
 
 HTTPClient
 ==========
 
 .. autoclass:: dbms.http.HTTPClient
-    :members:
-
-.. _Pregel:
-
-Pregel
-======
-
-.. autoclass:: dbms.pregel.Pregel
     :members:
 
 .. _Replication:
