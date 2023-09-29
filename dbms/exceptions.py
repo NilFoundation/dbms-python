@@ -478,63 +478,6 @@ class FoxxCommitError(DbmsServerError):
 
 
 ####################
-# Graph Exceptions #
-####################
-
-
-class GraphListError(DbmsServerError):
-    """Failed to retrieve graphs."""
-
-
-class GraphCreateError(DbmsServerError):
-    """Failed to create the graph."""
-
-
-class GraphDeleteError(DbmsServerError):
-    """Failed to delete the graph."""
-
-
-class GraphPropertiesError(DbmsServerError):
-    """Failed to retrieve graph properties."""
-
-
-class GraphTraverseError(DbmsServerError):
-    """Failed to execute graph traversal."""
-
-
-class VertexRelationListError(DbmsServerError):
-    """Failed to retrieve vertex relations."""
-
-
-class VertexRelationCreateError(DbmsServerError):
-    """Failed to create vertex relation."""
-
-
-class VertexRelationDeleteError(DbmsServerError):
-    """Failed to delete vertex relation."""
-
-
-class EdgeDefinitionListError(DbmsServerError):
-    """Failed to retrieve edge definitions."""
-
-
-class EdgeDefinitionCreateError(DbmsServerError):
-    """Failed to create edge definition."""
-
-
-class EdgeDefinitionReplaceError(DbmsServerError):
-    """Failed to replace edge definition."""
-
-
-class EdgeDefinitionDeleteError(DbmsServerError):
-    """Failed to delete edge definition."""
-
-
-class EdgeListError(DbmsServerError):
-    """Failed to retrieve edges coming in and out of a vertex."""
-
-
-####################
 # Index Exceptions #
 ####################
 
@@ -553,23 +496,6 @@ class IndexDeleteError(DbmsServerError):
 
 class IndexLoadError(DbmsServerError):
     """Failed to load indexes into memory."""
-
-
-#####################
-# Pregel Exceptions #
-#####################
-
-
-class PregelJobCreateError(DbmsServerError):
-    """Failed to create Pregel job."""
-
-
-class PregelJobGetError(DbmsServerError):
-    """Failed to retrieve Pregel job details."""
-
-
-class PregelJobDeleteError(DbmsServerError):
-    """Failed to delete Pregel job."""
 
 
 #####################

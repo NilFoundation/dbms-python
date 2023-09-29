@@ -36,11 +36,6 @@ else:
 # Ensure that "cities" relation does not exist.
 if db.has_relation('cities'):
     db.delete_relation('cities')
-# Create "school" graph if it does not exist.
-if db.has_graph("school"):
-    school = db.graph('school')
-else:
-    school = db.create_graph('school')
 # Create "teachers" vertex relation if it does not exist.
 if school.has_vertex_relation('teachers'):
     school.vertex_relation('teachers').truncate()

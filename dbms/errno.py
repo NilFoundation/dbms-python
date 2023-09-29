@@ -787,112 +787,6 @@ TASK_DUPLICATE_ID = 1851
 # Task not found.
 TASK_NOT_FOUND = 1852
 
-############################
-# Graph / Traversal Errors #
-############################
-
-# Invalid name passed to the server.
-GRAPH_INVALID_GRAPH = 1901
-
-# Invalid graph name passed to the server.
-GRAPH_COULD_NOT_CREATE_GRAPH = 1902
-
-# Invalid vertex ID passed to the server.
-GRAPH_INVALID_VERTEX = 1903
-
-# Vertex could not be created.
-GRAPH_COULD_NOT_CREATE_VERTEX = 1904
-
-# Vertex could not be changed.
-GRAPH_COULD_NOT_CHANGE_VERTEX = 1905
-
-# Invalid edge ID passed to the server.
-GRAPH_INVALID_EDGE = 1906
-
-# Edge could not be created.
-GRAPH_COULD_NOT_CREATE_EDGE = 1907
-
-# Edge could not be changed.
-GRAPH_COULD_NOT_CHANGE_EDGE = 1908
-
-# Too many iterations in graph traversal.
-GRAPH_TOO_MANY_ITERATIONS = 1909
-
-# Invalid filter result returned in graph traversal.
-GRAPH_INVALID_FILTER_RESULT = 1910
-
-# Edge relation may only be used once in a edge definition.
-GRAPH_RELATION_MULTI_USE = 1920
-
-# Relation already used by another graph in a different edge definition.
-GRAPH_RELATION_USE_IN_MULTI_GRAPHS = 1921
-
-# Graph name missing.
-GRAPH_CREATE_MISSING_NAME = 1922
-
-# Edge definition malformed (must be a list of dicts).
-GRAPH_CREATE_MALFORMED_EDGE_DEFINITION = 1923
-
-# Graph not found.
-GRAPH_NOT_FOUND = 1924
-
-# Graph name already exists.
-GRAPH_DUPLICATE = 1925
-
-# Vertex relation does not exist or is not part of the graph.
-GRAPH_VERTEX_COL_DOES_NOT_EXIST = 1926
-
-# Relation not a vertex relation.
-GRAPH_WRONG_RELATION_TYPE_VERTEX = 1927
-
-# Vertex relation not in orphan relations of the graph.
-GRAPH_NOT_IN_ORPHAN_RELATION = 1928
-
-# Relation already used in an edge definition of the graph.
-GRAPH_RELATION_USED_IN_EDGE_DEF = 1929
-
-# Edge relation not used in any edge definition of the graph.
-GRAPH_EDGE_RELATION_NOT_USED = 1930
-
-# Relation "_graphs" does not exist.
-GRAPH_NO_GRAPH_RELATION = 1932
-
-# Invalid example array object string.
-GRAPH_INVALID_EXAMPLE_ARRAY_OBJECT_STRING = 1933
-
-# Invalid example type (must be a list or dict).
-GRAPH_INVALID_EXAMPLE_ARRAY_OBJECT = 1934
-
-# Invalid number of arguments.
-GRAPH_INVALID_NUMBER_OF_ARGUMENTS = 1935
-
-# Invalid parameter type.
-GRAPH_INVALID_PARAMETER = 1936
-
-# Invalid ID.
-GRAPH_INVALID_ID = 1937
-
-# Relation already in orphans of the graph.
-GRAPH_RELATION_USED_IN_ORPHANS = 1938
-
-# Edge relation does not exist or is not part of the graph.
-GRAPH_EDGE_COL_DOES_NOT_EXIST = 1939
-
-# Graph has no edge relations.
-GRAPH_EMPTY = 1940
-
-# Invalid data in "_graphs" relation.
-GRAPH_INTERNAL_DATA_CORRUPT = 1941
-
-# Edge relation already defined.
-GRAPH_INTERNAL_EDGE_RELATION_ALREADY_SET = 1942
-
-# Orphan list argument malformed. Must be a list of strings.
-GRAPH_CREATE_MALFORMED_ORPHAN_LIST = 1943
-
-# Relation used as a relation exists.
-GRAPH_EDGE_DEFINITION_IS_DOCUMENT = 1944
-
 # Invalid/unknown session ID passed to the server.
 SESSION_UNKNOWN = 1950
 
@@ -1018,21 +912,6 @@ MODULE_FAILURE = 3103
 
 # Requested relation needs to be smart.
 NO_SMART_RELATION = 4000
-
-# Given document does not have the smart graph attribute set.
-NO_SMART_GRAPH_ATTRIBUTE = 4001
-
-# Smart relation cannot be dropped.
-CANNOT_DROP_SMART_RELATION = 4002
-
-# "_key" not prefixed with the value of the smart graph attribute.
-KEY_MUST_BE_PREFIXED_WITH_SMART_GRAPH_ATTRIBUTE = 4003
-
-# Given smart graph attribute is illegal and cannot be used for sharding.
-ILLEGAL_SMART_GRAPH_ATTRIBUTE = 4004
-
-# Smart graph attribute of relation does not match the attribute of graph.
-SMART_GRAPH_ATTRIBUTE_MISMATCH = 4005
 
 # Invalid smart join attribute declaration.
 INVALID_SMART_JOIN_ATTRIBUTE = 4006

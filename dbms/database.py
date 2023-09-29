@@ -20,9 +20,6 @@ from dbms.exceptions import (
     DatabaseDeleteError,
     DatabaseListError,
     DatabasePropertiesError,
-    GraphCreateError,
-    GraphDeleteError,
-    GraphListError,
     JWTSecretListError,
     JWTSecretReloadError,
     PermissionGetError,
@@ -73,9 +70,7 @@ from dbms.formatter import (
     format_tls,
 )
 from dbms.foxx import Foxx
-from dbms.graph import Graph
 from dbms.job import BatchJob
-from dbms.pregel import Pregel
 from dbms.replication import Replication
 from dbms.request import Request
 from dbms.response import Response
@@ -144,15 +139,6 @@ class Database(ApiGroup):
         :rtype: dbms.foxx.Foxx
         """
         return Foxx(self._conn, self._executor)
-
-    @property
-    def pregel(self) -> Pregel:
-        """Return Pregel API wrapper.
-
-        :return: Pregel API wrapper.
-        :rtype: dbms.pregel.Pregel
-        """
-        return Pregel(self._conn, self._executor)
 
     @property
     def replication(self) -> Replication:
@@ -1089,216 +1075,6 @@ class Database(ApiGroup):
                 return False
             if not resp.is_success:
                 raise RelationDeleteError(resp, request)
-            return True
-
-        return self._execute(request, response_handler)
-
-    ####################
-    # Graph Management #
-    ####################
-
-    def graph(self, name: str) -> Graph:
-        """Return the graph API wrapper.
-
-        :param name: Graph name.
-        :type name: str
-        :return: Graph API wrapper.
-        :rtype: dbms.graph.Graph
-        """
-        return Graph(self._conn, self._executor, name)
-
-    def has_graph(self, name: str) -> Result[bool]:
-        """Check if a graph exists in the database.
-
-        :param name: Graph name.
-        :type name: str
-        :return: True if graph exists, False otherwise.
-        :rtype: bool
-        """
-        request = Request(method="get", endpoint="/_api/gharial")
-
-        def response_handler(resp: Response) -> bool:
-            if not resp.is_success:
-                raise GraphListError(resp, request)
-            return any(name == graph["_key"] for graph in resp.body["graphs"])
-
-        return self._execute(request, response_handler)
-
-    def graphs(self) -> Result[Jsons]:
-        """List all graphs in the database.
-
-        :return: Graphs in the database.
-        :rtype: [dict]
-        :raise dbms.exceptions.GraphListError: If retrieval fails.
-        """
-        request = Request(method="get", endpoint="/_api/gharial")
-
-        def response_handler(resp: Response) -> Jsons:
-            if not resp.is_success:
-                raise GraphListError(resp, request)
-            return [
-                {
-                    "id": body["_id"],
-                    "name": body["_key"],
-                    "revision": body["_rev"],
-                    "orphan_relations": body["orphanCollections"],
-                    "edge_definitions": [
-                        {
-                            "edge_relation": definition["relation"],
-                            "from_vertex_relations": definition["from"],
-                            "to_vertex_relations": definition["to"],
-                        }
-                        for definition in body["edgeDefinitions"]
-                    ],
-                    "shard_count": body.get("numberOfShards"),
-                    "replication_factor": body.get("replicationFactor"),
-                }
-                for body in resp.body["graphs"]
-            ]
-
-        return self._execute(request, response_handler)
-
-    def create_graph(
-        self,
-        name: str,
-        edge_definitions: Optional[Sequence[Json]] = None,
-        orphan_relations: Optional[Sequence[str]] = None,
-        smart: Optional[bool] = None,
-        disjoint: Optional[bool] = None,
-        smart_field: Optional[str] = None,
-        shard_count: Optional[int] = None,
-        replication_factor: Optional[int] = None,
-        write_concern: Optional[int] = None,
-    ) -> Result[Graph]:
-        """Create a new graph.
-
-        :param name: Graph name.
-        :type name: str
-        :param edge_definitions: List of edge definitions, where each edge
-            definition entry is a dictionary with fields "edge_relation",
-            "from_vertex_relations" and "to_vertex_relations" (see below
-            for example).
-        :type edge_definitions: [dict] | None
-        :param orphan_relations: Names of additional vertex relations that
-            are not in edge definitions.
-        :type orphan_relations: [str] | None
-        :param smart: If set to True, sharding is enabled (see parameter
-            **smart_field** below). Applies only to enterprise version of
-            DbmsDB.
-        :type smart: bool | None
-        :param disjoint: If set to True, create a disjoint SmartGraph instead
-            of a regular SmartGraph. Applies only to enterprise version of
-            DbmsDB.
-        :type disjoint: bool | None
-        :param smart_field: Document field used to shard the vertices of the
-            graph. To use this, parameter **smart** must be set to True and
-            every vertex in the graph must have the smart field. Applies only
-            to enterprise version of DbmsDB.
-        :type smart_field: str | None
-        :param shard_count: Number of shards used for every relation in the
-            graph. To use this, parameter **smart** must be set to True and
-            every vertex in the graph must have the smart field. This number
-            cannot be modified later once set. Applies only to enterprise
-            version of DbmsDB.
-        :type shard_count: int | None
-        :param replication_factor: Number of copies of each shard on different
-            servers in a cluster. Allowed values are 1 (only one copy is kept
-            and no synchronous replication), and n (n-1 replicas are kept and
-            any two copies are replicated across servers synchronously, meaning
-            every write to the master is copied to all slaves before operation
-            is reported successful).
-        :type replication_factor: int
-        :param write_concern: Write concern for the relation. Determines how
-            many copies of each shard are required to be in sync on different
-            DBServers. If there are less than these many copies in the cluster
-            a shard will refuse to write. Writes to shards with enough
-            up-to-date copies will succeed at the same time. The value of this
-            parameter cannot be larger than that of **replication_factor**.
-            Default value is 1. Used for clusters only.
-        :type write_concern: int
-        :return: Graph API wrapper.
-        :rtype: dbms.graph.Graph
-        :raise dbms.exceptions.GraphCreateError: If create fails.
-
-        Here is an example entry for parameter **edge_definitions**:
-
-        .. code-block:: python
-
-            [
-                {
-                    'edge_relation': 'teach',
-                    'from_vertex_relations': ['teachers'],
-                    'to_vertex_relations': ['lectures']
-                }
-            ]
-        """
-        data: Json = {"name": name, "options": dict()}
-        if edge_definitions is not None:
-            data["edgeDefinitions"] = [
-                {
-                    "relation": definition["edge_relation"],
-                    "from": definition["from_vertex_relations"],
-                    "to": definition["to_vertex_relations"],
-                }
-                for definition in edge_definitions
-            ]
-        if orphan_relations is not None:
-            data["orphanCollections"] = orphan_relations
-        if smart is not None:  # pragma: no cover
-            data["isSmart"] = smart
-        if disjoint is not None:  # pragma: no cover
-            data["isDisjoint"] = disjoint
-        if smart_field is not None:  # pragma: no cover
-            data["options"]["smartGraphAttribute"] = smart_field
-        if shard_count is not None:  # pragma: no cover
-            data["options"]["numberOfShards"] = shard_count
-        if replication_factor is not None:  # pragma: no cover
-            data["options"]["replicationFactor"] = replication_factor
-        if write_concern is not None:  # pragma: no cover
-            data["options"]["writeConcern"] = write_concern
-
-        request = Request(method="post", endpoint="/_api/gharial", data=data)
-
-        def response_handler(resp: Response) -> Graph:
-            if resp.is_success:
-                return Graph(self._conn, self._executor, name)
-            raise GraphCreateError(resp, request)
-
-        return self._execute(request, response_handler)
-
-    def delete_graph(
-        self,
-        name: str,
-        ignore_missing: bool = False,
-        drop_relations: Optional[bool] = None,
-    ) -> Result[bool]:
-        """Drop the graph of the given name from the database.
-
-        :param name: Graph name.
-        :type name: str
-        :param ignore_missing: Do not raise an exception on missing graph.
-        :type ignore_missing: bool
-        :param drop_relations: Drop the relations of the graph also. This
-            is only if they are not in use by other graphs.
-        :type drop_relations: bool | None
-        :return: True if graph was deleted successfully, False if graph was not
-            found and **ignore_missing** was set to True.
-        :rtype: bool
-        :raise dbms.exceptions.GraphDeleteError: If delete fails.
-        """
-        params: Params = {}
-        if drop_relations is not None:
-            params["dropCollections"] = drop_relations
-
-        request = Request(
-            method="delete", endpoint=f"/_api/gharial/{name}", params=params
-        )
-
-        def response_handler(resp: Response) -> bool:
-            if resp.error_code == 1924 and ignore_missing:
-                return False
-            if not resp.is_success:
-                raise GraphDeleteError(resp, request)
             return True
 
         return self._execute(request, response_handler)
