@@ -892,7 +892,6 @@ class Database(ApiGroup):
         name: str,
         sync: bool = False,
         system: bool = False,
-        edge: bool = False,
         user_keys: bool = True,
         key_increment: Optional[int] = None,
         key_offset: Optional[int] = None,
@@ -919,8 +918,6 @@ class Database(ApiGroup):
         :param system: If set to True, a system relation is created. The
             relation name must have leading underscore "_" character.
         :type system: bool
-        :param edge: If set to True, an edge relation is created.
-        :type edge: bool
         :param key_generator: Used for generating document keys. Allowed values
             are "traditional" or "autoincrement".
         :type key_generator: str
@@ -960,9 +957,8 @@ class Database(ApiGroup):
         :type enforce_replication_factor: bool
         :param sharding_strategy: Sharding strategy. Available for DbmsDB
             version  and up only. Possible values are "community-compat",
-            "enterprise-compat", "enterprise-smart-edge-compat", "hash" and
-            "enterprise-hash-smart-edge". Refer to DbmsDB documentation for
-            more details on each value.
+            "enterprise-compat" and "hash".
+            Refer to DbmsDB documentation for more details on each value.
         :type sharding_strategy: str
         :param smart_join_attribute: Attribute of the relation which must
             contain the shard key value of the smart join relation. The shard
@@ -1008,7 +1004,7 @@ class Database(ApiGroup):
             "waitForSync": sync,
             "isSystem": system,
             "keyOptions": key_options,
-            "type": 3 if edge else 2,
+            "type": 2,
         }
         if shard_count is not None:
             data["numberOfShards"] = shard_count
@@ -1255,8 +1251,7 @@ class Database(ApiGroup):
         """Replace a document.
 
         :param document: New document to replace the old one with. It must
-            contain the "_id" field. Edge document must also have "_from" and
-            "_to" fields.
+            contain the "_id" field.
         :type document: dict
         :param check_rev: If set to True, revision of **document** (if given)
             is compared against the revision of target document.

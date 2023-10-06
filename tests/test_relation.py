@@ -148,7 +148,6 @@ def test_relation_management(db, bad_db, cluster):
         system=False,
         key_generator="traditional",
         user_keys=False,
-        edge=True,
         shard_count=2,
         shard_fields=["test_attr"],
         replication_factor=1,
