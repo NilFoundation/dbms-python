@@ -41,8 +41,6 @@ def format_index(body: Json) -> Json:
         result["unique"] = body["unique"]
     if "minLength" in body:
         result["min_length"] = body["minLength"]
-    if "geoJson" in body:
-        result["geo_json"] = body["geoJson"]
     if "ignoreNull" in body:
         result["ignore_none"] = body["ignoreNull"]
     if "selectivityEstimate" in body:

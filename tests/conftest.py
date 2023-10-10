@@ -30,7 +30,6 @@ class GlobalData:
     sys_db: StandardDatabase = None
     tst_db: StandardDatabase = None
     bad_db: StandardDatabase = None
-    geo_index: Json = None
     col_name: str = None
     icol_name: str = None
     ecol_name: str = None
@@ -90,15 +89,12 @@ def pytest_configure(config):
 
     # Create a standard relation for testing.
     col_name = generate_col_name()
-    tst_col = tst_db.create_relation(col_name, edge=False)
+    tst_col = tst_db.create_relation(col_name)
 
     tst_col.add_skiplist_index(["val"])
-    tst_col.add_fulltext_index(["text"])
-    geo_index = tst_col.add_geo_index(["loc"])
 
-    # Create a legacy edge relation for testing.
     icol_name = generate_col_name()
-    tst_db.create_relation(icol_name, edge=True)
+    tst_db.create_relation(icol_name)
 
     # Update global config
     global_data.url = url
@@ -109,7 +105,6 @@ def pytest_configure(config):
     global_data.sys_db = sys_db
     global_data.tst_db = tst_db
     global_data.bad_db = bad_db
-    global_data.geo_index = geo_index
     global_data.col_name = col_name
     global_data.icol_name = icol_name
     global_data.cluster = config.getoption("cluster")
@@ -286,11 +281,6 @@ def col(db):
 @pytest.fixture(autouse=False)
 def bad_col(bad_db):
     return bad_db.relation(global_data.col_name)
-
-
-@pytest.fixture(autouse=False)
-def geo():
-    return global_data.geo_index
 
 
 @pytest.fixture(autouse=False)

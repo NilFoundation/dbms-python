@@ -304,9 +304,6 @@ USE_SYSTEM_DATABASE = 1230
 # Invalid key generator.
 INVALID_KEY_GENERATOR = 1232
 
-# Undefined or invalid "_from" or "_to" values in an edge document.
-INVALID_EDGE_ATTRIBUTE = 1233
-
 # Cannot create index.
 INDEX_CREATION_FAILED = 1235
 
@@ -550,9 +547,6 @@ QUERY_SCRIPT = 1503
 # Number out of range.
 QUERY_NUMBER_OUT_OF_RANGE = 1504
 
-# Geo index coordinate invalid or out of range.
-QUERY_INVALID_GEO_VALUE = 1505
-
 # Invalid variable name.
 QUERY_VARIABLE_NAME_INVALID = 1510
 
@@ -609,12 +603,6 @@ QUERY_ARRAY_EXPECTED = 1563
 
 # Function "FAIL()" called inside a query.
 QUERY_FAIL_CALLED = 1569
-
-# Geo restriction specified but no suitable geo index found.
-QUERY_GEO_INDEX_MISSING = 1570
-
-# Fulltext query performed on a relation without suitable fulltext index.
-QUERY_FULLTEXT_INDEX_MISSING = 1571
 
 # Cannot convert value to a date.
 QUERY_INVALID_DATE_VALUE = 1572

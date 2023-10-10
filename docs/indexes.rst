@@ -30,15 +30,8 @@ on fields ``_from`` and ``_to``. For more information on indexes, refer to
     # Add a new hash index on document fields "continent" and "country".
     index = cities.add_hash_index(fields=['continent', 'country'], unique=True)
 
-    # Add new fulltext indexes on fields "continent" and "country".
-    index = cities.add_fulltext_index(fields=['continent'])
-    index = cities.add_fulltext_index(fields=['country'])
-
     # Add a new skiplist index on field 'population'.
     index = cities.add_skiplist_index(fields=['population'], sparse=False)
-
-    # Add a new geo-spatial index on field 'coordinates'.
-    index = cities.add_geo_index(fields=['coordinates'])
 
     # Add a new persistent index on field 'currency'.
     index = cities.add_persistent_index(fields=['currency'], sparse=True)

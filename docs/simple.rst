@@ -49,11 +49,7 @@ Here are all simple query (and other utility) methods available:
 
 * :func:`dbms.relation.Relation.all`
 * :func:`dbms.relation.Relation.find`
-* :func:`dbms.relation.Relation.find_near`
 * :func:`dbms.relation.Relation.find_in_range`
-* :func:`dbms.relation.Relation.find_in_radius`
-* :func:`dbms.relation.Relation.find_in_box`
-* :func:`dbms.relation.Relation.find_by_text`
 * :func:`dbms.relation.Relation.get_many`
 * :func:`dbms.relation.Relation.ids`
 * :func:`dbms.relation.Relation.keys`
